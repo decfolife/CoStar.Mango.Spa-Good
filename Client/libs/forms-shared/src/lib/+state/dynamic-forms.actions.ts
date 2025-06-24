@@ -12,7 +12,7 @@ import {
   RenderFormDropdowns,
   SaveRenderFormCommand,
 } from '@forms/model/dynamic-forms.interface';
-import { ApiResponse } from '@forms/model/api-response';
+import { ApiResponse } from '@mango/data-models/lib-data-models';
 
 export const FORMSLIST_LOAD_SUCCESS = '[FormsList] Load Success';
 export const FORMSLIST_LOAD_FAILURE = '[FormsList] Load Failure';
@@ -104,6 +104,9 @@ export const dynamicFormLoadActions = createAction(
     objectId: number;
     objectTypeId: number;
     objectTypeTypeId: number;
+    relationshipDefinitionId;
+    parentObjectId;
+    parentObjectTypeId;
     isEditMode: boolean;
   }>()
 );
@@ -305,6 +308,8 @@ export const dynamicFormLoadRenderForm = createAction(
     formId: number;
     objectId: number;
     objectTypeId: number;
+    formObjectId: number;
+    formObjectTypeId: number;
     parentObjectId: number;
     parentObjectTypeId: number;
   }>()

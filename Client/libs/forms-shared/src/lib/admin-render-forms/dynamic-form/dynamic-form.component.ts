@@ -81,6 +81,7 @@ import {
   Pill,
   ProjectsEmailInfo,
   RenderFormHeaderData,
+  SharedLeftNavLink,
   StatusPill,
   ToastState,
 } from '@mango/data-models/lib-data-models';
@@ -88,7 +89,7 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { DynamicFormSectionComponent } from './dynamic-form-sections/dynamic-form-section.component';
 import { ListPageService } from '@list-pages/components/listpage/core/services/listpage.service';
-import { CopyLeaseComponent } from '@forms/modals/copy-lease/copy-lease.component';
+import { CopyLeaseComponent } from '@forms/admin-render-forms/dynamic-form/dynamic-form-actions/copy-lease/copy-lease.component';
 import { HttpResponse } from '@angular/common/http';
 import { GlobalSessionService } from '@mangoSpa/src/app/services/global-session.service';
 import { DynamicFormAssociateComponent } from './dynamic-form-actions/dynamic-form-associate/dynamic-form-associate.component';
@@ -101,6 +102,9 @@ import { DynamicFormLeaseVerificationComponent } from './dynamic-form-actions/dy
 import { ArchiveLeaseComponent } from './dynamic-form-actions/archive/archive-lease/archive-lease.component';
 import { FilesService } from '../../../../../../apps/mango-crem-features/object-actions/src/app/shared/services/files.service';
 import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.service';
+import { AssociateToProjectComponent } from './dynamic-form-actions/associate-project/associate-project.component';
+import { LeaseAlertsModule } from '@micro-components/lease-alerts/lease-alerts.module';
+import { AddContactModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-contact-modal/add-contact-modal.component';
 
 @Component({
   selector: 'mango-dynamic-form',
@@ -123,6 +127,7 @@ import { MangoNavigationService } from '@mangoSpa/src/app/services/navigation.se
     MatDialogModule,
     LoaderModule,
     DropdownModule,
+    LeaseAlertsModule,
     ToastComponent,
     PageHeaderComponent,
   ],
@@ -146,18 +151,24 @@ export class DynamicFormComponent
   sectionsVisible: ISection[] = [];
   lastVisibleIndex = 0;
   externalCremLink: string;
+  renderFormError: boolean = false;
 
   // State flags
   isLoading = false;
   isActionLoading = false;
+  actionButtonText: string;
   errorLoading = false;
   isRenderForm = false;
   editMode = false;
   hasParentObjectLinker = false;
   isAddingSection = false;
   isToastVisible = false;
-  hasChanges = false;
+  disableSaveAndApply = false;
   reload: boolean = false;
+  expandAll = true as boolean;
+  showCannotLoadForm = true;
+  companyModuleUser = { hasAddRights: false };
+  contactModuleUser = { hasAddRights: false };
 
   // Form data
   userMessage = '';
@@ -197,6 +208,7 @@ export class DynamicFormComponent
   readonly breadcrumbs$ = this.mangoAppFacade.breadcrumbs$;
   readonly dropdownFormActions$ = this.returnActionsDropdown();
   readonly buttonFormActions$ = this.returnActionsButtons();
+  readonly loadingRenderFormError$ = this.dynamicFormsFacade.renderFormError$;
 
   public googleMapAPIKey: any;
   public googleMappingChannel: any;
@@ -212,6 +224,7 @@ export class DynamicFormComponent
   includeFilesText: string = `If File Paths is checked, selected file(s) will be included as path 
   to the application rather than an attachment(s)`;
   allowedObjectTypes = Object.values(AllowedObjectTypes);
+  funcLoadAllSectionsForScroll: any = this.loadAllSectionsForScroll;
 
   constructor(
     private location: Location,
@@ -242,6 +255,9 @@ export class DynamicFormComponent
     this.initializeForm();
     this.setupInitialState();
     this.statusPillInfo = this.getStatus();
+
+    this.checkAddRights(ObjectType.COMPANY, this.companyModuleUser);
+    this.checkAddRights(ObjectType.CONTACT, this.contactModuleUser);
 
     this.currentUserInfo$ = this.mangoAppFacade.contactRecord$;
     this.subs.add(
@@ -301,6 +317,36 @@ export class DynamicFormComponent
         })
       )
       .subscribe();
+
+    this.subs.add(
+      this.loadingRenderFormError$
+        .pipe(
+          switchMap((error) => {
+            if (error) {
+              this.showCannotLoadForm = true;
+              this.errorLoading = true;
+              this.isLoading = false;
+              this.renderFormError =
+                error.name && error.name == 'getRenderForm' ? true : false;
+              this.userMessage = error.message ? error.message : error;
+            }
+            return EMPTY;
+          })
+        )
+        .subscribe()
+    );
+  }
+
+  checkAddRights(module: any, _moduleUser: any): void {
+    if (this.isSuperUser) _moduleUser.hasAddRights = true;
+    else
+      this.listpageService
+        .getUserModuleRights(module.toString())
+        .subscribe((result) => {
+          let rights = result.data.filter((r: any) => r.hasAddRights);
+          _moduleUser.hasAddRights =
+            rights.length > 0 ? rights[0]['hasAddRights'] : false;
+        });
   }
 
   findChangedControl(formGroup: FormGroup, changes: any) {
@@ -491,7 +537,7 @@ export class DynamicFormComponent
   }
 
   private removeEndingQueryString(value: string) {
-    const questionMarkIndex = value.indexOf('?');
+    const questionMarkIndex = !!value ? value.indexOf('?') : -1;
     if (questionMarkIndex < 0) return value;
 
     const returnValue = value.substring(0, questionMarkIndex);
@@ -563,9 +609,7 @@ export class DynamicFormComponent
           let buttonsDataList = [];
           filteredFormActions.forEach((ffa) => {
             let buttonColor =
-              ffa.formActionLabel === 'Save' || ffa.formActionLabel === 'Apply'
-                ? 'primary'
-                : 'secondary';
+              ffa.formActionLabel === 'Save' ? 'primary' : 'secondary';
 
             buttonsDataList.push({
               id: `dynamic_button_${ffa.formActionLabel}_id`,
@@ -742,6 +786,37 @@ export class DynamicFormComponent
     );
   }
 
+  loadAllSectionsForScroll(navLink: SharedLeftNavLink): Observable<any> {
+    let elementId = navLink.linkUrl.replace('#', '');
+    let element = document.getElementById(elementId);
+
+    if (!!element) {
+      return of(false);
+    } else {
+      return this.selectFormSections$.pipe(
+        filter((sections) => sections !== null),
+        take(1),
+        map((sections) => {
+          let moreSectionsLoaded = false;
+          if (!!sections) {
+            let sectionElementsCount = document.querySelectorAll(
+              "[id^='dynamic-form_section']"
+            ).length;
+            while (sectionElementsCount < sections.length) {
+              moreSectionsLoaded = true;
+              this.loadMoreSections(sections);
+              sectionElementsCount += 6; //Number of sections loaded per call to loadMoreSections
+            }
+
+            return moreSectionsLoaded;
+          } else {
+            return false;
+          }
+        })
+      );
+    }
+  }
+
   handleHasParentObjectLinkerChange(value: boolean): void {
     if (!this.hasParentObjectLinker) {
       this.hasParentObjectLinker = value;
@@ -804,7 +879,11 @@ export class DynamicFormComponent
             } else if (res.data.isLocked) {
               statusPill.text = 'Locked';
               statusPill.type = Pill.BASIC;
-              statusPill.titleOnHover = res.data.lockedReason;
+              statusPill.titleOnHover = '';
+              statusPill.lockedMessage =
+                res.data.lockedReason +
+                '<br><br>' +
+                '<i>Locked records cannot be edited. Records will be unlocked when the batch has completed processing or has been canceled.</i>';
               statusPill.displayLockIcon = true;
             }
           }
@@ -823,16 +902,19 @@ export class DynamicFormComponent
   }
 
   onActionButtonClick(buttonLabel: string) {
+    this.actionButtonText = buttonLabel;
     switch (buttonLabel.toLowerCase()) {
       case 'edit': {
         this.editMode = true;
         this.changedFormItemKeys = [];
-        this.hasChanges = false;
         this.dynamicFormsFacade.loadFormActions(
           this.formId,
           this.objectId,
           this.objectTypeId,
           this.objectTypeTypeId,
+          this.relationshipDefinitionId,
+          this.parentObjectId,
+          this.parentObjectTypeId,
           this.editMode
         );
         break;
@@ -842,11 +924,17 @@ export class DynamicFormComponent
         break;
       }
       case 'save': {
-        this.validateAndSaveForm('save');
+        if (!this.disableSaveAndApply) {
+          this.disableSaveAndApply = true;
+          this.validateAndSaveForm('save');
+        }
         break;
       }
       case 'apply': {
-        this.validateAndSaveForm('apply');
+        if (!this.disableSaveAndApply) {
+          this.disableSaveAndApply = true;
+          this.validateAndSaveForm('apply');
+        }
         break;
       }
       case 'cancel': {
@@ -857,6 +945,9 @@ export class DynamicFormComponent
           this.objectId,
           this.objectTypeId,
           this.objectTypeTypeId,
+          this.relationshipDefinitionId,
+          this.parentObjectId,
+          this.parentObjectTypeId,
           this.editMode
         );
         break;
@@ -895,6 +986,7 @@ export class DynamicFormComponent
         );
         invalidFormItemLabels += obj.labelName + clauseDetailField + '\n';
       });
+      this.disableSaveAndApply = false;
       this.dialogService.alert(
         'Invalid Form Items',
         invalidFormItemLabels,
@@ -902,12 +994,16 @@ export class DynamicFormComponent
       );
       return;
     } else if (!this.changedFormItemKeys.length) {
-      this.editMode = false;
+      this.disableSaveAndApply = false;
+      this.editMode = oper.toLowerCase() === 'save' ? false : true;
       this.dynamicFormsFacade.loadFormActions(
         this.formId,
         this.objectId,
         this.objectTypeId,
         this.objectTypeTypeId,
+        this.relationshipDefinitionId,
+        this.parentObjectId,
+        this.parentObjectTypeId,
         this.editMode
       );
       return;
@@ -915,7 +1011,7 @@ export class DynamicFormComponent
 
     let itemsToSave = JSON.parse(JSON.stringify(this.changedFormItemKeys));
     let saveFormData: SaveRenderFormCommand = {
-      isNew: false,
+      isDynamicPopup: false,
       formId: this.formId,
       objectId: this.objectId,
       objectTypeId: this.objectTypeId,
@@ -929,6 +1025,7 @@ export class DynamicFormComponent
     itemsToSave.forEach((changedControl) => {
       let item: SaveRenderFormDto = {
         formItemId: changedControl.formItemId,
+        formItemTypeId: changedControl.formItemTypeId,
         oldValue:
           Array.isArray(changedControl.oldValue) ||
           typeof changedControl.oldValue === 'boolean'
@@ -954,15 +1051,18 @@ export class DynamicFormComponent
       (item) => item.oldValue !== item.newValue
     );
     if (!saveFormData.formItems.length) {
+      this.disableSaveAndApply = false;
       this.changedFormItemKeys = [];
-      this.hasChanges = false;
-      this.editMode = oper == 'save' ? false : true;
+      this.editMode = oper.toLowerCase() === 'save' ? false : true;
       !this.editMode &&
         this.dynamicFormsFacade.loadFormActions(
           this.formId,
           this.objectId,
           this.objectTypeId,
           this.objectTypeTypeId,
+          this.relationshipDefinitionId,
+          this.parentObjectId,
+          this.parentObjectTypeId,
           this.editMode
         );
       return;
@@ -983,9 +1083,8 @@ export class DynamicFormComponent
             response.saveRenderFormResponse.success
           ) {
             this.changedFormItemKeys = [];
-            this.hasChanges = false;
             this.dynamicFormsFacade.clearDynamicFormsState();
-            this.editMode = oper == 'save' ? false : true;
+            this.editMode = oper.toLowerCase() === 'save' ? false : true;
             this.reloadTheForm();
           } else {
             this.toastService.show(
@@ -995,8 +1094,11 @@ export class DynamicFormComponent
             );
             this.dynamicFormsFacade.clearSaveFormState();
           }
+
+          this.disableSaveAndApply = false;
         }),
         catchError((error) => {
+          this.disableSaveAndApply = false;
           this.toastService.show(
             'Error Saving the Form. Please review and try again',
             'Error',
@@ -1040,16 +1142,10 @@ export class DynamicFormComponent
 
   cancelExistingChanges() {
     if (this.changedFormItemKeys.length) {
-      this.changedFormItemKeys.forEach((formItem) => {
-        let control = this.getControl(this.form, formItem.formItemId);
-        control?.patchValue(formItem.oldValue);
-        control?.markAsPristine();
-      });
-      this.form.markAsPristine();
-      this.form.markAsUntouched();
+      this.changedFormItemKeys = [];
+      this.dynamicFormsFacade.clearDynamicFormsState();
+      this.reloadTheForm();
     }
-    this.changedFormItemKeys = [];
-    this.hasChanges = false;
   }
 
   getControl(form: FormGroup, key: string): AbstractControl | null {
@@ -1135,6 +1231,7 @@ export class DynamicFormComponent
 
   private handleLoadError(error: any): Observable<null> {
     console.error('Error loading dynamic form:', error);
+    this.showCannotLoadForm = true;
     this.errorLoading = true;
     this.userMessage = 'Error loading dynamic form';
     return of(null);
@@ -1146,10 +1243,18 @@ export class DynamicFormComponent
   }
 
   private handleError(response: any): Observable<null> {
+    this.showCannotLoadForm = true;
     this.errorLoading = true;
     if (response.statusCode === 403) {
       this.userMessage = response.clientErrorMessage;
+    } else if (
+      response.statusCode === 400 &&
+      response.clientErrorMessage.toLowerCase() === 'no records found'
+    ) {
+      this.userMessage = response.clientErrorMessage;
+      this.showCannotLoadForm = false;
     }
+
     return EMPTY;
   }
 
@@ -1161,6 +1266,9 @@ export class DynamicFormComponent
       this.objectId,
       this.objectTypeId,
       this.objectTypeTypeId,
+      this.relationshipDefinitionId,
+      this.parentObjectId,
+      this.parentObjectTypeId,
       this.editMode
     );
 
@@ -1190,6 +1298,8 @@ export class DynamicFormComponent
     this.dynamicFormsFacade.loadRenderForm(
       formData.formId,
       this.objectId,
+      this.objectTypeId,
+      formData.objectId,
       formData.objectTypeId,
       this.parentObjectId,
       this.parentObjectTypeId
@@ -1303,7 +1413,7 @@ export class DynamicFormComponent
   // Handle Browser Native Navigation events
   @HostListener('window:beforeunload', ['$event'])
   async windowBeforeUnload($event: any): Promise<void> {
-    if (this.hasChanges) $event.preventDefault();
+    if (this.changedFormItemKeys.length) $event.preventDefault();
   }
 
   handleChangeLossPrevention(
@@ -1312,24 +1422,16 @@ export class DynamicFormComponent
       title: null,
     }
   ) {
-    if (this.hasChanges) {
-      this.mangoAppFacade.setChangeLossPreventIsActive(true);
-      return this.dialogService
-        .confirm(
-          title ?? 'Changes Made!',
-          message ??
-            'Changes you made have not been saved. Would you like to continue editing or leave?',
-          'Continue',
-          'Leave'
-        )
-        .pipe(map((continueEdit) => !continueEdit));
-    }
-
-    return of(true);
-  }
-
-  markAsChanged() {
-    this.hasChanges = true;
+    this.mangoAppFacade.setChangeLossPreventIsActive(true);
+    return this.dialogService
+      .confirm(
+        title ?? 'Changes Made!',
+        message ??
+          'Changes you made have not been saved. Would you like to continue editing or leave?',
+        'Continue',
+        'Leave'
+      )
+      .pipe(map((continueEdit) => !continueEdit));
   }
 
   configGoogleMapKey() {
@@ -1375,13 +1477,49 @@ export class DynamicFormComponent
       this.archive();
     } else if (action === 'change status') {
       this.openLeaseVerificationModal();
+    } else if (action === 'attach existing') {
+      this.attachExisting();
     } else if (action === 'assign items') {
-      
+      this.navService.navigateToClassicAspAdminUrl(
+        '/forms/admin/maintFOrmItems.asp',
+        {
+          queryParams: {
+            fFOrmID: this.formId,
+          },
+          newTab: true,
+        }
+      );
     } else if (action === 'assign sections') {
-      
+      this.navService.navigateToClassicAspAdminUrl(
+        '/forms/admin/maintformSections.asp',
+        {
+          queryParams: {
+            fFOrmID: this.formId,
+          },
+          newTab: true,
+        }
+      );
     } else if (action === 'format item details') {
-      
+      this.navService.navigateToClassicAspAdminUrl(
+        '/forms/admin/FormItemSectionDetails.asp',
+        {
+          queryParams: {
+            FormID: this.formId,
+          },
+          newTab: true,
+        }
+      );
+    } else if (action === 'add contact') {
+      this.openAddContactModal();
     }
+  }
+
+  /**
+   * Expands all cards
+   * @param e
+   */
+  toggleAllCards(state: boolean) {
+    this.expandAll = state;
   }
 
   addBookmark() {
@@ -1546,6 +1684,23 @@ export class DynamicFormComponent
     this.subs.add(sub);
   }
 
+  openAddContactModal() {
+    const dialogRef = this.dialog.open(AddContactModalComponent, {
+      disableClose: true,
+      height: '50vh',
+      width: '58vw',
+      panelClass: 'addContactModal',
+      data: {
+        objectTypeId: this.objectTypeId,
+        companyID: this.objectId,
+      },
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.dynamicFormsFacade.clearDynamicFormsState();
+      this.reloadTheForm();
+    });
+  }
+
   openLeaseVerificationModal() {
     const dialogRef = this.dialog.open(DynamicFormLeaseVerificationComponent, {
       minWidth: '45vw',
@@ -1591,6 +1746,20 @@ export class DynamicFormComponent
       this.toastState = ToastState.ERROR;
       this.showToast();
     }
+  }
+
+  attachExisting(): void {
+    this.dialog.open(AssociateToProjectComponent, {
+      height: '500px',
+      width: '800px',
+      panelClass: 'df-attachExistingPopup',
+      data: {
+        OID: this.objectId,
+        OTID: this.objectTypeId,
+        OTTID: this.objectTypeTypeId,
+      },
+      disableClose: true,
+    });
   }
 
   private getFilenameFromResponse(response: any): string | null {

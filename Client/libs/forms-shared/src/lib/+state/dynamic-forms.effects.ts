@@ -54,7 +54,7 @@ export class DynamicFormsEffects {
           relatedObjectId: number;
           relatedObjectTypeId: number;
         }) => {
-        return this.dynamicFormsService
+          return this.dynamicFormsService
             .getForm(
               action.formId,
               action.objectId,
@@ -65,22 +65,30 @@ export class DynamicFormsEffects {
               action.relatedObjectId,
               action.relatedObjectTypeId
             )
-          .pipe(
-            map((result) =>
-              DynamicFormsActions.dynamicFormLoadSuccessWithStatus({
-                apiResponse: result,
-              })
-            ),
-            catchError((error) =>
-              of(
-                DynamicFormsActions.dynamicFormLoadFailure({
-                  error,
-                  formId: action.formId,
+            .pipe(
+              map((result) =>
+                DynamicFormsActions.dynamicFormLoadSuccessWithStatus({
+                  apiResponse: result,
                 })
+              ),
+              catchError((error) =>
+                of(
+                  DynamicFormsActions.dynamicFormLoadFailure({
+                    error: {
+                      name: 'getForm',
+                      message: error.error?.clientErrorMessage
+                        ? error.error.clientErrorMessage
+                        : error.statusText
+                        ? error.statusText
+                        : 'Form Data Could not be Loaded, Please contact the Admin',
+                    },
+                    formId: action.formId,
+                  })
+                )
               )
-            )
-          );
-        })
+            );
+        }
+      )
     )
   );
 
@@ -94,7 +102,10 @@ export class DynamicFormsEffects {
             action.objectId,
             action.objectTypeId,
             action.objectTypeTypeId,
-            action.isEditMode
+            action.isEditMode,
+            action.relationshipDefinitionId,
+            action.parentObjectId,
+            action.parentObjectTypeId
           )
           .pipe(
             map((result) =>
@@ -185,7 +196,13 @@ export class DynamicFormsEffects {
       ofType(DynamicFormsActions.dynamicFormLoadFields),
       mergeMap((action) =>
         this.dynamicFormsService
-          .getFormFields(action.formId, action.sectionId, action.objectTypeId)
+          .getFormFields(
+            action.formId,
+            action.sectionId,
+            action.objectTypeId,
+            0,
+            0
+          )
           .pipe(
             take(1),
             filter((formData) => formData !== undefined),
@@ -402,22 +419,48 @@ export class DynamicFormsEffects {
   loadRenderForm$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DynamicFormsActions.dynamicFormLoadRenderForm),
-      mergeMap((action: { formId; objectId; objectTypeId }) =>
+      switchMap((action: { formId; formObjectId; formObjectTypeId }) =>
         this.dynamicFormsService
           .getRenderFormData(
             action.formId,
-            action.objectId,
-            action.objectTypeId
+            action.formObjectId,
+            action.formObjectTypeId
           )
           .pipe(
             map((result) =>
-              DynamicFormsActions.dynamicFormLoadRenderFormSuccess({
-                renderFormData: result.data,
-              })
+              !!result && result.success
+                ? DynamicFormsActions.dynamicFormLoadRenderFormSuccess({
+                    renderFormData: result.data,
+                  })
+                : !!result
+                ? DynamicFormsActions.dynamicFormLoadRenderFormFailure({
+                    error: {
+                      name: 'getRenderForm',
+                      message: result.clientErrorMessage
+                        ? result.clientErrorMessage
+                        : 'Form Data Could not be Loaded, Please contact the Admin',
+                    },
+                  })
+                : DynamicFormsActions.dynamicFormLoadRenderFormFailure({
+                    error: {
+                      name: 'getRenderForm',
+                      message:
+                        'Form Data Could not be Loaded, Please contact the Admin.',
+                    },
+                  })
             ),
             catchError((error) =>
               of(
-                DynamicFormsActions.dynamicFormLoadRenderFormFailure({ error })
+                DynamicFormsActions.dynamicFormLoadRenderFormFailure({
+                  error: {
+                    name: 'getRenderForm',
+                    message: error.error?.clientErrorMessage
+                      ? error.error.clientErrorMessage
+                      : error.statusText
+                      ? error.statusText
+                      : 'Form Data Could not be Retrieved, Please contact the Admin',
+                  },
+                })
               )
             )
           )
@@ -484,8 +527,8 @@ export class DynamicFormsEffects {
       mergeMap(
         (action: {
           formId;
-          objectId;
-          objectTypeId;
+          formObjectId;
+          formObjectTypeId;
           parentObjectId;
           parentObjectTypeId;
         }) =>
@@ -494,8 +537,8 @@ export class DynamicFormsEffects {
               this.dynamicFormsService
                 .getRenderFormFormItemDropdowns(
                   action.formId,
-                  action.objectId,
-                  action.objectTypeId,
+                  action.formObjectId,
+                  action.formObjectTypeId,
                   action.parentObjectId,
                   action.parentObjectTypeId
                 )

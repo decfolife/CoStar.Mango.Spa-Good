@@ -12,6 +12,7 @@ import { DataService } from '@mango/core-shared';
 import {
   CURRENCY_DROPDOWN_ERROR,
   ContactRecord,
+  EQUIPMENT_LEASE_TEMPLATE_ID,
   EQUIPMENT_OTID,
   EQUIPMENT_RENDER_SELECT_SUPPLIER_ID,
   EQUIPMENT_RENDER_SELECT_TEMPLATE_ID,
@@ -92,6 +93,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   initialSelectedPortfolio: number;
   selectedSupplier: any;
   private redirectorLinks: any[] = null;
+  hasPassedSupplier = !!(this.data.objectId && this.data.objectName);
 
   constructor(
     public dialogRef: MatDialogRef<AddEquipmentModalComponent>,
@@ -107,8 +109,21 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
     public data: {
       objectTypeName: string;
       objectTypeId: number;
+      objectId: number;
+      objectName: string;
     }
-  ) {}
+  ) {
+    if (this.hasPassedSupplier) {
+      this.supplierDropdownItem = [
+        {
+          objectID: this.data.objectId,
+          objectName: this.data.objectName,
+        },
+      ];
+
+      this.selectedSupplierID = this.supplierDropdownItem[0].objectID;
+    }
+  }
 
   ngOnInit(): void {
     this.initializeAddEquipmentFormGroup();
@@ -136,7 +151,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
 
   initializeAddEquipmentFormGroup(): void {
     this.equipmentForm = this.fb.group({
-      portfolioList: ['', Validators.required],
+      portfolioList: ['', this.hasPassedSupplier ? null : Validators.required],
       supplierList: ['', Validators.required],
       templateList: ['', Validators.required],
       currencyTypeList: ['', Validators.required],
@@ -144,6 +159,11 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
       beginDate: [null, Validators.required],
       endDate: [null, Validators.required],
     });
+
+    if (this.hasPassedSupplier) {
+      this.equipmentForm.get('supplierList').disable();
+      this.equipmentForm.get('templateList').disable();
+    }
   }
 
   ngOnDestroy() {
@@ -199,6 +219,30 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
           }
         })
     );
+
+    if (this.hasPassedSupplier) {
+      this.subscriptions.add(
+        this.formWizardService
+          .getRenderSelect(
+            EQUIPMENT_LEASE_TEMPLATE_ID,
+            EQUIPMENT_RENDER_SELECT_TEMPLATE_ID
+          )
+          .pipe(
+            filter((v) => !!v),
+            map((templates) => {
+              this.templateDropdownItem = templates.data;
+              if (
+                this.templateDropdownItem &&
+                this.templateDropdownItem.length > 0
+              ) {
+                this.selectedTemplateID =
+                  this.templateDropdownItem[0].objectTypeTypeID;
+              }
+            })
+          )
+          .subscribe()
+      );
+    }
   }
 
   onPortfolioValueChange(e: any) {
@@ -385,9 +429,17 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   }
 
   getEquipmentData() {
+    let buildingID = this.equipmentForm.get('supplierList').value[0];
+    let ottid = this.equipmentForm.get('templateList').value[0];
+
+    if (this.hasPassedSupplier) {
+      buildingID = this.data.objectId;
+      ottid = EQUIPMENT_LEASE_TEMPLATE_ID;
+    }
+
     const equipment = {
       PremiseName: '',
-      BuildingID: this.equipmentForm.get('supplierList').value[0],
+      BuildingID: buildingID,
       PremiseObjectTypeTypeID: 200,
       AccountingType: 'AP',
       BeginDate: this.formatDate(this.equipmentForm.get('beginDate').value),
@@ -395,7 +447,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
       ExchangeRateID: this.equipmentForm.get('currencyTypeList').value[0],
       LeaseTypeID: 3,
       MeasureUnitsID: 1,
-      objectTypeTypeID: this.equipmentForm.get('templateList').value[0],
+      objectTypeTypeID: ottid,
       ParentLeaseAbstractID: 0,
       TenantName: this.equipmentForm.get('legalEntityName').value.trim(),
     };
@@ -441,9 +493,12 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   }
 
   resetPopupSelection() {
-    this.portfolioDropdown.clearDropdown();
-    this.templateDropdown.clearDropdown();
-    this.supplierDropdown.clearDropdown();
+    if (!this.hasPassedSupplier) {
+      this.portfolioDropdown.clearDropdown();
+      this.templateDropdown.clearDropdown();
+      this.supplierDropdown.clearDropdown();
+    }
+
     this.BeginDate = null;
     this.EndDate = null;
     this.equipmentForm.reset();

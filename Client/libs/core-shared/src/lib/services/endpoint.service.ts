@@ -56,7 +56,20 @@ export abstract class EndpointService {
         }
       }
 
-      return of(null);
+      // Checking for ProblemDetails error object
+      if (error.error?.type) {
+        return of({
+          success: false,
+          clientErrorMessage: error?.error?.message,
+          statusCode: error?.status,
+        });
+      }
+
+      return of({
+        success: false,
+        clientErrorMessage: error?.error?.clientErrorMessage,
+        statusCode: error?.status,
+      });
     };
   }
 

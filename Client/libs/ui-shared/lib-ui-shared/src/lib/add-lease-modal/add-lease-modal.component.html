@@ -4,12 +4,6 @@
   [modalTitle]="modalTitle"
   closeIconVisible="true"
   [customFooter]="true"
-  [loading]="{
-		type: 'form',
-		instances: 5,
-		show: loading,
-		headerLoading: true,
-	}"
 >
   <div modalContent class="body-content">
     <div modalContent id="addLeaseModal-content">
@@ -19,7 +13,7 @@
         layout="vertical"
         [formGroup]="addLeaseFormGroup"
       >
-        <crem-form-item id="aet-Portfolio-container">
+        <crem-form-item id="aet-Portfolio-container" *ngIf="!hasPassedBuilding">
           <crem-form-label [required]="true">Portfolio</crem-form-label>
           <crem-dropdown
             [autoSelect]="true"
@@ -62,7 +56,7 @@
             (selectedItems)="onBuildingChanged($event)"
             formControlName="building"
             required="true"
-            useSelectBox="true"
+            [autoSelect]="true"
           >
           </crem-dropdown>
         </crem-form-item>
@@ -86,6 +80,7 @@
             [isDisabled]="loading"
             formControlName="premise"
             required="true"
+            [autoSelect]="true"
           >
           </crem-dropdown>
         </crem-form-item>
@@ -189,12 +184,12 @@
               [showColumnHeader]="false"
               displayExpr="objectTypeTypeName"
               valueExpr="objectTypeTypeID"
-              [useSelectBox]="true"
               hoverText="Select {{ leaseObjectName }} Template"
               (selectedItems)="onLeaseTemplateChanged($event)"
               [isDisabled]="loading"
               formControlName="leaseTemplate"
               required="true"
+              [initialSelectedValue]="selectedLeaseTemplate"
             >
             </crem-dropdown>
           </crem-form-item>
@@ -374,6 +369,7 @@
       [icon]="saveClicked ? 'faSpinner' : ''"
       [iconPack]="saveClicked ? 'solid' : ''"
       [iconAnimation]="saveClicked ? 'spin' : ''"
+      [dataId]="'save_new'"
     >
       <span>
         {{ saveClicked ? 'Saving' : 'Save & New' }}

@@ -3,9 +3,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EndpointService } from '@mango/core-shared/lib-core-shared';
 import {
+  DeleteSubObjectRequest,
   SaveRenderFormCommand,
   UpdateLeaseVerificationStatusRequest,
 } from '@forms/model/dynamic-forms.interface';
+import { ObjectData } from '@forms/model/form-item-change-history';
 import { ApiResponse } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
 import { Api } from '@mango/data-models/lib-data-models';
@@ -17,6 +19,8 @@ import { HttpResponse } from '@angular/common/http';
 })
 export class DynamicFormsService extends EndpointService {
   formWizardUrl: string = UtilitiesService.getBaseApiUrl(Api.formWizard);
+  // formWizardUrl = `https://localhost:57320/api/`;
+  objectActions: string = UtilitiesService.getBaseApiUrl(Api.objectActions);
   projectUrl: string = UtilitiesService.getBaseApiUrl(Api.projects);
 
   getItems(): Observable<any> {
@@ -52,7 +56,10 @@ export class DynamicFormsService extends EndpointService {
     objectId: number,
     objectTypeId: number,
     objectTypeTypeId: number,
-    isEditMode: boolean
+    isEditMode: boolean,
+    relationshipDefinitionId: number = null,
+    parentObjectId: number = null,
+    parentObjectTypeId: number = null
   ): Observable<any> {
     const url = `${this.formWizardUrl}AdminForms/GetFormActions`;
     return this.callHttpPost(url, 'GetFormActions', {
@@ -61,6 +68,9 @@ export class DynamicFormsService extends EndpointService {
       objectTypeId,
       objectTypeTypeId,
       isEditMode,
+      relationshipDefinitionId,
+      parentObjectId,
+      parentObjectTypeId,
     });
   }
 
@@ -87,10 +97,18 @@ export class DynamicFormsService extends EndpointService {
   getFormFields(
     formId: number,
     sectionId: number,
-    objectTypeId: number
+    objectTypeId: number,
+    objectId: number = null,
+    relatedObjectId: number = null
   ): Observable<any> {
-    const url = `${this.formWizardUrl}AdminForms/GetFormFields/${formId}/${sectionId}/${objectTypeId}`;
-    return this.callHttpGet(url, 'GetFormFields');
+    return this.callHttpGet(
+      `${this.formWizardUrl}AdminForms/GetFormFields/${formId}/${sectionId}/${objectTypeId}`,
+      'GetFormFields',
+      {
+        objectId,
+        relatedObjectId,
+      }
+    );
   }
 
   getFormFieldsForAllSections(
@@ -146,9 +164,12 @@ export class DynamicFormsService extends EndpointService {
   getRenderFormData(
     formId: number,
     objectId: number,
-    objectTypeId: number
+    objectTypeId: number,
+    relatedObjectId: number = 0,
+    relatedObjectTypeId: number = 0,
+    isDynamicPopUp: boolean = false
   ): Observable<any> {
-    const url = `${this.formWizardUrl}RenderForms/GetRenderForm/${formId}/${objectId}/${objectTypeId}`;
+    const url = `${this.formWizardUrl}RenderForms/GetRenderForm/${formId}/${objectId}/${objectTypeId}/${relatedObjectId}/${relatedObjectTypeId}/${isDynamicPopUp}`;
     return this.callHttpGet(url, 'GetRenderFormData');
   }
 
@@ -194,6 +215,25 @@ export class DynamicFormsService extends EndpointService {
   ): Observable<any> {
     const url = `${this.formWizardUrl}RenderForms/getchangehistory/${controlId}/${objectId}/${objectTypeId}`;
     return this.callHttpGet(url, 'GetChangeHistory');
+  }
+
+  /**
+   * Object Actions: GetFormItemChangeHistory
+   *
+   * @param {*} ObjectID
+   * @param {*} ObjectTypeID
+   * @param {*} ObjectTypeTypeID
+   * @param {*} FormItemID
+   * @param {*} RelatedObjectID
+   * @param {*} RelatedObjectTypeID
+   * @param {*} RelationshipDefinitionID
+   * @memberof DynamicFormsService
+   */
+  getFormItemChangeHistory(
+    objectDataParams: Partial<ObjectData>
+  ): Observable<ApiResponse> {
+    const url = `${this.objectActions}ObjectActions/GetFormItemChangeHistory`;
+    return this.callHttpGet(url, 'GetFormItemChangeHistory', objectDataParams);
   }
 
   copyLease(copyLease: CopyLease) {
@@ -341,5 +381,50 @@ export class DynamicFormsService extends EndpointService {
       'updateLeaseVerificationStatus',
       leaseVerificationStatus
     );
+  }
+
+  getFormForObjectTypeType(ottid: number): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/formid/${ottid}`;
+
+    return this.callHttpGet(url, 'getFormForObjectTypeType');
+  }
+
+  //Form behaviors
+  getBehaviorConfigs() {
+    const url = `${this.formWizardUrl}behavior/GetBehaviorConfigs`;
+    return this.callHttpGet(url, 'getBehaviorConfigs');
+  }
+
+  deleteSubObject(payload: DeleteSubObjectRequest): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/SubObject`;
+
+    return this.callHttpDeleteWithBody(url, 'deleteSubObject', payload);
+  }
+
+  deleteVendor(payload: DeleteSubObjectRequest): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/Vendor`;
+
+    return this.callHttpDeleteWithBody(url, 'deleteVendor', payload);
+  }
+
+  getBehaviors(formSectionId: number, formId: number) {
+    const url = `${this.formWizardUrl}behavior/GetBehaviors/${formSectionId}/${formId}`;
+    return this.callHttpGet(url, 'getBehaviors');
+  }
+
+  saveFormBehavior(formBehavior: object): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}behavior/SaveBehavior`;
+    return this.callHttpPost(url, 'saveBehavior', formBehavior);
+  }
+
+  deleteFormBehavior(formBehaviorID: string): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}behavior/DeleteBehavior/${formBehaviorID}`;
+    return this.callHttpDelete(url, 'deleteBehavior');
+  }
+
+  getVendorHasCharges(vendorId: number): Observable<ApiResponse> {
+    const url = `${this.formWizardUrl}RenderForms/VendorHasCharges/${vendorId}`;
+
+    return this.callHttpGet(url, 'getVendorHasCharges');
   }
 }

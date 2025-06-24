@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { CommonModule, formatCurrency, formatDate } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -32,6 +32,7 @@ import {
   IFields,
   ISection,
   RenderFormItemDetails,
+  SaveRenderFormDto,
 } from '@forms/model/dynamic-forms.interface';
 import { UseDynamicFormFieldConfigDirective } from '@forms/pipes/use-dynamic-form-field-config.pipe';
 import { DynamicFormsService } from '@forms/services/dynamic-forms.service';
@@ -47,6 +48,7 @@ import {
   ButtonModule,
   CremRadioComponent,
   CremRadioGroupComponent,
+  CremToastService,
   DatePickerModule,
   DropdownModule,
   FieldHistoryComponent,
@@ -70,10 +72,12 @@ import {
   Subject,
   Subscription,
   combineLatest,
+  forkJoin,
   from,
   of,
 } from 'rxjs';
 import {
+  catchError,
   concatMap,
   filter,
   map,
@@ -98,8 +102,9 @@ import {
   FieldHistoryDataSource,
   ObjectType,
   ObjectTypeType,
+  ToastState,
 } from '@mango/data-models/lib-data-models';
-import { FormWizardService } from '@micro-components/services/form-wizard.service';
+import { BookmarksService } from '@micro-components/services/bookmarks.service';
 import {
   trigger,
   state,
@@ -107,6 +112,12 @@ import {
   transition,
   animate,
 } from '@angular/animations';
+import { redirectorLinks } from '@mangoSpa/src/app/+state/app/app.selectors';
+import { IsNumericPipe } from '../pipes/is-numeric.pipe';
+import { renderSelectFields } from '@forms/model/enums/render-selects.enums';
+import { FormWizardService } from '@micro-components/services/form-wizard.service';
+import { DynamicFormBehaviorsComponent } from '../dynamic-form-actions/dynamic-form-behaviors/dynamic-form-behaviors.component';
+import { BehaviorType } from '@forms/model/enums/behaviors.enums';
 
 export class tempList {
   columnNum: number;
@@ -161,6 +172,7 @@ const booleanStringMap = {
     UseDynamicFormFieldConfigDirective,
     ParseFormItemParametersPipe,
     GoogleMapsModule,
+    IsNumericPipe,
   ],
   animations: [
     trigger('expandCollapse', [
@@ -200,7 +212,6 @@ export class DynamicFormSectionComponent
 
   private currentSecMenuFocusIndex = 0;
   private subs: Subscription = new Subscription();
-  private destroy$ = new Subject<void>();
 
   @Input() section!: ISection;
   @Input() form!: FormGroup;
@@ -211,6 +222,13 @@ export class DynamicFormSectionComponent
   @Input() isSuperUser = false as boolean;
   @Input() canLoadMap = false as boolean;
   @Input() allFormItemsKeys: RenderFormItemDetails[];
+  /**
+   * Controls the card expansion state
+   * Controls the ExpandAll and CollapseAll from the Menu Action
+   *
+   * @memberof DynamicFormSectionComponent
+   */
+  @Input() isExpanded = true as boolean;
   @Output() hasParentObjectLinkerChange: EventEmitter<boolean> =
     new EventEmitter<boolean>();
 
@@ -237,15 +255,8 @@ export class DynamicFormSectionComponent
    */
   private _skeletonInstances: number;
 
-  /**
-   * Controls the card expansion state
-   *
-   * @memberof DynamicFormSectionComponent
-   */
-  isExpanded = true as boolean;
   private canExpand: boolean;
   showLoader: boolean;
-  hasChanges: boolean;
 
   selectedFormItem: IFields;
   formItemPopupTitle: string;
@@ -275,6 +286,7 @@ export class DynamicFormSectionComponent
 
   //*********** Google Maps ***************/
 
+  googleMapPath: string = '/v06/mapping/GoogleMapsWidgetV3.aspx';
   mapOptions: google.maps.MapOptions = {
     mapTypeId: 'roadmap',
     zoomControl: true,
@@ -317,7 +329,9 @@ export class DynamicFormSectionComponent
     private dynamicFormsService: DynamicFormsService,
     private sanitized: DomSanitizer,
     private dialogService: MangoDialogService,
-    private formWizardService: FormWizardService
+    private bookmarksService: BookmarksService,
+    private formWizardService: FormWizardService,
+    private toastService: CremToastService
   ) {}
 
   ngOnInit(): void {
@@ -470,6 +484,7 @@ export class DynamicFormSectionComponent
       newField['sourceSection'] = null;
       newField['sourceDate'] = null;
       newField['formItemSectionID'] = null;
+      newField['formItemMandatory'] = null;
 
       const formItemData = this.getMatchingItem(f.formItemID);
       if (!!formItemData) {
@@ -488,17 +503,14 @@ export class DynamicFormSectionComponent
         newField.sourceSection = formItemData.sourceSection;
         newField.sourceDate = formItemData.sourceDate;
         newField.formItemSectionID = formItemData.formItemSectionID;
+        newField.formItemMandatory = formItemData.formItemMandatory;
 
         /// format date field for view labels
         if (
           ['2', '9'].some((typeId) => formItemData.formItemTypeID === typeId) &&
           formItemData.dataTypeID === '7'
         ) {
-          if (
-            (!this.editMode ||
-              formItemData.formItemViewOnly.toLowerCase === 'true') &&
-            !!formItemData.formItemAnswer
-          ) {
+          if (!!formItemData.formItemAnswer) {
             newField.formItemAnswerViewMode = formatDate(
               formItemData.formItemAnswer,
               this.dateFormatPreferenceValue,
@@ -550,8 +562,20 @@ export class DynamicFormSectionComponent
             },
             {}
           );
-          const transformedData = { ...data, ...dropdownValues };
-          this.dropdownValues$ = of(transformedData);
+          let transformedData = { ...data, ...dropdownValues };
+
+          const observables =
+            this.getBehaviorDropdownObservables(transformedData);
+          if (observables.length > 0) {
+            this.subs.add(
+              forkJoin(observables).subscribe(() => {
+                this.dropdownValues$ = of(transformedData);
+              })
+            );
+          } else {
+            this.dropdownValues$ = of(transformedData);
+          }
+
           this.isDropdownValuesLoading = false;
         })
     );
@@ -596,15 +620,10 @@ export class DynamicFormSectionComponent
 
       const copiedObject = JSON.parse(JSON.stringify(item));
       this.allFormItemsKeys.push(copiedObject);
-      if (
-        formItem.formItemAnswer
-          ?.toString()
-          .includes('/v06/mapping/GoogleMapsWidgetV3.aspx') ||
-        formItem.sourceURL
-          ?.toString()
-          .includes('/v06/mapping/GoogleMapsWidgetV3.aspx')
-      ) {
-        this.getMapMarkers();
+      if (formItem.formItemAnswer?.toString().includes(this.googleMapPath)) {
+        this.extractMapParms(formItem.formItemAnswer);
+      } else if (formItem.sourceURL?.toString().includes(this.googleMapPath)) {
+        this.extractMapParms(formItem.sourceURL);
       }
     });
     this.form.setControl(this.formGroupName, this.childForm);
@@ -613,19 +632,6 @@ export class DynamicFormSectionComponent
     this.initialData = this.childForm.value;
 
     // we have to attach to the child form to prevent falsely detecting changes as new form sections are added to the container and rendered
-    this.childForm.valueChanges
-      .pipe(
-        takeUntil(this.destroy$),
-        tap((_) => {
-          this.markAsChanged();
-        })
-      )
-      .subscribe();
-  }
-
-  markAsChanged() {
-    this.hasChanges = true;
-    this.dynamicFormContainer.markAsChanged();
   }
 
   /**
@@ -828,7 +834,7 @@ export class DynamicFormSectionComponent
    * @memberof DynamicFormSectionComponent
    */
   onWidgetDownloadFile(e) {
-    this.dynamicFormWidget.exportExcel();
+    this.dynamicFormWidget.exportToExcel();
   }
 
   toggleFormControls() {
@@ -874,8 +880,6 @@ export class DynamicFormSectionComponent
 
   ngOnDestroy() {
     this.subs.unsubscribe();
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   private createDefaultFieldDetails(): IFieldDetails {
@@ -913,7 +917,7 @@ export class DynamicFormSectionComponent
         );
         this.menuItemsElements
           .toArray()
-          [this.currentSecMenuFocusIndex].nativeElement.focus();
+          [this.currentSecMenuFocusIndex].nativeElement?.focus();
       } else if (e.key === 'ArrowUp') {
         this.currentSecMenuFocusIndex = Math.max(
           this.currentSecMenuFocusIndex - 1,
@@ -921,14 +925,14 @@ export class DynamicFormSectionComponent
         );
         this.menuItemsElements
           .toArray()
-          [this.currentSecMenuFocusIndex].nativeElement.focus();
+          [this.currentSecMenuFocusIndex].nativeElement?.focus();
       } else if (
         e.key === 'Tab' &&
         e.shiftKey &&
         this.currentSecMenuFocusIndex === 0
       ) {
         this.trigger.closeMenu();
-        this.sectionTitle.nativeElement.focus();
+        this.sectionTitle.nativeElement?.focus();
       }
     }
   }
@@ -944,7 +948,7 @@ export class DynamicFormSectionComponent
     this.trigger.openMenu();
     this.currentSecMenuFocusIndex = 0;
     setTimeout(() => {
-      this.menuItemsElements.first.nativeElement.focus();
+      this.menuItemsElements.first.nativeElement?.focus();
     }, 0);
   }
 
@@ -1078,11 +1082,34 @@ export class DynamicFormSectionComponent
     return result;
   }
 
-  getMapMarkers() {
+  extractMapParms(mapString: string) {
+    let tempParms = mapString.split('>')[0]?.split('?');
+    if (tempParms?.length == 2) {
+      let obj = this.stringToObject(tempParms[1]);
+      this.getMapMarkers(obj);
+    }
+  }
+
+  stringToObject(str: string): { [key: string]: string } {
+    const obj: { [key: string]: string } = {};
+    const pairs = str.split('&');
+
+    pairs.forEach((pair) => {
+      const [key, value] = pair.split('=');
+      if (key && value) {
+        obj[key.trim()] = value.trim();
+      }
+    });
+    return obj;
+  }
+
+  getMapMarkers(mapParms: any) {
     this.advMarkers = [];
     const request: MapDataRequest = {
-      objectTypeId: +this.objectTypeId,
-      objectIds: this.objectId.toString(),
+      objectTypeId: Number(mapParms.otid),
+      objectIds: mapParms.oid,
+      MapId: mapParms.mapid,
+      vpMapType: mapParms.vp_map_type,
     };
 
     this.listpageService.getMarkerList(request).subscribe((res) => {
@@ -1132,8 +1159,20 @@ export class DynamicFormSectionComponent
 
   private sanitizedHtmlMap = new Map<string, any>();
   private processedItems = new Set<string>();
-  transform(value: string | null, key: string) {
+  transform(
+    value: any | null,
+    key: string,
+    dataTypeID: number,
+    numDecimals: string
+  ) {
     if (!value) return null;
+
+    if (dataTypeID == 6) {
+      return formatCurrency(value, 'en-US', '$', '1.2-2').replace(
+        /2/gi,
+        numDecimals ? numDecimals : '0'
+      );
+    }
 
     const strValue = value.toString().toLowerCase();
     if (
@@ -1275,5 +1314,325 @@ export class DynamicFormSectionComponent
         )
         .subscribe()
     );
+  }
+
+  openFormBehaviorsModal() {
+    const dialogRef = this.dialog.open(DynamicFormBehaviorsComponent, {
+      minWidth: '50vw',
+      maxWidth: '100vw',
+      width: '55vw',
+      maxHeight: 'auto',
+      data: {
+        renderFormData: this.selectRenderFormData,
+        formID: this.formId,
+        formSectionID: this.section?.formSectionID,
+      },
+    });
+    dialogRef.afterClosed();
+  }
+
+  handleBehavior(
+    requestTypeID,
+    formItemInput1ID,
+    formItemInput2ID,
+    formItemOutputID,
+    behaviorTypeID,
+    e,
+    dropdownBlankOption = undefined
+  ) {
+    if (formItemInput1ID == 0 || !e || e.length == 0) return;
+
+    if (behaviorTypeID == BehaviorType.SetCompletedDate) {
+      this.setCompletedDate(formItemOutputID, e[0].value);
+    } else if (behaviorTypeID == BehaviorType.CalcDateDifference) {
+      this.calcDateDifference(
+        formItemInput1ID,
+        formItemInput2ID,
+        formItemOutputID,
+        e
+      );
+    } else if (
+      behaviorTypeID == BehaviorType.CallToogleTextList ||
+      behaviorTypeID == BehaviorType.DisplayNewItems
+    ) {
+      this.populateBehaviorDropdown(
+        requestTypeID,
+        formItemInput1ID,
+        formItemInput2ID,
+        formItemOutputID,
+        behaviorTypeID,
+        e[0].value,
+        dropdownBlankOption
+      );
+    }
+  }
+
+  calcDateDifference(
+    formItemInput1ID: number,
+    formItemInput2ID: number,
+    formItemOutputID: number,
+    e
+  ) {
+    let valInput1 = this.getFormItem(formItemInput1ID.toString())?.value;
+    let valInput2 = this.getFormItem(formItemInput2ID.toString())?.value;
+
+    if (!valInput1 || !valInput2) return;
+    let inputDate1 =
+      typeof valInput1 === 'string' ? this.parseDate(valInput1) : valInput1;
+    let inputDate2 =
+      typeof valInput2 === 'string' ? this.parseDate(valInput2) : valInput2;
+
+    if (inputDate1 > inputDate2) {
+      this.getFormItem(formItemOutputID.toString())?.patchValue('');
+      this.dialogService.alert(
+        'Invalid Dates',
+        `Commencement Date must come before the Expiration Date.`,
+        'OK'
+      );
+    } else {
+      let dateDiff = this.dateDifference(inputDate1, inputDate2);
+      this.getFormItem(formItemOutputID.toString())?.patchValue(dateDiff);
+    }
+  }
+
+  dateDifference(date1, date2) {
+    const start = new Date(date1);
+    const end = new Date(date2);
+    end.setDate(end.getDate() + 1); //Adjust enddate 1 day ahead to include input date logic - V06 logic
+
+    let years = end.getFullYear() - start.getFullYear();
+    let months = end.getMonth() - start.getMonth();
+    let days = end.getDate() - start.getDate();
+
+    if (days < 0) {
+      months--;
+      const lastDayOfMonth = new Date(
+        end.getFullYear(),
+        end.getMonth(),
+        0
+      ).getDate();
+      days += lastDayOfMonth;
+    }
+
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    let dates = [
+      this.getValue(years, 'year'),
+      this.getValue(months, 'month'),
+      this.getValue(days, 'day'),
+    ];
+    let dateString = dates.filter(Boolean).join(', ');
+
+    return dateString;
+  }
+
+  getValue(val, ymd) {
+    return val <= 0 ? '' : val == 1 ? '1 ' + ymd : val + ' ' + ymd + 's';
+  }
+
+  parseDate(dateString) {
+    if (dateString.length && dateString.length == 10) {
+      if (dateString.split('/')[0].length == 4) {
+        const [year, month, day] = dateString.split('/').map(Number);
+        return new Date(year, month - 1, day); // month is 0-indexed
+      } else {
+        const [month, day, year] = dateString.split('/').map(Number);
+        return new Date(year, month - 1, day); // month is 0-indexed
+      }
+    } else {
+      this.dialogService.alert(
+        'Unknown Date Format',
+        `Date Format could not be determined - ${dateString}`,
+        'OK'
+      );
+    }
+  }
+
+  private notifyErrorMessage(errorMessage: string) {
+    this.toastService.show(errorMessage, 'Error', ToastState.ERROR, {
+      position: 'bottom right',
+      maxWidth: '350px',
+    });
+  }
+
+  changeFormItemType(
+    formItemID: number,
+    formItemType: string,
+    formItemTypeID: number
+  ) {
+    this.tempList.forEach((col) => {
+      let formItem = col.listOfFields.find((f) => f.formItemID == formItemID);
+      if (formItem && formItem.formItemType.formItemType != formItemType) {
+        formItem.formItemType.formItemType = formItemType;
+        formItem.formItemType.formItemTypeID = formItemTypeID;
+        formItem.formItemTypeID = formItemTypeID;
+      }
+    });
+  }
+
+  setCompletedDate(formItemOutputID: number, formItemValue: any) {
+    if (formItemValue == 3) {
+      let dateValue = formatDate(new Date(), 'MM/dd/yyyy', 'en-US');
+      this.getFormItem(formItemOutputID.toString())?.setValue(
+        dateValue.toString()
+      );
+    } else {
+      this.getFormItem(formItemOutputID.toString())?.setValue('');
+    }
+  }
+
+  private populateBehaviorDropdown(
+    requestTypeID: number,
+    formItemInput1ID: number,
+    formItemInput2ID: number,
+    formItemOutputID: number,
+    behaviorTypeID: number,
+    formItemValue: any,
+    dropdownBlankOption: string
+  ): void {
+    if (requestTypeID === 0) return;
+
+    const [valueIndex, displayIndex] = renderSelectFields[requestTypeID] || [];
+    if (valueIndex === undefined || displayIndex === undefined) return;
+
+    const isToogleTextList = behaviorTypeID === BehaviorType.CallToogleTextList;
+    this.subs.add(
+      this.formWizardService
+        .getRenderSelect(formItemValue, requestTypeID)
+        .subscribe({
+          next: (res) => {
+            if (!res?.success) {
+              this.notifyErrorMessage(
+                'There was an issue loading details. Please review and try again.'
+              );
+              return;
+            }
+
+            if (isToogleTextList) {
+              if (res.data.length === 0) {
+                this.changeFormItemType(formItemOutputID, 'Text Field', 2);
+              } else {
+                this.changeFormItemType(formItemOutputID, 'List Box', 1);
+              }
+            }
+
+            const dropdownOptions = this.buildDropdownOptions(
+              res.data,
+              valueIndex,
+              displayIndex,
+              dropdownBlankOption
+            );
+            this.dropdownValues$ = this.dropdownValues$.pipe(
+              map((dropdownMap) => {
+                dropdownMap[formItemOutputID] = dropdownOptions;
+                return dropdownMap;
+              })
+            );
+          },
+          error: (err) => {
+            this.notifyErrorMessage(
+              'There was an error loading details. Please review and try again.'
+            );
+            console.error('Error occurred while loading render selects:', err);
+          },
+        })
+    );
+  }
+
+  private getBehaviorDropdownObservables(dropdowns): any[] {
+    const observables = [];
+    this.tempList.forEach((col) => {
+      col.listOfFields.forEach((field) => {
+        if (
+          field.formItemID !== field.formItemInput1ID ||
+          field.requestTypeID === 0
+        )
+          return;
+
+        const formItemData = this.getMatchingItem(field.formItemID);
+        if (!formItemData?.formItemAnswer) return;
+
+        const [valueIndex, displayIndex] =
+          renderSelectFields[field.requestTypeID] || [];
+        if (valueIndex === undefined || displayIndex === undefined) return;
+
+        const isToogleTextList =
+          field.behaviorTypeID === BehaviorType.CallToogleTextList;
+        const obs$ = this.formWizardService
+          .getRenderSelect(formItemData.formItemAnswer, field.requestTypeID)
+          .pipe(
+            tap((res) => {
+              if (res.success) {
+                if (isToogleTextList) {
+                  if (res.data.length === 0) {
+                    this.changeFormItemType(
+                      field.formItemOutputID,
+                      'Text Field',
+                      2
+                    );
+                  } else {
+                    this.changeFormItemType(
+                      field.formItemOutputID,
+                      'List Box',
+                      1
+                    );
+                  }
+                }
+
+                const dropdownOptions = this.buildDropdownOptions(
+                  res.data,
+                  valueIndex,
+                  displayIndex,
+                  field.dropdownBlankOption
+                );
+                dropdowns[field.formItemOutputID] = dropdownOptions;
+              } else {
+                this.notifyErrorMessage(
+                  'There was an issue loading details. Please review and try again.'
+                );
+              }
+            }),
+            catchError((err) => {
+              this.notifyErrorMessage(
+                'There was an error loading details. Please review and try again.'
+              );
+              console.error(
+                'Error occurred while loading render selects:',
+                err
+              );
+              return of(null); // continue with other observables
+            })
+          );
+        observables.push(obs$);
+      });
+    });
+    return observables;
+  }
+
+  private buildDropdownOptions(
+    data: any[],
+    valueIndex: number,
+    displayIndex: number,
+    dropdownBlankOption: string
+  ): { value: string; display: string; redirector: string }[] {
+    const options = data.map((item) => {
+      const keys = Object.keys(item);
+      const valueKey = keys[valueIndex] || '';
+      const displayKey = keys[displayIndex] || '';
+      return {
+        value: item[valueKey].toString() ?? '',
+        display: item[displayKey].toString() ?? '',
+        redirector: '',
+      };
+    });
+
+    if (dropdownBlankOption?.toLowerCase() === 'true') {
+      options.unshift({ value: '', display: '', redirector: '' });
+    }
+
+    return options;
   }
 }

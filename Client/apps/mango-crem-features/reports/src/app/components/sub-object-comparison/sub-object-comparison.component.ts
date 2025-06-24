@@ -16,11 +16,16 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { interval, Subscription } from 'rxjs';
 import notify from 'devextreme/ui/notify';
 import { UtilitiesService } from '@mango/core-shared';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
+import { ToastState } from '@mango/data-models/lib-data-models';
 
 @Component({
   selector: 'mango-sub-object-comparison',
   templateUrl: './sub-object-comparison.component.html',
-  styleUrls: ['./sub-object-comparison.component.scss'],
+  styleUrls: [
+    './sub-object-comparison.component.scss',
+    '../../../assets/styles/reports.scss',
+  ],
 })
 export class SubObjectComparisonComponent implements OnInit {
   public pageTitle = this.route.snapshot.data['pageTitle'];
@@ -44,6 +49,7 @@ export class SubObjectComparisonComponent implements OnInit {
   public subscriptionObject: { [key: string]: Subscription } = {};
   public valid = true;
   public widgetId: number;
+  public subObjectIds: number[] = [];
 
   @ViewChild('DataGrid') dataGrid: DxDataGridComponent;
   @ViewChild('listMenuTrigger') listMenuTrigger: MatMenuTrigger;
@@ -56,7 +62,8 @@ export class SubObjectComparisonComponent implements OnInit {
     private datepipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private decimalPipe: DecimalPipe,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastService: CremToastService
   ) {
     this.widgetId = +this.route.snapshot.paramMap.get('widgetId');
   }
@@ -70,19 +77,38 @@ export class SubObjectComparisonComponent implements OnInit {
     this.parentObjectId = +this.route.snapshot.paramMap.get('parentObjectId');
     this.parentObjectTypeId =
       +this.route.snapshot.paramMap.get('parentObjectTypeId');
+    this.subObjectIds = this.route.snapshot.queryParamMap
+      .getAll('subObjectIds')
+      .map(Number)
+      .filter((x) => x !== 0);
 
-    this.sharedService.getUserPreferences().subscribe((result) => {
-      const userPreferences = result.data || {};
-      this.dateFormat = userPreferences?.dateFormat || 'MM/dd/yyyy';
-      this.projectGanttChartService
-        .getObjectNameAndType(this.parentObjectId, this.parentObjectTypeId)
-        .subscribe((projectType) => {
-          this.objectType = projectType.data.objectType;
-          this.pageTitle = projectType.data.objectName;
+    if (this.subObjectIds?.length) {
+      this.sharedService.getUserPreferences().subscribe((result) => {
+        const userPreferences = result.data || {};
+        this.dateFormat = userPreferences?.dateFormat || 'MM/dd/yyyy';
+        this.projectGanttChartService
+          .getObjectNameAndType(this.parentObjectId, this.parentObjectTypeId)
+          .subscribe((projectType) => {
+            this.objectType = projectType.data.objectType;
+            this.pageTitle = projectType.data.objectName;
 
-          this.getSubObjectComparisonData();
-        });
-    });
+            this.getSubObjectComparisonData();
+          });
+      });
+    } else {
+      this.toastService.show(
+        'Add at least one deal to compare.',
+        '',
+        ToastState.ERROR,
+        {
+          position: 'bottom right',
+          maxWidth: '350px',
+        }
+      );
+
+      this.valid = false;
+      this.loading = false;
+    }
   }
 
   public displayColumnChooser() {
@@ -328,7 +354,8 @@ export class SubObjectComparisonComponent implements OnInit {
       .getSubObjectsComparisonData(
         this.formId,
         this.childObjectTypeId,
-        this.widgetId
+        this.widgetId,
+        this.subObjectIds
       )
       .subscribe((result) => {
         const data = JSON.parse(result.data);

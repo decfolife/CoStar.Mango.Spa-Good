@@ -265,6 +265,8 @@ export class DropdownComponent
   // exsting usages of dropdown may rely on sourcing selectedDisplay from the valueExpr. setting this to false this allows the provided displayExpr to be used to drive the selectedDisplay
   @Input() useImplictValueExpr: boolean = true;
 
+  @Input() formControlName!: string;
+
   isTooltipVisible = false;
   isdisplayExprTooltipVisible = false;
   displayExprTooltipText = '';
@@ -328,6 +330,19 @@ export class DropdownComponent
 
     this.setDropdownvalue(this.initialSelectedValue);
     this.setDropDownAttr();
+  }
+
+  onKeyDown(e) {
+    if (e.event.code === 'Tab') {
+      let iconElement = e.element.querySelector('span.dx-icon.dx-icon-clear');
+      iconElement.tabIndex = 0;
+      iconElement.onkeydown = (event) => {
+        if (event.code === 'Enter') {
+          iconElement.click();
+          this.focusDropdown();
+        }
+      };
+    }
   }
 
   ngOnInit() {
@@ -515,7 +530,10 @@ export class DropdownComponent
         (data) => data?.[this.resolveSelectedDisplaySource()]
       );
       if (this.selectMode == 'single' && this.selectedDisplay.length) {
-        this.isDropDownBoxOpened = false;
+        this.focusDropdown();
+        setTimeout(() => {
+          this.isDropDownBoxOpened = false;
+        }, 400);
       }
 
       this.gridDropdownValueChanged.emit(true);
@@ -954,6 +972,7 @@ export class DropdownComponent
         this.dropDown.instance &&
         typeof this.dropDown.instance.close === 'function'
       ) {
+        this.focusDropdown();
         this.dropDown.instance.close();
       }
     }

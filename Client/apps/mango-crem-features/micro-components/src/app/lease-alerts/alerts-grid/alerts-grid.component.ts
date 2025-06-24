@@ -144,7 +144,7 @@ export class AlertsGridComponent implements OnInit {
 
   dismissToggleButtonOptions = {
     text: 'Dismiss',
-    elementAttr: { class: 'btn btn-primary' },
+    elementAttr: { class: 'btn btn-primary dismissBtn' },
     onClick: () => {
       const isCustomWithoutText =
         this.dismissToggleReasonIsCustom &&

@@ -33,7 +33,7 @@ export class FormWizardService extends EndpointService {
       p1: p1,
       p2: p2,
       p3: p3,
-      LookupSQL: lookupSql,
+      LookupSQL: requestTypeId == 111 ? '127' : lookupSql,
       page: page,
       pageSize: pageSize,
       isDynamicPopup: isDynamicPopup,
