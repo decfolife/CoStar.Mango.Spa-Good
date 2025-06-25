@@ -255,7 +255,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
   inCriticalViewDataError = false;
   lastGridDataRequest: GetGridDataRequest;
   public urlOID: number;
+  public urlOTID: number;
   public urlOTTID: number;
+  public urlNavPageId: number;
   public noDataText: string = 'No Data';
 
   private _userHasAddRights = false;
@@ -505,7 +507,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.urlOID = upperCaseParams['OID']
       ? parseInt(upperCaseParams['OID'])
       : null;
+    this.urlOTID = upperCaseParams['OTID']
+      ? parseInt(upperCaseParams['OTID'])
+      : null;
     this.urlOTTID = parseInt(upperCaseParams['OTTID'] || '0');
+    this.urlNavPageId = parseInt(upperCaseParams['NAVPAGEID'] || '0');
 
     //Set the objectTypeId from the value passed in the route instead of from the service if overrideInputSettings is true
     if (this.overrideInputSettings) {
@@ -526,9 +532,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
     });
 
-    let gloid = this.urlOID ? this.urlOID : 0;
+    let glpoid = this.urlOID ? this.urlOID : 0;
+    let glpotid = this.objectTypeId;
+    let glpnavpageid = this.urlNavPageId;
     this.service
-      .getListPageProperties(gloid, this.objectTypeId)
+      .getListPageProperties(glpoid, glpotid, glpnavpageid)
       .subscribe((res: ApiResponse) => {
         if (this.overrideInputSettings === true && res && res.data) {
           this._intitialListPageRequestedId = res.data.listPage ?? 0;

@@ -25,9 +25,13 @@ export class ListPageService extends EndpointService {
   // this function's endpoint will always go to the ListPage.aspx. This is used to get
   // properties that was passed in as input variables into the old version of the list
   // pages custom element
-  getListPageProperties(objectId, objectTypeId): Observable<ApiResponse> {
+  getListPageProperties(
+    objectId,
+    objectTypeId,
+    navPageId
+  ): Observable<ApiResponse> {
     return this.callHttpGet(
-      `${this.listpages}listpage/getlistpageproperties?objectId=${objectId}&objectTypeId=${objectTypeId}`,
+      `${this.listpages}listpage/getlistpageproperties?objectId=${objectId}&objectTypeId=${objectTypeId}&navpageid=${navPageId}`,
       'getlistpageproperties'
     );
   }
