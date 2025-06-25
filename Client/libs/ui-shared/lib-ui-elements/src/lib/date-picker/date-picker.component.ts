@@ -49,6 +49,7 @@ export class DatePickerComponent
   @Input() placeholderText = '';
   @Input() showDefaultValidationTooltip?: boolean = true;
   @Input() dataKey: string;
+  @Input() formControlName!: string;
   @Output() changeEvent = new EventEmitter();
 
   @ViewChild('DateBoxValidator', { static: false })

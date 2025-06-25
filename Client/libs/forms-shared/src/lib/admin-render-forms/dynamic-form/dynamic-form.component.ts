@@ -506,32 +506,32 @@ export class DynamicFormComponent
     );
     this.formId = Number(this.removeEndingQueryString(params['fid']));
     this.groupId =
-      params['ffsgid'] === undefined || params['ffsgid'] === 'undefined'
+      params['ffsgid'] === undefined || params['ffsgid'] === 'undefined' || !Number.isNaN(params['ffsgid'])
         ? 0
         : Number(this.removeEndingQueryString(params['ffsgid']));
 
     this.relationshipDefinitionId =
-      params['rdid'] === undefined || params['rdid'] === 'undefined'
+      params['rdid'] === undefined || params['rdid'] === 'undefined' || !Number.isNaN(params['rdid'])
         ? 0
         : Number(this.removeEndingQueryString(params['rdid']));
 
     this.parentObjectId =
-      params['poid'] === undefined || params['poid'] === 'undefined'
+      params['poid'] === undefined || params['poid'] === 'undefined' || !Number.isNaN(params['poid'])
         ? 0
         : Number(this.removeEndingQueryString(params['poid']));
 
     this.parentObjectTypeId =
-      params['potid'] === undefined || params['potid'] === 'undefined'
+      params['potid'] === undefined || params['potid'] === 'undefined' || !Number.isNaN(params['potid'])
         ? 0
         : Number(this.removeEndingQueryString(params['potid']));
 
     this.relatedObjectId =
-      params['roid'] === undefined || params['roid'] === 'undefined'
+      params['roid'] === undefined || params['roid'] === 'undefined' || !Number.isNaN(params['roid'])
         ? 0
         : Number(this.removeEndingQueryString(params['roid']));
 
     this.relatedObjectTypeId =
-      params['rotid'] === undefined || params['rotid'] === 'undefined'
+      params['rotid'] === undefined || params['rotid'] === 'undefined' || !Number.isNaN(params['rotid'])
         ? 0
         : Number(this.removeEndingQueryString(params['rotid']));
   }

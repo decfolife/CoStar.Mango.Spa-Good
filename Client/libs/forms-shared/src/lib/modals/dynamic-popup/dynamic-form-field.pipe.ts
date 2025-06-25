@@ -69,6 +69,10 @@ export class GetFieldTypePipe implements PipeTransform {
             return 'NUMBER';
           }
           default: {
+            // fixme: Check if contains the keyword email on the label, dataTypeName is not reliable
+            if (fieldName.includes('Email')) {
+              return 'EMAIL';
+            }
             return 'TEXT_FIELD';
           }
         }

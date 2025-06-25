@@ -173,6 +173,7 @@
         dataId: 'grid',
         suffix: (widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID,
       }"
+      (onContentReady)="addTabIndex()"
     >
       <dxo-load-panel [enabled]="true"></dxo-load-panel>
       <!-- Columns  -->
@@ -225,9 +226,9 @@
           [attr.title]="'Open File'"
           (buttonClick)="onOpenFileClick(data)"
           [cremDataId]="{
-            prefix: 'row',
-            suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
-          }"
+              prefix: 'row',
+              suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
+            }"
         ></crem-button>
 
         <!-- Edit Button -->
@@ -242,9 +243,9 @@
           [attr.title]="'Edit'"
           (buttonClick)="onEditClick(data, widget)"
           [cremDataId]="{
-            prefix: 'row',
-            suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
-          }"
+              prefix: 'row',
+              suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
+            }"
         ></crem-button>
 
         <!-- Delete Button -->
@@ -265,9 +266,9 @@
           [attr.title]="'Delete'"
           (buttonClick)="onDeleteClick(data, widget)"
           [cremDataId]="{
-            prefix: 'row',
-            suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
-          }"
+              prefix: 'row',
+              suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
+            }"
         ></crem-button>
 
         <!-- Go Button -->
@@ -286,9 +287,9 @@
           ariaLabel="Go to Row"
           (buttonClick)="onGoClick(data, widget)"
           [cremDataId]="{
-            prefix: 'row',
-            suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
-          }"
+              prefix: 'row',
+              suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
+            }"
         ></crem-button>
 
         <!-- History Button -->
@@ -308,10 +309,11 @@
           "
           [attr.title]="'History Details ' + widget.widgetName"
           [cremDataId]="{
-            prefix: 'row',
-            suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
-          }"
+              prefix: 'row',
+              suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
+            }"
         ></crem-field-history>
+        <a></a>
       </div>
       <!-- End Actions Column -->
 

@@ -1110,7 +1110,7 @@ export class DynamicFormWidgetComponent
       )
       .subscribe(
         (res) => {
-          if (res.success && res.statusCode === 200) {
+          if (res?.success && res?.statusCode === 200) {
             this.dynamicFormsService
               .getFormItemWidgetByWidgetId(this.field.widgetID, this.oid)
               .pipe(take(1))
@@ -1127,15 +1127,16 @@ export class DynamicFormWidgetComponent
                 );
               });
 
-            if (res.data?.warning) {
+            if (res?.data?.warning) {
               this.toastService.show(res.data.warning, '', ToastState.WARNING, {
                 position: 'bottom right',
                 maxWidth: '350px',
+                duration: 10000,
               });
             }
           } else if (
-            res.statusCode === 400 &&
-            res.clientErrorMessage === 'Vendor has charges'
+            res?.statusCode === 400 &&
+            res?.clientErrorMessage === 'Vendor has charges'
           ) {
             this.router.navigate(['/v06/Financials/Admin/ChargeList.aspx'], {
               queryParams: {
@@ -1146,7 +1147,7 @@ export class DynamicFormWidgetComponent
               },
             });
           } else {
-            const msg = res.statusCode === 403 ? permssionMsg : errMsg;
+            const msg = res?.statusCode === 403 ? permssionMsg : errMsg;
             this.toastService.show(msg, '', ToastState.ERROR, {
               position: 'bottom right',
               maxWidth: '350px',
@@ -1293,5 +1294,13 @@ export class DynamicFormWidgetComponent
   ngOnDestroy() {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  addTabIndex() {
+    Array.from(
+      document.getElementsByClassName('dx-datagrid-group-opened')
+    ).forEach((i) => {
+      i.setAttribute('tabindex', '0');
+    });
   }
 }

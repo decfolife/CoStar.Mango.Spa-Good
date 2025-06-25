@@ -15,13 +15,11 @@ import {
   SaveRenderFormCommand,
 } from '@forms/model/dynamic-forms.interface';
 import { DynamicFormsService } from '@forms/services/dynamic-forms.service';
-import {
-  ToastState,
-  VALIDATION_ERROR,
-} from '@mango/data-models/lib-data-models';
+import { ToastState } from '@mango/data-models/lib-data-models';
 import {
   ButtonModule,
   CremToastService,
+  DatePickerComponent,
   DatePickerModule,
   DropdownComponent,
   DropdownModule,
@@ -112,6 +110,8 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
   originalDropdownSelection: any[] = [];
   originalDropdownDS: any;
   @ViewChildren(DropdownComponent) dropdowns!: QueryList<DropdownComponent>;
+  @ViewChildren(DatePickerComponent)
+  datePickers!: QueryList<DatePickerComponent>;
 
   // TODO: This may need a service, this component seems to do too many things, please break down
   constructor(
@@ -490,13 +490,6 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
     formItemValue: any,
     oldValue: any = ''
   ) {
-    if (!formItemValue || formItemValue === '0') {
-      const dropdown = this.dropdowns.find(
-        (dropdown) => dropdown.formControlName === formItem.formItemFriendlyName
-      );
-      dropdown?.clearDropdown();
-    }
-
     this.dynamicForm.get(formItem.formItemFriendlyName).setValue(formItemValue);
 
     await this.updateFormItem(formItem, formItemValue, oldValue);
@@ -884,6 +877,7 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
 
   async saveAndNew() {
     await this.save(true);
+    // reset text inputs
     for (
       let index = 0;
       index < Object.keys(this.textInputList).length;
@@ -899,6 +893,7 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
     }
     this.widgetDetails[1].data = [];
     this.widgetDetails[1].data = this.originalDropdownDS;
+    // Reset Dropdowns
     for (
       let index = 0;
       index < Object.keys(this.originalDropdownSelection).length;
@@ -911,7 +906,7 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
       );
       const originalSelection = this.originalDropdownSelection[formItemId];
       const selectedItem = this.originalDropdownDS[formItemId].filter(
-        (d) => d.value === originalSelection.toString()
+        (d) => d.value === originalSelection?.toString()
       );
       await this.onDropdownValueChanged(
         selectedItem,
@@ -919,10 +914,24 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
         formItem,
         false
       );
+
+      this.resetDropdownComponents(formItem, originalSelection);
+
       this.widgetDetails[1].data[formItemId].selectedValue = originalSelection;
       this.updateDynamicFormValues(formItem, originalSelection);
       this.dynamicForm.valueChanges.subscribe();
     }
+
+    // reset datepickers
+    this.datePickers.forEach((x) => (x.value = ''));
+  }
+
+  resetDropdownComponents(formItem: any, originalSelection: string | number) {
+    const dropdown = this.dropdowns.find(
+      (dropdown) => dropdown.formControlName === formItem.formItemFriendlyName
+    );
+
+    dropdown?.setDropdownvalue(originalSelection);
   }
 
   /**
