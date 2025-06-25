@@ -106,7 +106,6 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
     private router: Router,
     private store: Store,
     private activatedRoute: ActivatedRoute,
-    private leftNavService: ProjectsDashboardLeftNavService,
     private headerService: HeaderService,
     private bookmarksService: BookmarksService,
     public dialog: MatDialog,
@@ -118,11 +117,11 @@ export class CremComponent implements AfterViewInit, OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.getToolbarModuleLinks();
     this.getDatabaseRestoreInfo();
     this.facade.refreshLeftSideNav();
     this.buildBreadCrumbs();
     this.addRightsGuardCheck();
+    this.getToolbarModuleLinks();
     // Auto fill search form if search query params present
     this.activatedRoute.queryParams.subscribe((params) => {
       this.querySearchParams = params ?? {};
