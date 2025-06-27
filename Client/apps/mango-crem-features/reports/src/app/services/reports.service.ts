@@ -40,6 +40,11 @@ export class ReportsService extends EndpointService {
     return this.callHttpPost(url, 'getUserModuleRights', { objectTypeIds });
   }
 
+  getUserMaxModuleRights(moduleID: Array<number>): Observable<any> {
+    const url = `${this.reportsUrl}reports/getusermaxmodulerights/${moduleID}`;
+    return this.callHttpGet(url, 'getUserMaxModuleRights');
+  }
+
   getAllReportTags(): Observable<ReportTag[]> {
     const url = `${this.reportsUrl}ReportsPage/GetAllReportTags`;
     return this.callHttpGet(url, 'getAllReportTags');

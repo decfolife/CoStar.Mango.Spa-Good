@@ -143,7 +143,7 @@
         [cellTemplate]="col.cellTemplate"
       >
         <dxo-format
-          *ngIf="col.dataType == 'number' && col.precision >= 0"
+          *ngIf="col.dataType === 'number' && col.precision >= 0"
           type="fixedPoint"
           [precision]="col.precision"
         ></dxo-format>
@@ -219,7 +219,9 @@
                   *ngIf="data.data.active"
                   [attr.title]="getTitleTooltip(data, 'copy')"
                   [disabled]="
-                    data.data.activeRecordsVisibleToMe || !hasSegmentsAddRight
+                    segmentModuleRights !== 'Add' ||
+                    data.data.activeRecordsVisibleToMe ||
+                    !hasSegmentsAddRight
                   "
                   (click)="hasSegmentsAddRight && copy(data)"
                   [ngClass]="
