@@ -312,6 +312,21 @@
                                     'df-datePicker-' +
                                     data?.name.formItemSectionDetail.formItemID
                                   "
+                                  (initialized)="
+                                    data?.name?.formItemInput1ID ===
+                                      data?.dataField ||
+                                    data?.name?.formItemInput2ID ===
+                                      data?.dataField
+                                      ? handleBehavior(
+                                          data?.name?.requestTypeID,
+                                          data?.name?.formItemInput1ID,
+                                          data?.name?.formItemInput2ID,
+                                          data?.name?.formItemOutputID,
+                                          data?.name?.behaviorTypeID,
+                                          $event
+                                        )
+                                      : ''
+                                  "
                                   (changeEvent)="
                                     data?.name?.formItemInput1ID ===
                                       data?.dataField ||

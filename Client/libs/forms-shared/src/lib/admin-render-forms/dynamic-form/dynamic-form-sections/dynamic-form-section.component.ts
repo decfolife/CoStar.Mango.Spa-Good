@@ -1391,7 +1391,9 @@ export class DynamicFormSectionComponent
       );
     } else {
       let dateDiff = this.dateDifference(inputDate1, inputDate2);
-      this.getFormItem(formItemOutputID.toString())?.patchValue(dateDiff);
+      setTimeout(() => {
+        this.getFormItem(formItemOutputID.toString())?.patchValue(dateDiff);
+      });
     }
   }
 

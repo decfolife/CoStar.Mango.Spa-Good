@@ -51,6 +51,7 @@ export class DatePickerComponent
   @Input() dataKey: string;
   @Input() formControlName!: string;
   @Output() changeEvent = new EventEmitter();
+  @Output() initialized = new EventEmitter();
 
   @ViewChild('DateBoxValidator', { static: false })
   dateBoxValidator: DxValidatorComponent;
@@ -74,6 +75,10 @@ export class DatePickerComponent
     this.onChange(event.value);
     this.onTouch();
     this.changeEvent?.emit(event);
+  }
+
+  public onInitialized(event) {
+    this.initialized?.emit(event);
   }
 
   onKeyDown(e: any) {
