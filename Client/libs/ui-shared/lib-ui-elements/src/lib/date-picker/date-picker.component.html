@@ -1,6 +1,5 @@
 <dx-date-box
   class="date-box"
-  valueChangeEvent="input"
   [(value)]="value"
   [displayFormat]="dateFormat"
   [inputAttr]="{
@@ -9,6 +8,7 @@
     'aria-label': 'Press Alt + ↓ / Alt + ↑ to Open/close the calendar.'
   }"
   [invalidDateMessage]="invalidDateMessage || 'Value must be a date'"
+  (onContentReady)="onContentReady($event)"
   (onValueChanged)="onValueChanged($event)"
   (onKeyDown)="onKeyDown($event)"
   (onOpened)="onCalendarOpened()"
