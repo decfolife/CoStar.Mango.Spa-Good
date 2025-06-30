@@ -115,7 +115,7 @@ export class AlertsGridComponent implements OnInit {
 
   dismissButtonOptions = {
     text: 'Dismiss',
-    elementAttr: { class: 'btn btn-primary' },
+    elementAttr: { class: 'btn btn-primary dismissBtn' },
     onClick: () => {
       if (this.dismissReasonText.length === 0 && this.isDismissReasonRequired) {
         notify({
