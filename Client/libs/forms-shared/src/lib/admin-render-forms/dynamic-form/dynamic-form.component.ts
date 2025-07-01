@@ -506,44 +506,44 @@ export class DynamicFormComponent
     );
     this.formId = Number(this.removeEndingQueryString(params['fid']));
     this.groupId =
-      params['ffsgid'] === undefined ||
-      params['ffsgid'] === 'undefined' ||
-      !Number.isNaN(params['ffsgid'])
+      !params['ffsgid'] ||
+      params['ffsgid'].toLowerCase() === 'undefined' ||
+      params['ffsgid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['ffsgid']));
-
+ 
     this.relationshipDefinitionId =
-      params['rdid'] === undefined ||
-      params['rdid'] === 'undefined' ||
-      !Number.isNaN(params['rdid'])
+      !params['rdid'] ||
+      params['rdid'].toLowerCase() === 'undefined' ||
+      params['rdid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['rdid']));
-
+ 
     this.parentObjectId =
-      params['poid'] === undefined ||
-      params['poid'] === 'undefined' ||
-      !Number.isNaN(params['poid'])
+      !params['poid']  ||
+      params['poid'].toLowerCase() === 'undefined' ||
+      params['poid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['poid']));
-
+ 
     this.parentObjectTypeId =
-      params['potid'] === undefined ||
-      params['potid'] === 'undefined' ||
-      !Number.isNaN(params['potid'])
+      !params['potid'] ||
+      params['potid'].toLowerCase() === 'undefined' ||
+      params['potid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['potid']));
-
+ 
     this.relatedObjectId =
-      params['roid'] === undefined ||
-      params['roid'] === 'undefined' ||
-      !Number.isNaN(params['roid'])
+      !params['roid'] ||
+      params['roid'].toLowerCase() === 'undefined' ||
+      params['roid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['roid']));
-
+ 
     this.relatedObjectTypeId =
-      params['rotid'] === undefined ||
-      params['rotid'] === 'undefined' ||
-      !Number.isNaN(params['rotid'])
+      !params['rotid'] ||
+      params['rotid'].toLowerCase() === 'undefined' ||
+      params['rotid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['rotid']));
   }
