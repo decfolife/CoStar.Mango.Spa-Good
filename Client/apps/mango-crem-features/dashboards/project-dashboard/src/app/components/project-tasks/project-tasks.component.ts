@@ -234,7 +234,6 @@ export class ProjectTasksComponent
   showSaveTasksAsTemplatePopup = false;
   disableTasksTemplateSaveButton = true;
   taskUserApprovalStatus;
-  externalCremLink: string;
   workFlowOttid: number;
   selectedTaskCount$ = new BehaviorSubject<number>(0);
   isApproveButtonDisabled$ = new BehaviorSubject<boolean>(true);
@@ -360,7 +359,6 @@ export class ProjectTasksComponent
   async ngOnInit() {
     this.taskUserApprovalStatus = TaskUserApprovalStatus;
 
-    this.setLegacyTaskLink();
     this.getMemberInfo();
 
     await this.route.queryParams
@@ -1352,17 +1350,6 @@ export class ProjectTasksComponent
 
     var splittedTaskStepFull = taskStepFull.split('.');
     return splittedTaskStepFull.length >= 5;
-  }
-
-  private setLegacyTaskLink(): void {
-    const taskPageParams = this.router.url.split('?')[1];
-
-    this.facade.clientKey$.subscribe((clientKey) => {
-      this.externalCremLink = `${environment.cremBaseUrl.replace(
-        '[CLIENT]',
-        clientKey
-      )}/project/tasks/view.asp?${taskPageParams}`;
-    });
   }
 
   buildApproversFilterSource() {
