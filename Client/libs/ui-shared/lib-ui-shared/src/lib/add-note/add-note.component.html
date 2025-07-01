@@ -12,13 +12,14 @@
 >
   <div modalContent id="addTaskNoteModal-content">
     <div class="div-noteTypeDropdown">
-      <h3
+      <crem-input-label
         id="noteTypeDropdownLabel"
-        class="noteTypeLabel label"
+        [label]="'Note Type'"
+        [showInfo]="false"
+        [required]="true"
         [ngClass]="noteTypeDropdownInValid ? 'fieldInvalid' : ''"
-      >
-        Note Type <span class="at-required" aria-label="required">*</span>
-      </h3>
+      ></crem-input-label>
+
       <crem-dropdown
         #NoteTypeDropdown
         id="noteTypeDropdown"
@@ -35,14 +36,14 @@
       >
       </crem-dropdown>
     </div>
-    <div class="note-body-container">
-      <h3
+    <div class="note-container">
+      <crem-input-label
         id="noteBodyTextAreaLabel"
-        class="noteBodyLabel label"
+        [label]="'Note'"
+        [showInfo]="false"
+        [required]="true"
         [ngClass]="noteBodyTextAreaInValid ? 'fieldInvalid' : ''"
-      >
-        Note <span class="at-required" aria-label="required">*</span>
-      </h3>
+      ></crem-input-label>
       <dx-text-area
         id="noteTextArea"
         [value]="commonNoteText"
