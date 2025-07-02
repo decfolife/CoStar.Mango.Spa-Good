@@ -183,6 +183,7 @@ export class ProjectTeamComponent implements OnInit, OnDestroy {
               panelClass: 'composeEmailModal',
               data: {
                 objectId: this.projectId,
+                objectTypeId: 1,
                 contacts: this.projectsEmailInfo.contacts,
                 noteTypes: this.projectsEmailInfo.noteTypes,
                 fileItems: this.projectsEmailInfo.fileItems,

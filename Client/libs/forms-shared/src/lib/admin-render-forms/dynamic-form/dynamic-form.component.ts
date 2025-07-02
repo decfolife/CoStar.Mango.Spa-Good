@@ -1197,6 +1197,7 @@ export class DynamicFormComponent
               panelClass: 'composeEmailModal',
               data: {
                 objectId: this.objectId,
+                objectTypeId: this.objectTypeId,
                 contacts: this.formsEmailInfo.contacts,
                 noteTypes: this.formsEmailInfo.noteTypes,
                 fileItems: this.formsEmailInfo.fileItems,
