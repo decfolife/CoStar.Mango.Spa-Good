@@ -217,13 +217,23 @@ export class ComposeEmailComponent implements OnInit, OnDestroy {
           )
           .subscribe(
             (result) => {
-              if (result) {
+              if (result && result.success) {
                 this.toaster.show(
                   'Email has been sent',
                   'Success',
                   ToastState.SUCCESS
                 );
                 this.dialogRef.close();
+              } else {
+                this.subs.push(
+                  this.dialogService
+                    .alert(
+                      'Error sending Email',
+                      'Email could not be sent',
+                      'OK'
+                    )
+                    .subscribe()
+                );
               }
             },
             (err) => {

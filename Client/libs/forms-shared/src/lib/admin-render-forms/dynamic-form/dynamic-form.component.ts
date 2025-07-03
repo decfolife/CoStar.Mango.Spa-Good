@@ -221,6 +221,8 @@ export class DynamicFormComponent
   public defaultNoteType: EmailNoteType = <EmailNoteType>{};
   isComposeEmailOpen: boolean = false;
   formsEmailInfo: ProjectsEmailInfo = <ProjectsEmailInfo>{};
+  emailNote: string = `By including the unapproved tasks, each user will receive an individual email, 
+  otherwise everyone will be Carbon Copied.`;
   includeFilesText: string = `If File Paths is checked, selected file(s) will be included as path 
   to the application rather than an attachment(s)`;
   allowedObjectTypes = Object.values(AllowedObjectTypes);
@@ -1203,7 +1205,7 @@ export class DynamicFormComponent
                 fileItems: this.formsEmailInfo.fileItems,
                 defaultNoteType: this.defaultNoteType,
                 inclUnappdTsksSel: this.objectTypeId == 1 ? true : false,
-                emailNote: '',
+                emailNote: this.objectTypeId == 1 ? this.emailNote : '',
                 includeFileInfo: this.includeFilesText,
                 emailSendHandler: this.sendEmail.bind(this),
               },
