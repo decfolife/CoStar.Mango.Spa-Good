@@ -1202,7 +1202,7 @@ export class DynamicFormComponent
                 noteTypes: this.formsEmailInfo.noteTypes,
                 fileItems: this.formsEmailInfo.fileItems,
                 defaultNoteType: this.defaultNoteType,
-                inclUnappdTsksSel: false,
+                inclUnappdTsksSel: this.objectTypeId == 1 ? true : false,
                 emailNote: '',
                 includeFileInfo: this.includeFilesText,
                 emailSendHandler: this.sendEmail.bind(this),
