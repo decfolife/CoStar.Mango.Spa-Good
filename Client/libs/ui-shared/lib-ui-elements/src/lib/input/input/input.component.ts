@@ -29,7 +29,8 @@ import { IconModule } from '../../icon';
 import { ErrorTooltipComponent } from '../../error-tooltip';
 import { CremValidatedComponent } from '../../base';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
+import { CremFormControlStatusType } from '@mango/data-models/lib-data-models';
 import { InputStateDirective } from './input.directive';
 
 /**
@@ -119,6 +120,8 @@ export class InputComponent
   @Input() disallowNegative?: boolean;
   @Input() debounceTime = 0;
   @Input() ariaLabel?: string;
+  @Input() status: CremFormControlStatusType = 'default';
+  @Input() statusMessage = 'One or more required fields are not valid.';
 
   /**
    * (Optional) Input Mask
