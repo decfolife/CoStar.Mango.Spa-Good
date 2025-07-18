@@ -24,6 +24,7 @@ import {
   DxValidatorComponent,
 } from 'devextreme-angular';
 import { CremValidatedComponent } from '../base';
+import { dxValidatorResult } from 'devextreme/ui/validator';
 
 /**
  *
@@ -871,7 +872,16 @@ export class DropdownComponent
         const validation = this.DropdownBoxValidator.instance.validate();
         return validation;
       }
+    } else if (this.required) {
+      const result: dxValidatorResult = {
+        isValid: false,
+      };
+      return result;
     }
+    const result: dxValidatorResult = {
+      isValid: true,
+    };
+    return result;
   }
 
   ADAattributes(e: any) {
