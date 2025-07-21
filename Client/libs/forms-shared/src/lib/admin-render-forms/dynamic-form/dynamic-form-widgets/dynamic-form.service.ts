@@ -10,7 +10,6 @@ import {
   PivotGridField,
   ColumnFieldsExtended,
   Format,
-  FieldDataType,
   GridMasterDetail,
 } from './dynamic-widget.model';
 import {
@@ -32,6 +31,7 @@ import {
 } from '@forms/model/dynamic-forms.interface';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 import { Environment } from '@mango/data-models/lib-data-models';
+import { DataType } from 'libs/data-models/lib-data-models/src/lib/enums/index';
 
 @Injectable()
 export class DynamicWidgetService {
@@ -531,7 +531,7 @@ export class DynamicWidgetService {
     switch (
       dataType // Verify that format string is provided
     ) {
-      case FieldDataType.Currency: {
+      case DataType.CURRENCY: {
         return {
           type: 'currency',
           precision: this.extractPrecisionFromFormatString(
@@ -542,8 +542,8 @@ export class DynamicWidgetService {
         };
       }
       default:
-      case FieldDataType.Percent:
-      case FieldDataType.Numeric: {
+      case DataType.PERCENT:
+      case DataType.NUMERIC_9W: {
         return {
           type: 'decimal',
           precision: this.extractPrecisionFromFormatString(
@@ -714,5 +714,22 @@ export class DynamicWidgetService {
    */
   containsSubstring(str, substring) {
     return str.includes(substring);
+  }
+
+  /**
+   * Utility function to remove duplicates by oid
+   * Fixes an issue with displaying duplicate rows. This fix
+   * mimics RemoveDuplicateRowsWhenSecurityApplied in v06.
+   * @param data
+   * @returns
+   */
+  getUniqueByOid(data: any[]): any[] {
+    const mapByOid = data.reduce((acc, item) => {
+      acc[item.oid] = item; // Keeps the last occurrence
+      return acc;
+    }, {} as Record<number, any>);
+
+    const uniqueItems = Object.values(mapByOid);
+    return uniqueItems;
   }
 }

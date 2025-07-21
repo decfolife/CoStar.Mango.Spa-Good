@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { GetFieldTypePipe } from './dynamic-form-field.pipe';
 
 @Injectable()
 export class DynamicPopupUtilitiesService {
+  constructor(private getFieldTypePipe: GetFieldTypePipe) {}
+
   /**
    * Retrieves role dropdown display data to maintain compatibility between V06 and Dynamic Popup.
    *
@@ -180,5 +183,49 @@ export class DynamicPopupUtilitiesService {
       return null;
     }
     return { email: true };
+  }
+
+  /**
+   * Workaround: The `dropSpecialCharacters` option in ngx-mask does not appear
+   * to unmask the data as expected. This method manually unmasks fields
+   * (e.g., numbers) using `maskService.removeMask()`.
+   */
+  unMaskFields(formItems: any[], popupData: any[]): any[] {
+    const newFormItems = formItems.map((item, i) => {
+      const popupItem = popupData.filter(
+        (e) => item.formItemId === e.formItemID
+      )[0];
+      const { formItemTypeID } = popupItem.formItemType;
+      const { dataTypeID, formItemLabel } = popupItem.formItemSectionDetail;
+
+      const fieldType = this.getFieldTypePipe.transform(
+        formItemTypeID,
+        dataTypeID,
+        formItemLabel
+      );
+
+      switch (fieldType) {
+        case 'CURRENCY':
+        case 'NUMBER': {
+          return {
+            ...item,
+            newValue: this.unmaskDecimal(formItems[i].newValue),
+            fieldType: fieldType,
+          };
+        }
+        default: {
+          return { ...item };
+        }
+      }
+    });
+
+    return newFormItems;
+  }
+
+  /**
+   *
+   */
+  unmaskDecimal(value: string): string {
+    return value.replace(/,/g, '');
   }
 }

@@ -118,6 +118,7 @@ import { renderSelectFields } from '@forms/model/enums/render-selects.enums';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { DynamicFormBehaviorsComponent } from '../dynamic-form-actions/dynamic-form-behaviors/dynamic-form-behaviors.component';
 import { BehaviorType } from '@forms/model/enums/behaviors.enums';
+import { DataType } from 'libs/data-models/lib-data-models/src/lib/enums/index';
 
 export class tempList {
   columnNum: number;
@@ -235,6 +236,8 @@ export class DynamicFormSectionComponent
   @Input() formGroupName: string;
   childForm: FormGroup = new FormGroup({});
 
+  @Output() loadNextSections: EventEmitter<any> = new EventEmitter();
+
   faCog = faCog;
   sampleRadioItems: string[] = ['Option A', 'Option B', 'Option C'];
   tempList: tempList[] = [];
@@ -266,7 +269,7 @@ export class DynamicFormSectionComponent
   sectionFields$: Observable<IFields[]>;
   selectAvailableFormFieldsBySectionId$: Observable<IFields[]>;
   dropdownValues$: Observable<any[]>;
-
+  lastSection: string;
   selectRenderFormData: any;
   validationErrors: any;
   showParentLinker = false;
@@ -378,6 +381,16 @@ export class DynamicFormSectionComponent
     );
 
     if (this.objectTypeId == ObjectType.PREMISE) this.hidePremise = true;
+
+    this.dynamicFormsFacade.selectFormSections$
+      .pipe(
+        map(
+          (result) =>
+            (this.lastSection =
+              result != null ? result[result.length - 1].formSectionName : '')
+        )
+      )
+      .subscribe();
   }
 
   loadSectionFormFields(): void {
@@ -508,7 +521,7 @@ export class DynamicFormSectionComponent
         /// format date field for view labels
         if (
           ['2', '9'].some((typeId) => formItemData.formItemTypeID === typeId) &&
-          formItemData.dataTypeID === '7'
+          formItemData.dataTypeID === DataType.DATE.toString()
         ) {
           if (!!formItemData.formItemAnswer) {
             newField.formItemAnswerViewMode = formatDate(
@@ -1012,9 +1025,14 @@ export class DynamicFormSectionComponent
         }
         /// format the decimals for Int(3), Numeric(5), Money(6), Percent(206) datatypes
         if (
-          ['3', '5', '6', '206'].some(
-            (dataTypeId) => result.dataTypeID === dataTypeId
-          )
+          [
+            DataType.INTEGER,
+            DataType.DOUBLE,
+            DataType.CURRENCY,
+            DataType.PERCENT,
+          ]
+            .map(String)
+            .some((dataTypeId) => result.dataTypeID === dataTypeId)
         ) {
           if (
             isTruthy(result.numDecimals) &&
@@ -1167,7 +1185,7 @@ export class DynamicFormSectionComponent
   ) {
     if (!value) return null;
 
-    if (dataTypeID == 6) {
+    if (dataTypeID == DataType.CURRENCY) {
       return formatCurrency(value, 'en-US', '$', '1.2-2').replace(
         /2/gi,
         numDecimals ? numDecimals : '0'
@@ -1239,6 +1257,15 @@ export class DynamicFormSectionComponent
       if (!card.getElementsByClassName('dx-item dx-list-item').length)
         card.remove();
     }
+
+    let focusable = document.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    focusable[focusable.length - 2].addEventListener('focus', (e) => {
+      if (!document.getElementById(this.lastSection)) {
+        this.loadNextSections.emit();
+      }
+    });
   }
 
   onDecimalValueChanged(e, numDecimals: number, formItemId: any) {

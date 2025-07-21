@@ -4,6 +4,7 @@
   [closeOrCancelButtonText]="'Cancel'"
   [customFooter]="true"
   [id]="'dynamic-' + (sectionName | slugify)"
+  [closeDialogResult]="savedOnce"
   [loading]="{
     type: 'form',
     instances: 3,
@@ -267,6 +268,7 @@
       </crem-button>
 
       <crem-button
+        *ngIf="!data.isEdit"
         type="secondary"
         [id]="'df-saveNewBtn'"
         class="cl-copyLease cl-btn"

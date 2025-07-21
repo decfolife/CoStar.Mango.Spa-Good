@@ -18,6 +18,7 @@ import notify from 'devextreme/ui/notify';
 import { UtilitiesService } from '@mango/core-shared';
 import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 import { ToastState } from '@mango/data-models/lib-data-models';
+import { DataType } from 'libs/data-models/lib-data-models/src/lib/enums/index';
 
 @Component({
   selector: 'mango-sub-object-comparison',
@@ -50,6 +51,7 @@ export class SubObjectComparisonComponent implements OnInit {
   public valid = true;
   public widgetId: number;
   public subObjectIds: number[] = [];
+  DataType = DataType;
 
   @ViewChild('DataGrid') dataGrid: DxDataGridComponent;
   @ViewChild('listMenuTrigger') listMenuTrigger: MatMenuTrigger;
@@ -136,29 +138,29 @@ export class SubObjectComparisonComponent implements OnInit {
         gridCell.column.dataField !== 'RowLabel' &&
         gridCell.value
       ) {
-        if (gridCell?.data?.DataTypeId === '7') {
+        if (gridCell?.data?.DataTypeId === DataType.DATE.toString()) {
           excelCell.value = this.datepipe.transform(
             gridCell.value,
             this.dateFormat
           );
         }
 
-        if (gridCell?.data?.DataTypeId === '6') {
+        if (gridCell?.data?.DataTypeId === DataType.CURRENCY.toString()) {
           excelCell.value = this.currencyPipe.transform(gridCell.value, 'USD');
         }
 
         if (
-          ((gridCell?.data?.DataTypeId === '5' ||
-            gridCell?.data?.DataTypeId === '206') &&
+          ((gridCell?.data?.DataTypeId === DataType.DOUBLE.toString() ||
+            gridCell?.data?.DataTypeId === DataType.PERCENT.toString()) &&
             gridCell?.data?.FormItemTypeId === '2') ||
-          (gridCell?.data.DataTypeId === '5' &&
+          (gridCell?.data.DataTypeId === DataType.DOUBLE.toString() &&
             gridCell?.data.FormItemTypeId === '9')
         ) {
           excelCell.value = this.decimalPipe.transform(gridCell.value, '1.2-2');
         }
 
         if (
-          gridCell?.data?.DataTypeId === '3' &&
+          gridCell?.data?.DataTypeId === DataType.INTEGER.toString() &&
           gridCell?.data?.FormItemTypeId === '2'
         ) {
           excelCell.value = this.decimalPipe.transform(gridCell.value, '1.0');
@@ -170,7 +172,7 @@ export class SubObjectComparisonComponent implements OnInit {
         }
 
         if (
-          gridCell?.data.DataTypeId === '200' &&
+          gridCell?.data.DataTypeId === DataType.CHAR.toString() &&
           gridCell?.data.FormItemTypeId === '9'
         ) {
           //add image?
@@ -384,7 +386,7 @@ export class SubObjectComparisonComponent implements OnInit {
           if (item?.FormItemTypeId === '17' || item?.FormItemTypeId === '6') {
             item.RowLabel = 'Image';
           } else if (
-            item?.DataTypeId === '200' &&
+            item?.DataTypeId === DataType.CHAR.toString() &&
             item?.FormItemTypeId === '9'
           ) {
             item.RowLabel = 'Map';
@@ -516,7 +518,10 @@ export class SubObjectComparisonComponent implements OnInit {
               const checkImageInterval = interval(1000);
 
               const mapItem = this.data.find((item) => {
-                return item.DataTypeId === '200' && item.FormItemTypeId === '9';
+                return (
+                  item.DataTypeId === DataType.CHAR.toString() &&
+                  item.FormItemTypeId === '9'
+                );
               });
 
               if (mapItem?.[key]) {

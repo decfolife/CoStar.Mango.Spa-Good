@@ -134,6 +134,7 @@
 
     <!-- Widget/Grid -->
     <dx-data-grid
+      (onContentReady)="SummaryRowTabs()"
       #widgetDataGrid
       [ngClass]="{
         'grid-no-alt': !(gridMasterDetail.masterView | isObjectEmpty)
@@ -312,8 +313,8 @@
               prefix: 'row',
               suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
             }"
-        ></crem-field-history>
-        <a></a>
+        ></crem-field-history
+        ><a></a>
       </div>
       <!-- End Actions Column -->
 

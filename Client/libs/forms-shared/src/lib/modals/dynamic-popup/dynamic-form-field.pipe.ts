@@ -93,7 +93,8 @@ export class MaskInputPipe implements PipeTransform {
   ): InputMask {
     let fieldMask: InputMask = {
       ...mask,
-      showMaskTyped: true,
+      showMaskTyped: false,
+      dropSpecialCharacters: true,
     };
 
     switch (fieldType) {
@@ -190,7 +191,7 @@ export class MaskInputPipe implements PipeTransform {
         : 'separator.0',
       thousandSeparator: format.includes(',') ? ',' : '',
       allowNegativeNumbers: true,
-      dropSpecialCharacters: false,
+      dropSpecialCharacters: true,
     };
   }
 }

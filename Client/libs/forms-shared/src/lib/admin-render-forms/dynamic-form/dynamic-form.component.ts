@@ -9,6 +9,7 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -146,6 +147,8 @@ export class DynamicFormComponent
   @ViewChild('dynamicFormContent') dynamicFormContent: ElementRef;
   @ViewChildren(DynamicFormSectionComponent)
   childForms: QueryList<DynamicFormSectionComponent>;
+  @ViewChild(DynamicFormSectionComponent)
+  dynamicFormSectionComponent!: DynamicFormSectionComponent;
 
   form: FormGroup;
   sectionsVisible: ISection[] = [];
@@ -244,7 +247,8 @@ export class DynamicFormComponent
     private toastService: CremToastService,
     private titleService: Title,
     private fileService: FilesService,
-    private navService: MangoNavigationService
+    private navService: MangoNavigationService,
+    private ref: ChangeDetectorRef
   ) {}
 
   tryPreventChangeLoss(): Observable<boolean> {
@@ -513,35 +517,35 @@ export class DynamicFormComponent
       params['ffsgid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['ffsgid']));
- 
+
     this.relationshipDefinitionId =
       !params['rdid'] ||
       params['rdid'].toLowerCase() === 'undefined' ||
       params['rdid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['rdid']));
- 
+
     this.parentObjectId =
-      !params['poid']  ||
+      !params['poid'] ||
       params['poid'].toLowerCase() === 'undefined' ||
       params['poid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['poid']));
- 
+
     this.parentObjectTypeId =
       !params['potid'] ||
       params['potid'].toLowerCase() === 'undefined' ||
       params['potid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['potid']));
- 
+
     this.relatedObjectId =
       !params['roid'] ||
       params['roid'].toLowerCase() === 'undefined' ||
       params['roid'].toLowerCase() === 'null'
         ? 0
         : Number(this.removeEndingQueryString(params['roid']));
- 
+
     this.relatedObjectTypeId =
       !params['rotid'] ||
       params['rotid'].toLowerCase() === 'undefined' ||
@@ -807,28 +811,43 @@ export class DynamicFormComponent
     if (!!element) {
       return of(false);
     } else {
-      return this.selectFormSections$.pipe(
-        filter((sections) => sections !== null),
-        take(1),
-        map((sections) => {
-          let moreSectionsLoaded = false;
-          if (!!sections) {
-            let sectionElementsCount = document.querySelectorAll(
-              "[id^='dynamic-form_section']"
-            ).length;
-            while (sectionElementsCount < sections.length) {
-              moreSectionsLoaded = true;
-              this.loadMoreSections(sections);
-              sectionElementsCount += 6; //Number of sections loaded per call to loadMoreSections
-            }
-
-            return moreSectionsLoaded;
-          } else {
-            return false;
-          }
-        })
-      );
+      return this.getAllSections();
     }
+  }
+
+  private getAllSections(): Observable<boolean> {
+    return this.selectFormSections$.pipe(
+      filter((sections) => sections !== null),
+      take(1),
+      map((sections) => {
+        let moreSectionsLoaded = false;
+        if (!!sections) {
+          let sectionElementsCount = document.querySelectorAll(
+            "[id^='dynamic-form_section']"
+          ).length;
+          while (sectionElementsCount < sections.length) {
+            moreSectionsLoaded = true;
+            this.loadMoreSections(sections);
+            sectionElementsCount += 6; //Number of sections loaded per call to loadMoreSections
+          }
+
+          return moreSectionsLoaded;
+        } else {
+          return false;
+        }
+      })
+    );
+  }
+
+  loadNextSections() {
+    let getAllSectionsObservable = this.getAllSections();
+    this.subs.add(
+      getAllSectionsObservable.subscribe((sectionsLoaded) => {
+        if (sectionsLoaded) {
+          this.ref.detectChanges();
+        }
+      })
+    );
   }
 
   handleHasParentObjectLinkerChange(value: boolean): void {

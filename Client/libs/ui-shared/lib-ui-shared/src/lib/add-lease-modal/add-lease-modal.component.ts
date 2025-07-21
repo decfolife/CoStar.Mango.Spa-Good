@@ -100,6 +100,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   dateFormat = '';
   isUserDatesEU: boolean;
   hasPassedBuilding = this.data.objectId && this.data.objectName;
+  savedALease = false; // true when "save and new" used at lease once
 
   @Output() isLoading = new EventEmitter();
   @ViewChild('leasePortfolioId') leasePortfolioDropdown: DropdownComponent;
@@ -583,7 +584,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
 
   public close() {
     if (!this.newLeaseSaved) {
-      this.dialogRef.close();
+      this.dialogRef.close(this.savedALease);
     }
   }
 
@@ -642,7 +643,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
                   duration: 5000,
                 }
               );
-              this.dialogRef.close();
+              this.dialogRef.close(true);
               this.saveClicked = false;
             } else {
               this.toastService.show(
@@ -685,6 +686,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
                 }
               );
               this.saveClicked = false;
+              this.savedALease = true;
               this.resetInputFields();
             } else {
               this.toastService.show(
@@ -709,7 +711,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
   }
 
   resetInputFields() {
-    this.currencyDropdown.clearSelectBox();
+    this.currencyDropdown.setDropdownvalue(this.selectedCurrencyIndex);
     this.leaseParentDropdown.clearSelectBox();
 
     if (!this.hasPassedBuilding) {
@@ -723,7 +725,7 @@ export class AddLeaseModalComponent implements OnInit, OnDestroy {
     if (this.premiseDropdown != undefined && !this.data.premiseId) {
       this.premiseDropdown.clearSelectBox();
     }
-    this.measurementDropdown.clearSelectBox();
+    this.measurementDropdown.setDropdownvalue(this.selectedMeasurementIndex);
     this.addLeaseFormGroup.get('beginDate').setValue('');
     this.addLeaseFormGroup.get('endDate').setValue('');
     this.tenantNameTextBox.value = '';

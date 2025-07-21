@@ -164,23 +164,3 @@ export interface Format {
   precision: number; // the precision of values
   currency: string; // a specific 3-letter code for the "currency" format
 }
-
-/**
- * This is to define the dataFieldDataType and provides the
- * correct and corresponding format and data type
- *
- * @export
- * @enum {number}
- */
-export enum FieldDataType {
-  Currency = 6,
-  Numeric = 131,
-  Percent = 206,
-  TextArea = 200,
-}
-
-export function isSupportedDataType(value: unknown): value is FieldDataType {
-  return Object.values(FieldDataType)
-    .filter((v) => typeof v === 'number')
-    .includes(value as FieldDataType);
-}

@@ -4,6 +4,7 @@
   [modalTitle]="modalTitle"
   closeIconVisible="true"
   [customFooter]="true"
+  [closeDialogResult]="savedALease"
 >
   <div modalContent class="body-content">
     <div modalContent id="addLeaseModal-content">
@@ -121,6 +122,7 @@
             [isDisabled]="loading"
             required="true"
             formControlName="premiseType"
+            [autoSelect]="true"
           >
           </crem-dropdown>
         </crem-form-item>

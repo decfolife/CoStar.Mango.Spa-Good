@@ -88,12 +88,13 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
   isUserDatesEU = true;
   public currencyDropdownItem: any = [];
-  selectedCurrency: number;
+  defaultCurrency: number;
   selectedPortfolio: any;
   initialSelectedPortfolio: number;
   selectedSupplier: any;
   private redirectorLinks: any[] = null;
   hasPassedSupplier = !!(this.data.objectId && this.data.objectName);
+  savedALease = false; // true when "save and new" used at lease once
 
   constructor(
     public dialogRef: MatDialogRef<AddEquipmentModalComponent>,
@@ -123,6 +124,8 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
 
       this.selectedSupplierID = this.supplierDropdownItem[0].objectID;
     }
+
+    this.getDropdownData();
   }
 
   ngOnInit(): void {
@@ -134,11 +137,9 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
         this.dateFormat = contact.preferences.contactDatesEU
           ? 'dd.MM.yyyy'
           : 'MM/dd/yyyy';
-        this.selectedCurrency = contact.preferences.contactCurrency;
+        this.defaultCurrency = contact.preferences.contactCurrency;
       })
     );
-
-    this.getDropdownData();
 
     if (this.redirectorLinks === null) {
       this.subs.push(
@@ -306,7 +307,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
                 maxWidth: '360px',
               }
             );
-            this.dialogRef.close();
+            this.dialogRef.close(true);
             this.saveClicked = false;
           } else {
             this.toastService.show(
@@ -348,6 +349,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
             );
             this.saveNewClicked = false;
             this.disableButton = false;
+            this.savedALease = true;
             this.resetPopupSelection();
           } else {
             this.toastService.show(
@@ -478,7 +480,7 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   }
 
   public close() {
-    this.dialogRef.close();
+    this.dialogRef.close(this.savedALease);
   }
 
   getId(
@@ -493,14 +495,18 @@ export class AddEquipmentModalComponent implements OnInit, OnDestroy {
   }
 
   resetPopupSelection() {
-    if (!this.hasPassedSupplier) {
-      this.portfolioDropdown.clearDropdown();
-      this.templateDropdown.clearDropdown();
-      this.supplierDropdown.clearDropdown();
+    let supplierDefaultedValues = null;
+
+    if (this.hasPassedSupplier) {
+      supplierDefaultedValues = {
+        supplierList: this.data.objectId,
+        templateList: this.equipmentForm.get('templateList').value,
+      };
     }
 
-    this.BeginDate = null;
-    this.EndDate = null;
-    this.equipmentForm.reset();
+    this.equipmentForm.reset({
+      ...supplierDefaultedValues,
+      currencyTypeList: this.defaultCurrency,
+    });
   }
 }

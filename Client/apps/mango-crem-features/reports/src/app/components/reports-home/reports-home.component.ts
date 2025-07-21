@@ -349,7 +349,12 @@ export class ReportsHomeComponent implements OnInit, OnDestroy {
   }
 
   runReport(e) {
-    if (this.rcssFlagActive && this.isCriteriaReport[e.data.reportObject]) {
+    // rcssFlagActive = useSegmentsFeature
+    if (
+      e.data.type.toLowerCase() === 'standard' &&
+      this.rcssFlagActive &&
+      this.isCriteriaReport[e.data.reportObject]
+    ) {
       this.dialog.open(CriteriaReportComponent, {
         height: LargeModal.Height,
         width: LargeModal.Width,

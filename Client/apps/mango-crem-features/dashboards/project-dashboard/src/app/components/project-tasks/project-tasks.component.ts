@@ -224,6 +224,10 @@ export class ProjectTasksComponent
     'Approval Date can be modified once approval has been done.';
   approvalBtnTitle: string =
     'require approval. Once completed this task will be available for approval.';
+  quickApprovalApplyBtnTitle: string =
+    'click to save the Actual Start Date for unselected tasks only';
+  quickApprovalApproveBtnTitle: string =
+    'click to approve the selected tasks only';
   dragPosition: any = { x: 0, y: 0 };
   showQuickApprovalPopup = false;
   isEditAsgineesModalOpen = false;
@@ -2253,7 +2257,9 @@ export class ProjectTasksComponent
       });
 
       const newUrl = this.router.serializeUrl(urlTree);
-      this.router.navigateByUrl(newUrl); // This will reload the whole page
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigateByUrl(newUrl);
+      });
     });
   }
 

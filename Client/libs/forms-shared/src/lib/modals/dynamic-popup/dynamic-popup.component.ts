@@ -8,14 +8,19 @@ import {
   QueryList,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import {
+  DeleteSubObjectRequest,
   FormWizardDataTypeID,
   FormWizardDataTypeIDType,
   SaveRenderFormCommand,
 } from '@forms/model/dynamic-forms.interface';
 import { DynamicFormsService } from '@forms/services/dynamic-forms.service';
-import { ToastState } from '@mango/data-models/lib-data-models';
+import { ObjectType, ToastState } from '@mango/data-models/lib-data-models';
 import {
   ButtonModule,
   CremToastService,
@@ -29,7 +34,7 @@ import {
 } from '@mango/ui-shared/lib-ui-elements';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
-import { filter, switchMap, take } from 'rxjs/operators';
+import { filter, finalize, switchMap, take } from 'rxjs/operators';
 import { CremPipesModule } from 'libs/core-shared/src/lib/pipes/pipes.module';
 import { Router } from '@angular/router';
 import {
@@ -38,6 +43,9 @@ import {
   MaskInputPipe,
 } from './dynamic-form-field.pipe';
 import { DynamicPopupUtilitiesService } from './dynamic-popup-utilities.service';
+import { DataType } from 'libs/data-models/lib-data-models/src/lib/enums/index';
+import { DeleteSubObjectPopupComponent } from '@forms/admin-render-forms/dynamic-form/dynamic-form-widgets/delete-subobject-popup/delete-subobject-popup.component';
+import { deepFreeze } from 'libs/core-shared/src/lib/utilities/utils';
 
 // TODO: Replace this with the `FormWizardTypeID` and `FormWizardDataTypeID` enums
 const RENDER_LOOKUP_SQL = 998;
@@ -49,13 +57,15 @@ const FORM_ITEM_TEXT_AREA_FIELD_ID = 3;
 const FORM_ITEM_DATE_FIELD = 7;
 const FORM_ITEM_ROLE_TITLE = 'Role';
 const FORM_ITEM_ROLE_FRIENDLY_NAME = 'CommonTeam_Role_Company';
-//2	adSmallInt 	Plain	Int
-//3	adInteger 	Int	Int
-//5	adDouble	Numeric
-//6	adCurrency	Money
-//131	adNumeric 	NULL
-//206	adPercent	Percent
-const NUMERIC_DATA_TYPE_IDS: number[] = [2, 3, 5, 6, 9, 131, 206];
+const NUMERIC_DATA_TYPE_IDS: number[] = [
+  DataType.SMALL_INT,
+  DataType.INTEGER,
+  DataType.DOUBLE,
+  DataType.CURRENCY,
+  DataType.IDISPATCH,
+  DataType.NUMERIC_9W,
+  DataType.PERCENT,
+];
 
 @Component({
   selector: 'mango-dynamic-popup',
@@ -75,7 +85,7 @@ const NUMERIC_DATA_TYPE_IDS: number[] = [2, 3, 5, 6, 9, 131, 206];
     IsFieldRequiredPipe,
     MaskInputPipe,
   ],
-  providers: [DynamicPopupUtilitiesService],
+  providers: [DynamicPopupUtilitiesService, GetFieldTypePipe],
 })
 export class DynamicPopupComponent implements OnInit, OnDestroy {
   footerButtonDisabled = false as boolean;
@@ -112,9 +122,11 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
   @ViewChildren(DropdownComponent) dropdowns!: QueryList<DropdownComponent>;
   @ViewChildren(DatePickerComponent)
   datePickers!: QueryList<DatePickerComponent>;
+  savedOnce = false;
 
   // TODO: This may need a service, this component seems to do too many things, please break down
   constructor(
+    private dialog: MatDialog,
     public dialogRef: MatDialogRef<DynamicPopupComponent>,
     private dynamicFormsService: DynamicFormsService,
     private formWizardService: FormWizardService,
@@ -359,6 +371,9 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
         true
       )
       .toPromise();
+
+    // Prevent changing the original form data.
+    deepFreeze(this.widgetEditData);
   }
 
   private async isMandatoryField(index: any) {
@@ -485,14 +500,14 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
   }
 
   //update Dynamic form
-  async updateDynamicFormValues(
+  updateDynamicFormValues(
     formItem: any,
     formItemValue: any,
     oldValue: any = ''
   ) {
     this.dynamicForm.get(formItem.formItemFriendlyName).setValue(formItemValue);
 
-    await this.updateFormItem(formItem, formItemValue, oldValue);
+    this.updateFormItem(formItem, formItemValue, oldValue);
   }
 
   //Populate the child dropdown data based on formItemJavaScript from parent dropdown list
@@ -877,6 +892,7 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
 
   async saveAndNew() {
     await this.save(true);
+    this.savedOnce = true;
     // reset text inputs
     for (
       let index = 0;
@@ -884,7 +900,7 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
       index++
     ) {
       this.textInputList[Object.keys(this.textInputList)[index]] = '';
-      await this.updateDynamicFormValues(
+      this.updateDynamicFormValues(
         this.widgetDetails[0].data.find(
           (d) => d.formItemID == Object.keys(this.textInputList)[index]
         ),
@@ -939,6 +955,12 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
    * @param e
    */
   async save(saveAndNew = false as boolean) {
+    if (this.changedFormItemKeys.length === 0) {
+      this.showToast('Saved successfully!', '', ToastState.SUCCESS);
+      this.dialogRef.close(true);
+      return;
+    }
+
     // Validating fields
     if (!this.dynamicForm.valid) {
       // Get Specific validation errors
@@ -968,7 +990,21 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
       relationshipDefinitionId: this.data.relatedDefinitionId,
       formItems: [],
     };
-    saveFormData.formItems = this.changedFormItemKeys;
+    saveFormData.formItems = [
+      ...this.dynamicPopupUtilities.unMaskFields(
+        this.changedFormItemKeys,
+        this.popupData
+      ),
+    ];
+
+    if (this._debug) {
+      console.debug({
+        formItems: this.changedFormItemKeys,
+        popupData: this.popupData,
+        unMaskedFields: saveFormData.formItems,
+        saveFormData: saveFormData,
+      });
+    }
 
     this.dynamicFormsService
       .saveRenderForm(saveFormData)
@@ -1005,7 +1041,7 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
     );
   }
 
-  async updateFormItem(formItem: any, value: string, oldValue = null) {
+  updateFormItem(formItem: any, value: string, oldValue = null) {
     const changedItem = {
       formItemId: formItem.formItemID,
       formItemTypeId: formItem.formItemTypeID,
@@ -1019,35 +1055,196 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
         ? 'Clause'
         : 'Dynamic',
     };
-    let valueBeforeSave = '';
-    let itmExist = true;
-    if (
-      this.changedFormItemKeys.findIndex(
-        (s) => s.formItemId === changedItem.formItemId
-      ) >= 0
-    ) {
-      valueBeforeSave = this.changedFormItemKeys.find(
-        (s) => s.formItemId === changedItem.formItemId
-      ).newValue;
-      if (valueBeforeSave != value) {
-        changedItem.oldValue = valueBeforeSave;
-        this.changedFormItemKeys.splice(
-          this.changedFormItemKeys.findIndex(
-            (s) => s.formItemId === changedItem.formItemId
-          ),
-          1
-        );
-        itmExist = false;
-      }
-    } else itmExist = false;
+    const orginalFormData = this.widgetEditData?.data || [];
+    const changedItmIdx = this.changedFormItemKeys.findIndex((s) => {
+      return s.formItemId === changedItem.formItemId;
+    });
 
-    if (!itmExist) {
+    let valueBeforeSave = '';
+
+    const editDataIdx = orginalFormData.findIndex((x) => {
+      return +x.formItemID === +changedItem.formItemId;
+    });
+
+    if (editDataIdx !== -1) {
+      valueBeforeSave = orginalFormData[editDataIdx].formItemAnswer;
+    }
+
+    // if we have this already, just update newValue
+    // on new, it's always -1 and we continue on
+    if (changedItmIdx > -1) {
+      // Check value === valueBeforeSave for case where user changes value and undoes it (ex: backspace)
+      if (value === valueBeforeSave) {
+        this.changedFormItemKeys.splice(changedItmIdx, 1);
+      } else {
+        this.changedFormItemKeys[changedItmIdx].newValue = value;
+      }
+
+      return;
+    }
+
+    if (changedItmIdx === -1 && value !== valueBeforeSave) {
+      changedItem.oldValue = valueBeforeSave;
       this.changedFormItemKeys.push(changedItem);
     }
   }
 
+  getDeleteCall(widgetObjectTypeID: any, payload: DeleteSubObjectRequest) {
+    if (widgetObjectTypeID === ObjectType.VENDOR) {
+      return this.dynamicFormsService.deleteVendor(payload);
+    }
+    return this.dynamicFormsService.deleteSubObject(payload);
+  }
+
+  handleDeleteDialog(dialogRes: boolean, rowData: any, hasCharges: boolean) {
+    const errMsg = 'An error has occurred. Please try again.';
+    const permssionMsg = 'User does not have delete rights';
+    this._isLoading = true;
+    if (dialogRes === false) {
+      this._isLoading = false;
+      return; // User closed the dialog. Do nothing
+    }
+
+    if (dialogRes && hasCharges) {
+      this.router.navigate(['/v06/Financials/Admin/ChargeList.aspx'], {
+        queryParams: {
+          VendorID: rowData.data.oid,
+          masterGroupID: rowData.data.mastergroupid,
+          VendorCustomer: rowData.data.objecttypetypeid,
+          CompanyID: rowData.data.companyid,
+        },
+      });
+    }
+
+    const payload = this.buildDeleteRequestPayload({
+      rowData,
+      widgetobjectTypeID: this.data.objectTypeId,
+      widgetRelDefID: this.data.relatedDefinitionId,
+      oid: this.data.relatedObjectId,
+      otid: this.data.relatedObjectTypeId,
+    });
+
+    this.getDeleteCall(this.data.objectTypeId, payload)
+      .pipe(
+        take(1),
+        finalize(() => (this._isLoading = false))
+      )
+      .subscribe(
+        (res) => {
+          if (res?.success && res?.statusCode === 200) {
+            this.showToast(
+              'Item deleted successfully!',
+              '',
+              ToastState.SUCCESS
+            );
+            if (res?.data?.warning) {
+              this.toastService.show(res.data.warning, '', ToastState.WARNING, {
+                position: 'bottom right',
+                maxWidth: '350px',
+                duration: 10000,
+              });
+            }
+            this.dialogRef.close(res.success);
+          } else if (
+            res?.statusCode === 400 &&
+            res?.clientErrorMessage === 'Vendor has charges'
+          ) {
+            this.router.navigate(['/v06/Financials/Admin/ChargeList.aspx'], {
+              queryParams: {
+                VendorID: rowData.data.oid,
+                masterGroupID: rowData.data.mastergroupid,
+                VendorCustomer: rowData.data.objecttypetypeid,
+                CompanyID: rowData.data.companyid,
+              },
+            });
+          } else {
+            const msg = res?.statusCode === 403 ? permssionMsg : errMsg;
+            this.toastService.show(msg, '', ToastState.ERROR, {
+              position: 'bottom right',
+              maxWidth: '350px',
+            });
+          }
+        },
+        (err) => {
+          this.toastService.show(errMsg, '', ToastState.ERROR, {
+            position: 'bottom right',
+            maxWidth: '350px',
+          });
+        }
+      );
+  }
+
+  buildDeleteRequestPayload(objectData: {
+    oid: number;
+    otid: number;
+    rowData: any;
+    widgetobjectTypeID: any;
+    widgetRelDefID: any;
+  }) {
+    const { oid, otid, rowData, widgetobjectTypeID, widgetRelDefID } = {
+      ...objectData,
+    };
+
+    const relationshipDefinitionId =
+      objectData.widgetobjectTypeID === ObjectType.DEAL_TERM
+        ? rowData.data.relationshipdefinitionid
+        : widgetRelDefID;
+
+    const payload: DeleteSubObjectRequest = {
+      objectId: rowData.data.oid,
+      objectTypeId: widgetobjectTypeID,
+      relatedObjectId: oid,
+      relatedObjectTypeId: otid,
+      relationshipDefinitionId,
+    };
+
+    return payload;
+  }
+
   onDelete() {
-    //ToDo: Handle Delete code.
+    this._isLoading = true;
+    if (this.data.objectTypeId === ObjectType.VENDOR) {
+      this.dynamicFormsService
+        .getVendorHasCharges(this.data.objectId)
+        .pipe(
+          take(1),
+          finalize(() => (this._isLoading = false))
+        )
+        .subscribe((res) => {
+          if (res.success) {
+            const hasCharges = res.data.hasCharges;
+            const dialogRef = this.dialog.open(DeleteSubObjectPopupComponent, {
+              data: {
+                hasCharges,
+              },
+            });
+
+            dialogRef
+              .afterClosed()
+              .pipe(take(1))
+              .subscribe((dialogRes) => {
+                this.handleDeleteDialog(
+                  dialogRes,
+                  this.data?.rowData,
+                  hasCharges
+                );
+              });
+          }
+        });
+    } else {
+      const dialogRef = this.dialog.open(DeleteSubObjectPopupComponent, {
+        data: {
+          hasCharges: false,
+        },
+      });
+
+      dialogRef
+        .afterClosed()
+        .pipe(take(1))
+        .subscribe((dialogRes) => {
+          this.handleDeleteDialog(dialogRes, this.data?.rowData, false);
+        });
+    }
   }
 
   onLaunch() {
@@ -1093,7 +1290,7 @@ export class DynamicPopupComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
-    this.dialogRef.close();
+    this.dialogRef.close(this.savedOnce);
   }
 
   /**

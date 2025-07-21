@@ -824,7 +824,10 @@ export class DynamicFormWidgetComponent
               premiseId: this.otid === ObjectType.PREMISE ? this.oid : null,
             },
           });
-          dialogLeaseRef.afterClosed();
+          dialogLeaseRef
+            .afterClosed()
+            .pipe(filter((x) => !!x))
+            .subscribe(this.handleDialogClose);
         });
       }
       if (
@@ -848,16 +851,28 @@ export class DynamicFormWidgetComponent
                 },
               }
             );
-            dialogLeaseRef.afterClosed();
+            dialogLeaseRef
+              .afterClosed()
+              .pipe(filter((x) => !!x))
+              .subscribe(this.handleDialogClose);
           });
       }
       if (widget.columnGroup.widgetJSClickEvent.indexOf('AddNewPremise') > 0) {
-        const dialogRef = this.dialog.open(
-          AddPremiseModalComponent,
-          modalConfig
-        );
+        this.getLeaseModalData().subscribe(({ objectId, objectName }) => {
+          const dialogRef = this.dialog.open(AddPremiseModalComponent, {
+            ...modalConfig,
+            data: {
+              ...modalConfig.data,
+              objectId,
+              objectName,
+            },
+          });
 
-        dialogRef.afterClosed();
+          dialogRef
+            .afterClosed()
+            .pipe(filter((x) => !!x))
+            .subscribe(this.handleDialogClose);
+        });
       }
       if (
         widget.columnGroup.widgetJSClickEvent?.indexOf(
@@ -897,17 +912,10 @@ export class DynamicFormWidgetComponent
             parentfid: this.fid,
           },
         });
-        dialogRef.afterClosed().subscribe((results) => {
-          if (results) {
-            this.dynamicFormsService
-              .getFormItemWidgetByWidgetId(this.field.widgetID, this.oid)
-              .subscribe((resp) => {
-                this.selectWidget$ = of(resp.data);
-              });
-          } else {
-            return;
-          }
-        });
+        dialogRef
+          .afterClosed()
+          .pipe(filter((x) => !!x))
+          .subscribe(this.handleDialogClose);
       }
     }
   }
@@ -1287,10 +1295,6 @@ export class DynamicFormWidgetComponent
     }
   }
 
-  onHistoryClick(e: DxDataGridTypes.ColumnButtonClickEvent): void {
-    console.log('onHistoryClick', e);
-  }
-
   ngOnDestroy() {
     this._destroy$.next();
     this._destroy$.complete();
@@ -1302,5 +1306,31 @@ export class DynamicFormWidgetComponent
     ).forEach((i) => {
       i.setAttribute('tabindex', '0');
     });
+  }
+
+  handleDialogClose = () => {
+    this.isLoading = true;
+
+    this.dynamicFormsService
+      .getFormItemWidgetByWidgetId(this.field.widgetID, this.oid)
+      .pipe(
+        take(1),
+        finalize(() => (this.isLoading = false))
+      )
+      .subscribe((resp) => {
+        this.selectWidget$ = of(resp.data);
+      });
+  };
+
+  SummaryRowTabs() {
+    let grid = document.getElementsByClassName('dx-row dx-data-row');
+    if (grid)
+      Array.from(grid).forEach((e) => {
+        Array.from(e.getElementsByTagName('td')).forEach((i) => {
+          i.setAttribute('class', '');
+          i.setAttribute('tabindex', '0');
+          if (i.innerHTML == '&nbsp;') i.innerHTML = '<a></a>';
+        });
+      });
   }
 }

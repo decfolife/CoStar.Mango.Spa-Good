@@ -1,9 +1,11 @@
 <crem-modal
+  #equipmentModal
   modalId="add_equipment_modal"
   modalTitleId="add_equipment_modal_modalTitleId"
   modalTitle="Add Equipment Lease"
   closeIconVisible="true"
   [customFooter]="true"
+  [closeDialogResult]="savedALease"
 >
   <div modalContent class="body-content">
     <form
@@ -187,7 +189,7 @@
             valueExpr="exchangeRateID"
             [required]="true"
             [allowSearch]="true"
-            [initialSelectedValue]="selectedCurrency"
+            [initialSelectedValue]="defaultCurrency"
             hoverText="Select Currency Type"
             formControlName="currencyTypeList"
             [containerized]="false"
