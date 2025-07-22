@@ -93,6 +93,7 @@ import { DynamicFormWidgetExportComponent } from './dynamic-form-widget-export';
 import {
   ObjectType,
   ObjectTypeType,
+  DataType,
 } from 'libs/data-models/lib-data-models/src/lib/enums/index';
 import { ListPageService } from 'apps/mango-crem-features/list-pages/src/app/components/listpage/core/services/listpage.service';
 
@@ -192,7 +193,7 @@ export class DynamicFormWidgetComponent
   isLoading: boolean;
   errorLoading: boolean;
   userMessage: string;
-  objTypeList: number[] = [1, 2, 3, 4, 120, 45];
+  objTypeList: number[] = [1, 2, 3, 4, 120];
   selectWidget$: Observable<Widget>;
   isRenderForm = this.dynamicFormsFacade.selectIsRenderForm$;
   showFileIcon = false;
@@ -209,7 +210,14 @@ export class DynamicFormWidgetComponent
    */
   historyGridColumns = historyGridColumns;
 
-  numberColumnTypeIds = new Set(['4', '5', '14', '131', '139', '206']);
+  numberColumnTypeIds = new Set([
+    DataType.SINGLE.toString(),
+    DataType.DOUBLE.toString(),
+    DataType.DECIMAL.toString(),
+    DataType.NUMERIC_9W.toString(),
+    DataType.NUMERIC_10W.toString(),
+    DataType.PERCENT.toString(),
+  ]);
   DATE_COL_ID = '7';
   LEASE_OPTION_WIDGET_ID = 1;
   /* Grid Configuration */
@@ -242,7 +250,7 @@ export class DynamicFormWidgetComponent
   widgetSummary: FormWidgetTypeID.SUMMARY;
   widgetSummaryDynamic: FormWidgetTypeID.SUMMARY_DYNAMIC;
   actionsInclusions = {
-    openFile: ['Document Index', 'Documents Index'],
+    openFile: ['Document Index', 'Documents Index', 'Audit Tracker'],
   };
 
   /**
@@ -410,6 +418,9 @@ export class DynamicFormWidgetComponent
             return EMPTY;
           }
           const clone = JSON.parse(JSON.stringify(widgetResponse));
+          clone.data.renderFormWidgetData = this.widgetService.getUniqueByOid(
+            clone.data.renderFormWidgetData
+          );
           clone.data = this.convertDateStrings(clone.data);
           this.columnFormatMap = this.buildColumnFormatting(clone.data);
           return clone;
@@ -1049,19 +1060,13 @@ export class DynamicFormWidgetComponent
         relatedObjectId: this.objectId,
         relatedObjectTypeId: this.objectTypeId,
         relatedDefinitionId: this.widgetRelationshipDefId,
+        rowData: rowData,
       },
     });
-    dialogRef.afterClosed().subscribe((results) => {
-      if (results) {
-        this.dynamicFormsService
-          .getFormItemWidgetByWidgetId(this.field.widgetID, this.oid)
-          .subscribe((resp) => {
-            this.selectWidget$ = of(resp.data);
-          });
-      } else {
-        return;
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(filter((x) => !!x))
+      .subscribe(this.handleDialogClose);
   }
 
   getDeleteCall(widget: Widget, payload: DeleteSubObjectRequest) {
@@ -1123,6 +1128,10 @@ export class DynamicFormWidgetComponent
               .getFormItemWidgetByWidgetId(this.field.widgetID, this.oid)
               .pipe(take(1))
               .subscribe((resp) => {
+                resp.data.renderFormWidgetData =
+                  this.widgetService.getUniqueByOid(
+                    resp.data.renderFormWidgetData
+                  );
                 this.selectWidget$ = of(resp.data);
                 this.toastService.show(
                   'Item deleted successfully!',
@@ -1315,6 +1324,12 @@ export class DynamicFormWidgetComponent
       .getFormItemWidgetByWidgetId(this.field.widgetID, this.oid)
       .pipe(
         take(1),
+        map((resp) => {
+          resp.data.renderFormWidgetData = this.widgetService.getUniqueByOid(
+            resp.data.renderFormWidgetData
+          );
+          return resp;
+        }),
         finalize(() => (this.isLoading = false))
       )
       .subscribe((resp) => {
@@ -1328,8 +1343,6 @@ export class DynamicFormWidgetComponent
       Array.from(grid).forEach((e) => {
         Array.from(e.getElementsByTagName('td')).forEach((i) => {
           i.setAttribute('class', '');
-          i.setAttribute('tabindex', '0');
-          if (i.innerHTML == '&nbsp;') i.innerHTML = '<a></a>';
         });
       });
   }
