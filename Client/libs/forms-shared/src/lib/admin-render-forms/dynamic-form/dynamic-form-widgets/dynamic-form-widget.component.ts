@@ -1343,6 +1343,8 @@ export class DynamicFormWidgetComponent
       Array.from(grid).forEach((e) => {
         Array.from(e.getElementsByTagName('td')).forEach((i) => {
           i.setAttribute('class', '');
+          i.setAttribute('tabindex', '0');
+          if (i.innerHTML == '&nbsp;') i.innerHTML = '<a></a>';
         });
       });
   }
