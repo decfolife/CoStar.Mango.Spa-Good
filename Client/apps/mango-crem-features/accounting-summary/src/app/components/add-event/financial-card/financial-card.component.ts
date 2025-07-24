@@ -1162,7 +1162,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         return;
       } else if (
         this.measureEvent !== 'Initial' &&
-        (rouActionDate < this.minROUActionDate || rouActionDate > this.termEnd)
+        (rouActionDate < new Date(this.minROUActionDate) ||
+          rouActionDate > this.termEnd)
       ) {
         this.addEditScheduleService.showToast(
           'ROU Asset Obtained Action Date',
