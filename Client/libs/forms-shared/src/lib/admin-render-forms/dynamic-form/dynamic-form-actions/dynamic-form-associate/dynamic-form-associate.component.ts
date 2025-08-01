@@ -108,7 +108,7 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   }
 
   onStateValueChange(e: any) {
-    if (e.length != 0 && e[0].name) {
+    if (e.length != 0 && (e[0].name !== undefined && e[0].name !== null)) {
       this.selectedState = e[0].name;
       this.getBuildings(this.selectedCountry, this.selectedState);
     } else {
@@ -504,20 +504,20 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   populateAssociatedInfo() {
     this.getCountryData();
 
-    this.selectedCountry = this.associatedData.buildingCountry;
-    this.selectedState = this.associatedData.buildingState;
+    this.selectedCountry = this.associatedData.buildingCountry === '' ? '[none]' : this.associatedData.buildingCountry;
+    this.selectedState = this.associatedData.buildingState === '' ? '[none]' : this.associatedData.buildingState;
     this.selectedBuildingID = this.associatedData.buildingID;
 
     if (this.selectedCountry !== '' && this.selectedState !== '') {
-      this.getStatesData(this.selectedCountry);
-    }
+        this.getStatesData(this.selectedCountry);
+      }
 
     if (
       this.selectedBuildingID != 0 &&
       this.selectedCountry !== '' &&
       this.selectedState !== ''
     ) {
-      this.getBuildings(this.selectedCountry, this.selectedState);
+        this.getBuildings(this.selectedCountry, this.selectedState);
     }
 
     if (this.associateType === 'lease') {
