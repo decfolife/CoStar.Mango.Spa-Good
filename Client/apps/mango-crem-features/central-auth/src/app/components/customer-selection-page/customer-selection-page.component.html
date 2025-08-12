@@ -9,20 +9,53 @@
     <mat-card>
       <mat-card-content>
         <div class="mx-auto">
-          <h6 class="text-center">Select a site</h6>
-          <div class="d-flex justify-content-center pb-2">
-            <dx-select-box
-              id="clients-dropdown"
-              [dataSource]="clientsDropdown$ | async"
-              searchMode="contains"
-              [searchEnabled]="true"
-              width="300"
-              [showClearButton]="true"
-              (onValueChanged)="onClientSelected($event.value)"
-              [inputAttr]="{ title: 'Client name input' }"
-            >
-            </dx-select-box>
+          <div *ngIf="!isDevEnv">
+            <h6 class="text-center">Select a site</h6>
+            <div class="d-flex justify-content-center pb-2">
+              <dx-select-box
+                id="clients-dropdown"
+                [dataSource]="clientsDropdown$ | async"
+                searchMode="contains"
+                [searchEnabled]="true"
+                width="300"
+                [showClearButton]="true"
+                (onValueChanged)="onClientSelected($event.value)"
+                [inputAttr]="{ title: 'Client name input' }"
+              >
+              </dx-select-box>
+            </div>
           </div>
+
+          <div *ngIf="isDevEnv" class="row">
+            <div class="col">
+              <h6 class="text-center">Select a site</h6>
+              <dx-select-box
+                id="clients-dropdown"
+                [dataSource]="clientsDropdown$ | async"
+                searchMode="contains"
+                [searchEnabled]="true"
+                [showClearButton]="true"
+                (onValueChanged)="onClientSelected($event.value)"
+                [inputAttr]="{ title: 'Client name input' }"
+              >
+              </dx-select-box>
+            </div>
+            <div class="col">
+              <h6 class="text-center">Select instance</h6>
+              <dx-select-box
+                id="instances-dropdown"
+                [dataSource]="instancesDropdown"
+                searchMode="contains"
+                [searchEnabled]="true"
+                [showClearButton]="true"
+                [(value)]="selectedInstance"
+                (onValueChanged)="onInstanceSelected($event.value)"
+                [inputAttr]="{ title: 'Instance name input' }"
+              >
+              </dx-select-box>
+            </div>
+          </div>
+
           <h6 class="text-center pt-4">Recently Visited</h6>
           <div
             class="card-deck-container d-flex justify-content-center flex-wrap"

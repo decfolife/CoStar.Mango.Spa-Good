@@ -17,6 +17,7 @@ export interface MultiClientLoginHttpRequest {
   contactID?: number;
   isDefaultLoginContact?: boolean;
   defaultLoginContactId?: number;
+  instance?: string;
 }
 
 export interface CremHTTPResult {

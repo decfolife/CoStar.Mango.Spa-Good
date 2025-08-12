@@ -22,6 +22,7 @@ export interface State extends EntityState<CentralAuthEntity> {
   selectedContactRecord: ContactRecord;
   selectedClientKey: string;
   selectedClient: UserSite;
+  selectedInstance: string;
   openClientInNewTab: boolean;
   userClients: UserSite[];
   userContactRecords: ContactRecord[];
@@ -49,6 +50,7 @@ export const initialState: State = appAdapter.getInitialState({
   selectedContactRecord: null,
   selectedClientKey: null,
   selectedClient: null,
+  selectedInstance: null,
   openClientInNewTab: true,
   userClients: null,
   userRecentClients: null,
@@ -92,6 +94,10 @@ const appReducer = createReducer(
   on(AppActions.setSelectedClient, (state, { client }) => ({
     ...state,
     selectedClient: client,
+  })),
+  on(AppActions.setSelectedInstance, (state, { instance }) => ({
+    ...state,
+    selectedInstance: instance,
   })),
   on(AppActions.setSelectedContactID, (state, { contactId }) => ({
     ...state,

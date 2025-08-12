@@ -3,7 +3,6 @@ import { Injectable, inject } from '@angular/core';
 import {
   AuthHTTPResponse,
   ClientSitesByUser,
-  Environment,
   GetContactRecordHTTPResponse,
   MultiClientLoginHttpRequest,
   OAuthAuthorizeHTTPResponse,
@@ -15,7 +14,7 @@ import {
   ApiResult,
 } from '@mango/data-models/lib-data-models';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { LoginResponse } from 'libs/data-models/lib-data-models/src/lib/models/user-auth.interface';
 import {
@@ -25,6 +24,7 @@ import {
   parseBool,
 } from '@mango/core-shared';
 import { UserAuth } from '../models/userAuth';
+import { environment } from '../../environments/environment.dev';
 
 @Injectable({
   providedIn: 'root',
@@ -46,8 +46,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private _storageService: StorageService,
-    private jwtService: JwtService,
-    private env: Environment
+    private jwtService: JwtService
   ) {}
 
   // setAuth(user: UserAuth) {
@@ -55,8 +54,19 @@ export class AuthService {
   // }
 
   purgeAuth() {
+    let instance = null;
+    
+    const isDev = environment.name === 'DEV';
+    if (isDev) {
+      instance = this._storageService.getData('instance')
+    }
+    
     this.tempAccessToken = '';
     this._storageService.clearAll();
+
+    if (isDev) {
+      this._storageService.savePermanentData(instance, 'instance');
+    }
   }
 
   retrieveAuthorizationCode(

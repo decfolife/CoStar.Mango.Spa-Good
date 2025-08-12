@@ -35,6 +35,7 @@ export const LOAD_CURRENT_USER_COMPLETE = '[UI] Load Logged-In User Completed';
 export const SET_USER = '[UI] Set User';
 export const SET_SELECTED_CLIENT_KEY = '[UI] Set Selected Client Key';
 export const SET_CLIENT = '[UI] Set Client';
+export const SET_SELECTED_INSTANCE = '[UI] Set Selected Instance Name';
 export const SET_SELECTED_CONTACT_ID = '[UI] Set Selected Contact ID';
 export const SET_CONTACT_RECORD = '[UI] Set Contact Record';
 export const SET_DEFAULT_CONTACT_RECORD = '[UI] Set Default Contact Record';
@@ -105,6 +106,10 @@ export const setUser = createAction(SET_USER, props<{ user: UserAuth }>());
 export const setSelectedClientKey = createAction(
   SET_SELECTED_CLIENT_KEY,
   props<{ clientKey: string }>()
+);
+export const setSelectedInstance = createAction(
+  SET_SELECTED_INSTANCE,
+  props<{ instance: string }>()
 );
 export const getUserClients = createAction(GET_USER_CLIENTS);
 export const getUserClientsSuccess = createAction(

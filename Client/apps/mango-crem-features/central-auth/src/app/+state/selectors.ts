@@ -34,6 +34,11 @@ export const selectedClient = createSelector(
   (state: State) => state.selectedClient
 );
 
+export const selectedInstance = createSelector(
+  getAppState,
+  (state: State) => state.selectedInstance
+);
+
 export const contactRecord = createSelector(
   getAppState,
   (state: State) => state.selectedContactRecord

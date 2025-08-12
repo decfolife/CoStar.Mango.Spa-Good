@@ -24,6 +24,7 @@ export class CentralAuthFacade {
   userRecentClients$ = this.store.pipe(select(AppSelectors.userRecentClients));
   selectedClientKey$ = this.store.pipe(select(AppSelectors.selectedClientKey));
   selectedClient$ = this.store.pipe(select(AppSelectors.selectedClient));
+  selectedInstance$ = this.store.pipe(select(AppSelectors.selectedInstance));
   contactId$ = this.store.pipe(select(AppSelectors.contactId));
   selectedContactRecord$ = this.store.pipe(select(AppSelectors.contactRecord));
   selectedDefaultContactRecord$ = this.store.pipe(
@@ -129,6 +130,10 @@ export class CentralAuthFacade {
 
   setClient(client: UserSite) {
     this.store.dispatch(AppActions.setSelectedClient({ client }));
+  }
+
+  setSelectedInstance(instance: string) {
+    this.store.dispatch(AppActions.setSelectedInstance({ instance }));
   }
 
   setSelectedContactId(contactId: number) {

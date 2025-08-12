@@ -38,6 +38,7 @@ export class OAuthEffects {
             this.centralAuthFacade.selectedContactRecord$.pipe(take(1)),
             this.centralAuthFacade.isClientSpecificLogin$.pipe(take(1)),
             this.centralAuthFacade.selectedDefaultContactRecord$.pipe(take(1)),
+            this.centralAuthFacade.selectedInstance$.pipe(take(1)),
           ])
         ),
         filter(([client, contactRecord]) => !!client && !!contactRecord),
@@ -47,6 +48,7 @@ export class OAuthEffects {
             contactRecord,
             isClientSpecificLogin,
             selectedDefaultContact,
+            instance,
           ]) => {
             let request: MultiClientLoginHttpRequest = {
               clientKey: client.clientKey,
@@ -55,6 +57,7 @@ export class OAuthEffects {
                 selectedDefaultContact?.defaultLoginContactId ?? 0,
               isDefaultLoginContact:
                 selectedDefaultContact?.isDefaultLoginContact ?? null,
+              instance: instance,
             };
             this.centralAuthFacade.setSelectedDefaultContactRecord(null);
             return [request, isClientSpecificLogin];
