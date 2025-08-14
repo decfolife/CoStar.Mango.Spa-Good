@@ -470,7 +470,9 @@ export class BalanceCardsContainerComponent implements OnInit, OnDestroy {
   }
 
   updateBalanceCardModel(update: any) {
-    this.renameUpdateVariables(update);
+    if ([0, 5].includes(this.balanceCardsModel.classificationID)) {
+      this.renameUpdateVariables(update);
+    }
     Object.keys(this.balanceCardsModel).forEach((k) => {
       if ((update[k] || update[k] === 0) && update[k] !== '') {
         this.balanceCardsModel[k] = update[k];
