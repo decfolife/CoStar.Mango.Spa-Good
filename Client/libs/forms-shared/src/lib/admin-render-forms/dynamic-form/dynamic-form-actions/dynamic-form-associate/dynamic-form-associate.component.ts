@@ -19,7 +19,6 @@ import {
   DatePickerModule,
   DropdownComponent,
   DropdownModule,
-  InputComponent,
   LibUiElementsModule,
   ModalModule,
 } from '@mango/ui-shared/lib-ui-elements';
@@ -36,7 +35,6 @@ import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkb
     ModalModule,
     DropdownModule,
     LibUiElementsModule,
-    InputComponent,
     ReactiveFormsModule,
     CremFormsModule,
     DatePickerModule,
@@ -184,6 +182,8 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
             this.countryDropdownItem = res.data.map((t) => {
               return { name: t, value: t };
             });
+
+            this.countryDropdownItem.splice(0,0, { name: '[none]', value: '[none]' });
           } else {
             this.countryDropdownItem = [];
             this.notifyErrorMessage(
@@ -210,6 +210,8 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
             this.stateDropdownItem = res.data.map((t) => {
               return { name: t, value: t };
             });
+
+            this.stateDropdownItem.splice(0,0, { name: '[none]', value: '[none]' });
           } else {
             this.stateDropdownItem = [];
             this.notifyErrorMessage(
@@ -504,13 +506,17 @@ export class DynamicFormAssociateComponent implements OnInit, OnDestroy {
   populateAssociatedInfo() {
     this.getCountryData();
 
-    this.selectedCountry = this.associatedData.buildingCountry === '' ? '[none]' : this.associatedData.buildingCountry;
-    this.selectedState = this.associatedData.buildingState === '' ? '[none]' : this.associatedData.buildingState;
+    if ((this.associateType === 'lease' && (!!this.associatedData.leaseAbstractID) && this.associatedData.leaseAbstractID > 0) ||
+        (this.associateType === 'building' && (!!this.associatedData.buildingID) && this.associatedData.buildingID > 0)) {
+          this.selectedCountry = !(!!this.associatedData.buildingCountry) || this.associatedData.buildingCountry === '' ? '[none]' : this.associatedData.buildingCountry;
+          this.selectedState = !(!!this.associatedData.buildingState) || this.associatedData.buildingState === '' ? '[none]' : this.associatedData.buildingState;
+    }
+    
     this.selectedBuildingID = this.associatedData.buildingID;
 
     if (this.selectedCountry !== '' && this.selectedState !== '') {
         this.getStatesData(this.selectedCountry);
-      }
+    }
 
     if (
       this.selectedBuildingID != 0 &&
