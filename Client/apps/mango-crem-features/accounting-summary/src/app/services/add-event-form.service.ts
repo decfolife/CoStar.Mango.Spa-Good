@@ -88,7 +88,10 @@ export class AddEventFormService {
   public calculateValuesClicked = new BehaviorSubject<boolean>(false);
   public validateCalculateComponents$ = new BehaviorSubject<boolean>(false);
   public operatingClassifications: number[] = [0, 5];
-
+  public isOtherChargesSaved = new BehaviorSubject<{
+    isOtherChargesSaved: boolean;
+    glEventIDs: number[];
+  }>({ isOtherChargesSaved: false, glEventIDs: [] });
   financialFormData$ = this.financialForm$;
   scheduleDetailsFormData$ = this.scheduleDetailsForm$;
   classificationFormData$ = this.classificationForm$;

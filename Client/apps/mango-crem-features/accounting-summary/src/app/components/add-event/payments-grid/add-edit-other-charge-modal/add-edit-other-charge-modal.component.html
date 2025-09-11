@@ -383,14 +383,14 @@
       <crem-button
         type="secondary"
         [id]="accountingSummaryService.getId(componentName, 'cancel', 'button')"
-        (click)="close($event)"
+        (click)="close()"
       >
         Cancel</crem-button
       >
       <crem-button
         type="secondary"
         [id]="accountingSummaryService.getId(componentName, 'delete', 'button')"
-        (click)="delete($event)"
+        (click)="delete()"
         *ngIf="isEdit"
       >
         Delete</crem-button
@@ -404,7 +404,7 @@
             'button'
           )
         "
-        (click)="saveAndNew($event)"
+        (click)="saveAndNew()"
         *ngIf="!isEdit"
       >
         Save & New</crem-button
@@ -412,7 +412,7 @@
       <crem-button
         type="primary"
         [id]="accountingSummaryService.getId(componentName, 'save', 'button')"
-        (click)="save($event)"
+        (click)="save()"
       >
         Save</crem-button
       >

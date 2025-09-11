@@ -14,7 +14,7 @@ import { Message, MessageService } from 'primeng/api';
 @Injectable()
 export class AddEditScheduleService extends EndpointService {
   private apiUrl: string;
-  private leaseAbstractId: any;
+  private leaseAbstractId: number;
   public chargeMinAndMaxDateOptionPopulated = new Subject<any>();
   private messages: Message[] = []; // To keep track of added toast messages
   private dateOnlyRegex =
