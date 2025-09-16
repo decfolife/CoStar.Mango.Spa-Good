@@ -261,6 +261,7 @@ export class AddEditOtherChargeModalComponent implements OnInit {
 
   isProratedChanged(e) {
     this.isProrated = e.value;
+    this.updateProrationAmounts();
   }
 
   onDatePickerChange(e, componentName) {
@@ -274,8 +275,10 @@ export class AddEditOtherChargeModalComponent implements OnInit {
         this.updateProrationAmounts();
         break;
       case 'firstRecurringDatePicker':
-        this.firstRecurringDate = e.value;
-        this.updateProrationAmounts(true);
+        if (this.firstRecurringDate !== e.value) {
+          this.firstRecurringDate = e.value;
+          this.updateProrationAmounts(true);
+        }
         break;
     }
   }
@@ -334,13 +337,12 @@ export class AddEditOtherChargeModalComponent implements OnInit {
     };
 
     if (
-      prorationData.amount === 0 ||
+      !this.isProrated ||
+      !prorationData.amount ||
+      !this.frequencyTypeId ||
+      !this.prorationTypeId ||
       prorationData.startDate <= new Date(0) ||
-      prorationData.endDate <= new Date(0) ||
-      this.frequencyTypeId <= 0 ||
-      this.prorationTypeId <= 0 ||
-      this.frequencyTypeId === undefined ||
-      this.prorationTypeId === undefined
+      prorationData.endDate <= new Date(0)
     ) {
       return;
     }
