@@ -6,6 +6,8 @@ import { DxDataGridModule, DxDataGridComponent } from 'devextreme-angular';
 import { CostarMatchingService } from '../../services/costar-matching.service';
 import { ListPageService } from '../../../../../list-pages/src/app/components/listpage/core/services/listpage.service';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { SettingsService } from '@mango/core-shared/lib-core-shared';
+import { MangoAppFacade } from '../../../../../../mango/src/app/+state/app/app.facade';
 import {
   CoStarProperty,
   ToastState,
@@ -87,16 +89,23 @@ export class CostarPropertyLookupComponent {
   verifyAddressTooltip = 'Verify Address';
   showUseAddressConfirmation: boolean = false;
   outsideResearchMarkets: boolean = false;
+  useCostarService: boolean = false;
 
   constructor(
+    private settingsService: SettingsService,
     private route: ActivatedRoute,
     private router: Router,
     private costarMatchingService: CostarMatchingService,
     private listPageService: ListPageService,
-    private toastService: CremToastService
+    private toastService: CremToastService,
+    private facade: MangoAppFacade
   ) {}
 
   ngOnInit(): void {
+    this.facade.adminFlags$.subscribe((res) => {
+      if (res) this.useCostarService = res.useCostarService;
+    });
+
     this.navPageId = this.route.snapshot.queryParamMap
       .get('navpageid')
       ?.split('?')[0];

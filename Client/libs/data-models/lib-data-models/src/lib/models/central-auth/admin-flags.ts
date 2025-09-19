@@ -1,7 +1,9 @@
 export interface AdminFlags {
-    UseCentralAuthentication: boolean;
-    UseLeasePaymentsFeature: boolean;
-    UseSegmentsFeature: boolean;
-    UseInAppDisclosuresFeature: boolean;
-    IsRedirectorActive: boolean;    
+  UseCentralAuthentication: boolean;
+  UseLeasePaymentsFeature: boolean;
+  UseSegmentsFeature: boolean;
+  UseInAppDisclosuresFeature: boolean;
+  IsRedirectorActive: boolean;
+  UseCostarService: boolean;
+  UseInBenchmark: boolean;
 }

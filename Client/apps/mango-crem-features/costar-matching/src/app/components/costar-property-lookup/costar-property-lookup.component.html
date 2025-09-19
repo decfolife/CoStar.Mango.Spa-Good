@@ -93,81 +93,90 @@
           class="costar-matching-properties-container"
         >
           <crem-card id="costar-matching-match-property" title="Match Property">
-            <div class="no-match-msg" *ngIf="properties?.length === 0">
-              <p>Unable to match property</p>
-            </div>
-            <div class="search-container">
-              <crem-search
-                [showLabel]="false"
-                [placeholder]="''"
-                [disabled]="false"
-                [required]="false"
-                [showInfo]="false"
-                [value]="buildingInfo.buildingAddress_1"
-                [debounceTime]="500"
-                [searchOption]="'typing'"
-                (changed)="searchCostarProperties($event)"
-              >
-              </crem-search>
-            </div>
-            <div class="grid-container" *ngIf="properties?.length > 0">
-              <dx-data-grid
-                #PropertiesGrid
-                id="costar-matching-matched-properties"
-                [dataSource]="properties"
-                [showBorders]="true"
-                [hoverStateEnabled]="true"
-                [showRowLines]="true"
-                [showColumnLines]="false"
-                (onKeyDown)="onGridCellKeyDown($event)"
-                (onSelectionChanged)="onSelectionChanged($event)"
-              >
-                <dxo-selection mode="multiple"></dxo-selection>
-                <dxi-column
-                  dataField="coStarID"
-                  caption="CoStar ID"
-                  alignment="left"
-                ></dxi-column>
-                <dxi-column
-                  dataField="coStarAddress"
-                  caption="Property Address"
-                  alignment="left"
-                  dataType="date"
-                  format="MM/dd/yyyy hh:mm:ss a"
-                ></dxi-column>
-                <dxi-column
-                  dataField="propertyType"
-                  caption="Property Type"
-                  alignment="left"
-                ></dxi-column>
-                <dxi-column
-                  dataField="confidenceScore"
-                  caption="Confidence Score"
-                  alignment="left"
-                ></dxi-column>
-              </dx-data-grid>
-              <div
-                class="associated-property-info"
-                *ngIf="PropertiesGrid?.selectedRowKeys?.length > 0"
-              >
-                <div>Associate Property to</div>
-                <div class="propertyInfo">
-                  {{
-                    PropertiesGrid.instance.getSelectedRowsData()[0]
-                      .coStarAddress
-                  }}
-                </div>
-                <div class="confirm">
-                  <crem-button
-                    class="confirm-button"
-                    type="primary"
-                    id="costar-matching-confirm-button"
-                    (buttonClick)="saveCostarInfo()"
-                    >Confirm
-                  </crem-button>
+            <div *ngIf="useCostarService; else noService">
+              <div class="no-match-msg" *ngIf="properties?.length === 0">
+                <p>Unable to match property</p>
+              </div>
+              <div class="search-container">
+                <crem-search
+                  [showLabel]="false"
+                  [placeholder]="''"
+                  [disabled]="false"
+                  [required]="false"
+                  [showInfo]="false"
+                  [value]="buildingInfo.buildingAddress_1"
+                  [debounceTime]="500"
+                  [searchOption]="'typing'"
+                  (changed)="searchCostarProperties($event)"
+                >
+                </crem-search>
+              </div>
+              <div class="grid-container" *ngIf="properties?.length > 0">
+                <dx-data-grid
+                  #PropertiesGrid
+                  id="costar-matching-matched-properties"
+                  [dataSource]="properties"
+                  [showBorders]="true"
+                  [hoverStateEnabled]="true"
+                  [showRowLines]="true"
+                  [showColumnLines]="false"
+                  (onKeyDown)="onGridCellKeyDown($event)"
+                  (onSelectionChanged)="onSelectionChanged($event)"
+                >
+                  <dxo-selection mode="multiple"></dxo-selection>
+                  <dxi-column
+                    dataField="coStarID"
+                    caption="CoStar ID"
+                    alignment="left"
+                  ></dxi-column>
+                  <dxi-column
+                    dataField="coStarAddress"
+                    caption="Property Address"
+                    alignment="left"
+                    dataType="date"
+                    format="MM/dd/yyyy hh:mm:ss a"
+                  ></dxi-column>
+                  <dxi-column
+                    dataField="propertyType"
+                    caption="Property Type"
+                    alignment="left"
+                  ></dxi-column>
+                  <dxi-column
+                    dataField="confidenceScore"
+                    caption="Confidence Score"
+                    alignment="left"
+                  ></dxi-column>
+                </dx-data-grid>
+                <div
+                  class="associated-property-info"
+                  *ngIf="PropertiesGrid?.selectedRowKeys?.length > 0"
+                >
+                  <div>Associate Property to</div>
+                  <div class="propertyInfo">
+                    {{
+                      PropertiesGrid.instance.getSelectedRowsData()[0]
+                        .coStarAddress
+                    }}
+                  </div>
+                  <div class="confirm">
+                    <crem-button
+                      class="confirm-button"
+                      type="primary"
+                      id="costar-matching-confirm-button"
+                      (buttonClick)="saveCostarInfo()"
+                      >Confirm
+                    </crem-button>
+                  </div>
                 </div>
               </div>
             </div>
+            <ng-template #noService>
+              <p class="match-err-msg">
+                To see the CoStar Analytics data please subscribe to the CoStar
+                Data Provisioning. Please contact support for further
+                assistance.
+              </p>
+            </ng-template>
           </crem-card>
         </div>
       </div>
