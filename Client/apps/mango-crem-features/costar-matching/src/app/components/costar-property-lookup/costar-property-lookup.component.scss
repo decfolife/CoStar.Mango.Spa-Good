@@ -104,6 +104,7 @@
 .match-err-msg {
   @include costar(padding, 4);
   @include costar(color, danger);
+  padding-top: 75px;
 }
 
 .note {
