@@ -148,7 +148,7 @@ export class CostarPropertyLookupComponent {
           })
         )
         .subscribe((info: BuildingInfo) => {
-          if (info.costarID && this.useCostarService) {
+          if (info.costarID && this.useCostarService == true) {
             this.redirectUrl = `/v06/CostarIntegration/CostarIntegration.aspx?OTID=${this.objectTypeId}&OID=${this.buildingId}&OTTID=${this.objectTypeTypeId}&CostarID=${info.costarID}&navpageid=${this.navPageId}`;
             this.router.navigateByUrl(this.redirectUrl.toString());
           }
