@@ -299,7 +299,8 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   sanitizeExcelName(name: string): string {
-    return name.replace(/[\\/:*?"<>|]/g, '_');
+    // eslint-disable-next-line no-useless-escape
+    return name.replace(/[\\/:*?"<>|\[\]]/g, '_');
   }
 
   exportToExcel(component: any, filename: string, worksheetName: string): void {
