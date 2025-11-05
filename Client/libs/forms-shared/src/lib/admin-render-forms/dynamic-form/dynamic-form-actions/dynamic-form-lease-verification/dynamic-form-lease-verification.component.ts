@@ -69,10 +69,19 @@ export class DynamicFormLeaseVerificationComponent
       objectTypeTypeId: number;
       parentObjectId: number;
       parentObjectTypeId: number;
+      currentStatus?: number;
     }
   ) {}
 
   ngOnInit(): void {
+    // Initialize oldStatus from passed data first (priority)
+    if (
+      this.data.currentStatus !== undefined &&
+      this.data.currentStatus !== null
+    ) {
+      this.oldStatus = this.data.currentStatus;
+    }
+
     this.getLeaseVerificationStatuses();
     this.subscription.push(
       this.appFacade.clientInfo$.subscribe((info) => {
@@ -81,10 +90,30 @@ export class DynamicFormLeaseVerificationComponent
       })
     );
 
+    // Fallback: Try to get status from store if not passed via data
     this.subscription.push(
       this.dynamicFormsFacade.selectRenderFormData$.subscribe(
         (selectRenderFormData) => {
-          this.oldStatus = +selectRenderFormData[0].formItemAnswer;
+          // Only set from store if not already set from passed data
+          if (
+            (this.oldStatus === undefined || this.oldStatus === null) &&
+            selectRenderFormData &&
+            selectRenderFormData.length > 0
+          ) {
+            // Find the Lease Verification Status field (formID: 4196)
+            const leaseVerificationField = selectRenderFormData.find(
+              (item) =>
+                item.formItemId === 4196 ||
+                item.formItemLabel === 'Lease Verification Status'
+            );
+
+            if (
+              leaseVerificationField &&
+              leaseVerificationField.formItemAnswer
+            ) {
+              this.oldStatus = +leaseVerificationField.formItemAnswer;
+            }
+          }
         }
       )
     );
@@ -165,6 +194,7 @@ export class DynamicFormLeaseVerificationComponent
         )
         .subscribe((res: ApiResponse) => {
           if (res && res.success) {
+            // API returns array of available workflow status options
             this.workFlowStatus = res.data;
           } else {
             this.toastService.show(
