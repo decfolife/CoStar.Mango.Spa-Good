@@ -233,6 +233,12 @@ export class DynamicFormComponent
   to the application rather than an attachment(s)`;
   allowedObjectTypes = Object.values(AllowedObjectTypes);
   funcLoadAllSectionsForScroll: any = this.loadAllSectionsForScroll;
+  formItmToHide: any[] = [];
+  reloadSections: boolean = false;
+  updatedSection: any;
+
+  formDataObjectId: number;
+  formDataObjectTypeId: number;
 
   constructor(
     private location: Location,
@@ -409,7 +415,7 @@ export class DynamicFormComponent
     return value;
   }
 
-  getChangedFormItems(key, value) {
+  async getChangedFormItems(key, value) {
     let clauseDetailField: any = null;
     let keyStr = key.toString();
 
@@ -449,6 +455,60 @@ export class DynamicFormComponent
         type: formItem.type,
       };
       this.changedFormItemKeys.push(changedItem);
+    }
+    let updateSections = false;
+    for (let index = 0; index < this.changedFormItemKeys.length; index++) {
+      let formItemName = this.allFormItemsKeys.find(
+        (formItm) =>
+          formItm.formItemId === this.changedFormItemKeys[index].formItemId
+      ).labelName;
+      if (
+        formItemName === 'Is Vendor' ||
+        formItemName === 'Is Customer' ||
+        formItemName == 'Subscribe to Reminders'
+      ) {
+        updateSections = true;
+        break;
+      }
+    }
+    if (updateSections) {
+      await this.loadUpdatedSections();
+      this.dynamicFormsFacade.loadFormSections(
+        this.formId,
+        this.groupId,
+        this.objectId
+      );
+
+      var allSections = this.updatedSection?.data
+        ? this.updatedSection?.data
+        : [];
+
+      for (let index = 0; index < this.changedFormItemKeys.length; index++) {
+        const element = this.changedFormItemKeys[index];
+        if (element.formItemId != null) {
+          let sectionExistLst = allSections.filter(
+            (s) => s.formInputId1 == element.formItemId
+          );
+
+          if (sectionExistLst && sectionExistLst.length > 0) {
+            sectionExistLst.forEach((section) => {
+              let sectionToUpdate = allSections.find(
+                (s) => s.formSectionID == section.formSectionID
+              );
+              if (sectionToUpdate)
+                sectionToUpdate.sectionVisibility =
+                  element.newValue == '1'
+                    ? true
+                    : element.newValue == '0'
+                    ? false
+                    : false;
+            });
+          }
+        }
+      }
+      this.sectionsVisible = allSections.filter(
+        (s) => s.sectionVisibility == true || s.sectionVisibility == null
+      );
     }
   }
 
@@ -802,9 +862,29 @@ export class DynamicFormComponent
           take(1)
         )
         .subscribe((sections) => {
+          this.setSectionsVisibility(sections);
           this.loadMoreSections(sections);
         })
     );
+  }
+
+  setSectionsVisibility(sections: any[]) {
+    if (sections != null && sections.length > 0) {
+      this.formItmToHide = sections.filter(
+        (s) => s.sectionVisibility === false || s.sectionVisibility === true
+      );
+      let sectionsToSplice = sections.filter(
+        (s) => s.sectionVisibility === false
+      );
+      for (let index = 0; index < sectionsToSplice.length; index++) {
+        let sectionIndex = sections.findIndex(
+          (s) => s.formSectionID === sectionsToSplice[index].formSectionID
+        );
+        if (sectionIndex > -1) {
+          sections.splice(sectionIndex, 1);
+        }
+      }
+    }
   }
 
   loadAllSectionsForScroll(navLink: SharedLeftNavLink): Observable<any> {
@@ -856,7 +936,10 @@ export class DynamicFormComponent
   handleHasParentObjectLinkerChange(value: boolean): void {
     if (!this.hasParentObjectLinker) {
       this.hasParentObjectLinker = value;
-      this.dynamicFormsFacade.loadParentLink(this.objectId, this.objectTypeId);
+      this.dynamicFormsFacade.loadParentLink(
+        this.formDataObjectId ?? this.objectId,
+        this.formDataObjectTypeId ?? this.objectTypeId
+      );
     }
   }
 
@@ -1105,6 +1188,22 @@ export class DynamicFormComponent
       return;
     }
 
+    for (let index = 0; index < saveFormData.formItems.length; index++) {
+      const formItmId = saveFormData.formItems[index].formItemId;
+      let formItemName = this.allFormItemsKeys.find(
+        (formItm) => formItm.formItemId === formItmId
+      ).labelName;
+      if (
+        formItemName === 'Is Vendor' ||
+        formItemName === 'Is Customer' ||
+        formItemName == 'Subscribe to Reminders'
+      ) {
+        //reload the sections
+        this.reloadSections = true;
+        break;
+      }
+    }
+
     this.dynamicFormsFacade.saveRenderForm(saveFormData);
     this.handleSaveResponse(oper);
   }
@@ -1300,8 +1399,17 @@ export class DynamicFormComponent
     return EMPTY;
   }
 
-  private loadFormData(formData: any): void {
-    this.dynamicFormsFacade.loadFormSections(this.formId, this.groupId);
+  private async loadFormData(formData: any): Promise<void> {
+    if (this.reloadSections) await this.loadUpdatedSections();
+
+    this.formDataObjectId = formData.objectId;
+    this.formDataObjectTypeId = formData.objectTypeId;
+
+    this.dynamicFormsFacade.loadFormSections(
+      this.formId,
+      this.groupId,
+      this.objectId
+    );
     this.handleFormSectionsLoad();
     this.dynamicFormsFacade.loadFormActions(
       this.formId,
@@ -1321,6 +1429,17 @@ export class DynamicFormComponent
     }
   }
 
+  async loadUpdatedSections() {
+    {
+      this.updatedSection = await this.dynamicFormsService
+        .getFormSections(this.formId, this.groupId, this.objectId)
+        .pipe(
+          filter((sections) => sections !== null),
+          take(1)
+        )
+        .toPromise();
+    }
+  }
   private loadDesignModeData(formData: any): void {
     this.dynamicFormsFacade.loadAvailableSections(
       this.formId,
@@ -1383,6 +1502,8 @@ export class DynamicFormComponent
     );
   }
 
+  // TODO: Refactor out this method and make error handling
+  // more consistent with dynamic-form-widget.component.
   private showToast(): void {
     setTimeout(() => {
       this.isToastVisible = true;
@@ -1409,6 +1530,7 @@ export class DynamicFormComponent
           take(1)
         )
         .subscribe((sections) => {
+          this.setSectionsVisibility(sections);
           if (this.isRenderForm) {
             this.handleRenderFormSections(sections);
           } else {
@@ -1512,7 +1634,9 @@ export class DynamicFormComponent
     if (action === 'copy' && this.objectTypeId == ObjectType.LEASE) {
       this.copyLease();
     } else if (action === 'print to pdf') {
-      this.download();
+      this.downloadToPdf();
+    } else if (action === 'print to excel') {
+      this.downloadToExcel();
     } else if (action.startsWith('associate')) {
       this.performAssociatePopup(action);
     } else if (action === 'archive' || action === 'archive (new)') {
@@ -1553,6 +1677,19 @@ export class DynamicFormComponent
       );
     } else if (action === 'add contact') {
       this.openAddContactModal();
+    } else if (
+      action === 'generate universal changes form' ||
+      action === 'generate compliance form'
+    ) {
+      if (formAction.formAction) {
+        let urlLink = formAction.formAction;
+        urlLink = urlLink
+          .replace('window.open', '')
+          .replace(/[()';]/g, '')
+          .replace(/\@FOID/, this.objectId)
+          .replace(/\@FOTID/, this.objectTypeId);
+        this.router.navigateByUrl(urlLink);
+      }
     }
   }
 
@@ -1652,11 +1789,23 @@ export class DynamicFormComponent
     );
   }
 
-  private notifyErrorMessage(errorMessage: string) {
-    this.toastService.show(errorMessage, 'Error', ToastState.ERROR, {
+  private notifyErrorMessage(errorMessage: string, title = 'Error') {
+    this.toastService.show(errorMessage, title, ToastState.ERROR, {
       position: 'bottom right',
       maxWidth: '350px',
     });
+  }
+
+  private notifiyProcessingExport() {
+    this.toastService.show(
+      'The export file will be downloaded shortly.',
+      '',
+      ToastState.SUCCESS,
+      {
+        position: 'bottom right',
+        maxWidth: '350px',
+      }
+    );
   }
 
   copyLease(): void {
@@ -1790,26 +1939,58 @@ export class DynamicFormComponent
     });
   }
 
-  download(): void {
+  downloadToExcel(): void {
+    const objectId = this.formDataObjectId ?? this.objectId;
+    const objectTypeId = this.formDataObjectTypeId ?? this.objectTypeId;
     this.isActionLoading = true;
+    this.notifiyProcessingExport();
 
-    try {
-      this.dynamicFormsService
-        .download(this.formId, this.objectId, this.objectTypeId)
-        .subscribe((response) => {
-          const defaultFileName: string = `${this.formId}-${this.objectId}-${this.objectTypeId}.pdf`;
+    this.dynamicFormsService
+      .downloadExcel(this.formId, objectId, objectTypeId, this.objectTypeTypeId)
+      .subscribe({
+        next: (response) => {
+          const defaultFileName = `${
+            environment.production ? '' : environment.name + '-'
+          }${this.formId}-${objectId}-${objectTypeId}-${
+            this.objectTypeTypeId
+          }.xlsx`;
           const filename =
             this.getFilenameFromResponse(response) || defaultFileName;
 
           this.isActionLoading = false;
           this.downloadFile(filename, response);
-        });
-    } catch (error) {
-      this.isActionLoading = false;
-      this.toastMessageHeader = 'Error Printing To PDF.';
-      this.toastState = ToastState.ERROR;
-      this.showToast();
-    }
+        },
+        error: (err) => {
+          this.isActionLoading = false;
+          this.toastMessageHeader = 'Error Printing To Excel.';
+          this.notifyErrorMessage(this.toastMessageHeader, '');
+        },
+      });
+  }
+
+  downloadToPdf(): void {
+    const objectId = this.formDataObjectId ?? this.objectId;
+    const objectTypeId = this.formDataObjectTypeId ?? this.objectTypeId;
+    this.isActionLoading = true;
+    this.notifiyProcessingExport();
+
+    this.dynamicFormsService
+      .downloadPdf(this.formId, objectId, objectTypeId, this.objectTypeTypeId)
+      .subscribe({
+        next: (response) => {
+          const defaultFileName = `${this.formId}-${objectId}-${objectTypeId}.pdf`;
+          const filename =
+            this.getFilenameFromResponse(response) || defaultFileName;
+
+          this.isActionLoading = false;
+          this.downloadFile(filename, response);
+        },
+        error: (err) => {
+          this.isActionLoading = false;
+          this.toastMessageHeader = 'Error Printing To PDF.';
+          this.notifyErrorMessage(this.toastMessageHeader, '');
+        },
+      });
   }
 
   attachExisting(): void {
