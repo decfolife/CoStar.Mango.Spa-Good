@@ -39,7 +39,10 @@ export class CustomerSelectionPageComponent implements OnInit {
     return environment.name === 'DEV';
   }
 
-  constructor(private centralAuthFacade: CentralAuthFacade, private storageService: StorageService) {
+  constructor(
+    private centralAuthFacade: CentralAuthFacade,
+    private storageService: StorageService
+  ) {
     this.clients$ = this.centralAuthFacade.userClients$;
     this.isLoading$ = this.clients$.pipe(map((clients) => !clients));
     this.recentClients$ = this.centralAuthFacade.userRecentClients$;
@@ -50,11 +53,11 @@ export class CustomerSelectionPageComponent implements OnInit {
 
     if (this.isDevEnv) {
       this.instancesDropdown = Object.keys(Instance)
-      .filter(x => !isNaN(Number(x)))
-      .map(key => Instance[key]);
+        .filter((x) => !isNaN(Number(x)))
+        .map((key) => Instance[key]);
 
-      const instance = this.storageService.getData('instance')
-    
+      const instance = this.storageService.getData('instance');
+
       this.selectedInstance = instance ?? Instance[Instance.App];
       this.centralAuthFacade.setSelectedInstance(this.selectedInstance);
     }

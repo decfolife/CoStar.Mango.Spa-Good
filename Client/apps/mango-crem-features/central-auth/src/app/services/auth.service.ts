@@ -55,12 +55,12 @@ export class AuthService {
 
   purgeAuth() {
     let instance = null;
-    
+
     const isDev = environment.name === 'DEV';
     if (isDev) {
-      instance = this._storageService.getData('instance')
+      instance = this._storageService.getData('instance');
     }
-    
+
     this.tempAccessToken = '';
     this._storageService.clearAll();
 
