@@ -51,7 +51,12 @@ export class ServiceAccountEndpointsComponent implements OnDestroy {
       })
     );
     this.endpoints.forEach(
-      (i) => (i.scopeName = i.scopeName.replace('api.', ''))
+      (i) =>
+        (i.scopeName = i.scopeName
+          .toLowerCase()
+          .replace(/-/g, ' ')
+          .replace('api.', '')
+          .replace(/\b\w/g, (s) => s.toUpperCase()))
     );
 
     this.endpoints.sort((a, b) => {
@@ -65,8 +70,15 @@ export class ServiceAccountEndpointsComponent implements OnDestroy {
 
   updateEndPointAccess(e: any, index: number) {
     if (e.checked)
-      this.addScopes.push('api.' + this.endpoints[index].scopeName);
-    else this.removeScopes.push('api.' + this.endpoints[index].scopeName);
+      this.addScopes.push(
+        'api.' +
+          this.endpoints[index].scopeName.replace(/ /g, '-').toLowerCase()
+      );
+    else
+      this.removeScopes.push(
+        'api.' +
+          this.endpoints[index].scopeName.replace(/ /g, '-').toLowerCase()
+      );
 
     const request: UpdateServiceAccountEndPointAccessRequest = {
       addScopes: this.addScopes,
