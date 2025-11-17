@@ -612,6 +612,7 @@ export const dashboardASCAnnually: DashboardConfig = {
       showMenuReset: false,
       width: 200,
       sortingOrder: {},
+      fillMissingYears: true,
       filterData: [
         { displayKey: '5 years', valueKey: 6 },
         { displayKey: '10 years', valueKey: 11 },
@@ -1278,6 +1279,7 @@ export const dashboardASCQuarterly: DashboardConfig = {
       showMenuReset: false,
       width: 200,
       sortingOrder: {},
+      fillMissingYears: true,
       filterData: [
         { displayKey: '5 years', valueKey: 6 },
         { displayKey: '10 years', valueKey: 11 },
@@ -2105,6 +2107,7 @@ export const dashboardIFRSAnnually: DashboardConfig = {
       id: 'IFRS16-Annual-Future-Commitments',
       width: 200,
       sortingOrder: {},
+      fillMissingYears: true,
       sortedColumnFieldName: 'LeaseTemplate',
       columnSortingOrder: {
         Lease: 1,
@@ -2948,6 +2951,7 @@ export const dashboardIFRSQuarterly: DashboardConfig = {
       id: 'IFRS16-Quarterly-Future-Commitments',
       width: 200,
       sortingOrder: {},
+      fillMissingYears: true,
       filterData: [
         { displayKey: '5 years', valueKey: 6 },
         { displayKey: '10 years', valueKey: 11 },

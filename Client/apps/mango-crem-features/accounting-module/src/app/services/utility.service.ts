@@ -565,6 +565,11 @@ export class UtilityService {
       );
     }
 
+    // Fill missing years BEFORE applying modify transformations
+    if (cardConfig.fillMissingYears) {
+      IADCardData = this.fillMissingYears(IADCardData, cardConfig);
+    }
+
     // Transform cardData according to fieldTransform.modify object
     IADCardData = this.modifyCardData(IADCardData, cardConfig);
 
@@ -640,6 +645,160 @@ export class UtilityService {
     return transformedStore;
   }
 
+  /**
+   * Fills in missing years with zero values for all dimension combinations.
+   * Ensures maturity schedules show the full year range (5 or 10 years) even when data is missing.
+   *
+   * @param {Array<any>} IADCardData - The raw card data
+   * @param {CardConfig} cardConfig - The card configuration
+   * @return {*}  {Array<any>} - Data with all years filled
+   * @memberof UtilityService
+   */
+  fillMissingYears(
+    IADCardData: Array<any>,
+    cardConfig: CardConfig,
+    debug = false
+  ): Array<any> {
+    this._debug = debug;
+    if (!cardConfig.fillMissingYears || !cardConfig.filterInitialValue) {
+      return IADCardData;
+    }
+
+    // Determine the year range from filterInitialValue
+    const yearRange = Number(cardConfig.filterInitialValue.valueKey);
+    if (!yearRange || isNaN(yearRange)) {
+      return IADCardData;
+    }
+
+    // Determine starting and ending years from the data
+    if (!IADCardData || IADCardData.length === 0) {
+      return IADCardData;
+    }
+
+    const years = IADCardData.map((item) => Number(item.PeriodYear)).filter(
+      (year) => !isNaN(year)
+    );
+    const minYear = Math.min(...years);
+    const maxYear = Math.max(...years);
+
+    if (!minYear || !maxYear || isNaN(minYear) || isNaN(maxYear)) {
+      return IADCardData;
+    }
+
+    // Calculate the target end year based on starting year and range
+    const targetEndYear = minYear + yearRange - 1;
+
+    // Only fill if we need years AFTER the current max year
+    if (maxYear >= targetEndYear) {
+      // We already have all the years we need (or more)
+      return IADCardData;
+    }
+
+    // Extract unique dimension values from existing data
+    const dimensions = this.extractDimensions(IADCardData);
+    this._debug && console.debug('Extracted dimensions:', dimensions);
+
+    // Start with existing data
+    const completeData: Array<any> = [...IADCardData];
+
+    // Only add missing years at the END (from maxYear + 1 to targetEndYear)
+    for (let year = maxYear + 1; year <= targetEndYear; year++) {
+      dimensions.combinations.forEach((combo) => {
+        const zeroEntry = {
+          PeriodYear: year,
+          ...combo,
+          ScheduledPaymentsReporting: 0,
+          RemainingPaymentsReporting: 0,
+        };
+        this._debug &&
+          console.debug('Pushed missing year entry', JSON.stringify(zeroEntry));
+        completeData.push(zeroEntry);
+      });
+    }
+
+    this._debug &&
+      console.debug('fillMissingYears result:', {
+        original: IADCardData.length,
+        filled: completeData.length,
+        yearRange,
+        minYear,
+        maxYear,
+        targetEndYear,
+        dimensions,
+      });
+
+    return completeData;
+  }
+
+  /**
+   * Extracts unique dimension values and their combinations from the data.
+   *
+   * @private
+   * @param {Array<any>} data
+   * @return {*}  {{ dimensionFields: string[], combinations: Array<any> }}
+   * @memberof UtilityService
+   */
+  private extractDimensions(data: Array<any>): {
+    dimensionFields: string[];
+    combinations: Array<any>;
+  } {
+    if (!data || data.length === 0) {
+      return { dimensionFields: [], combinations: [{}] };
+    }
+
+    // Identify dimension fields (excluding PeriodYear and data fields)
+    const excludeFields = [
+      'PeriodYear',
+      'PeriodQuarter',
+      'PeriodYearQuarter',
+      'ScheduledPaymentsReporting',
+      'RemainingPaymentsReporting',
+    ];
+
+    const sampleItem = data[0];
+    const dimensionFields = Object.keys(sampleItem).filter(
+      (key) => !excludeFields.includes(key)
+    );
+
+    // Extract unique values for each dimension
+    const uniqueValues: Record<string, Set<any>> = {};
+    dimensionFields.forEach((field) => {
+      uniqueValues[field] = new Set();
+    });
+
+    data.forEach((item) => {
+      dimensionFields.forEach((field) => {
+        if (item[field] !== undefined && item[field] !== null) {
+          uniqueValues[field].add(item[field]);
+        }
+      });
+    });
+
+    // Generate all combinations of dimension values
+    const combinations: Array<any> = [];
+    const generateCombinations = (fields: string[], current: any = {}) => {
+      if (fields.length === 0) {
+        combinations.push({ ...current });
+        return;
+      }
+
+      const [field, ...rest] = fields;
+      const values = Array.from(uniqueValues[field]);
+
+      if (values.length === 0) {
+        generateCombinations(rest, current);
+      } else {
+        values.forEach((value) => {
+          generateCombinations(rest, { ...current, [field]: value });
+        });
+      }
+    };
+
+    generateCombinations(dimensionFields);
+
+    return { dimensionFields, combinations };
+  }
+
   modifyCardData(IADCardData: Array<any>, cardConfig: CardConfig): Array<any> {
     const builtEntries: Partial<CardDataItem>[] = [];
     let index;
@@ -672,7 +831,6 @@ export class UtilityService {
 
     IADCardData.map((e, i) => {
       builtEntries.push(e);
-
       if (e[el.modify.compareWith] === index) {
         // Once it finds the right Index in the list of data make the modifications
         builtEntries[i][el.modify.compareWith] = el.modify.caption.toString();
