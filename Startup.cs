@@ -81,7 +81,7 @@ public class Startup
             var service = p.GetRequiredService<IRequestService>();
 
             c.DefaultRequestHeaders.Add(Headers.TrackingId, service.TrackingId.ToString());
-        });
+        }).AddStandardResilienceHandler();
 
         services.AddCors(options =>
         {
