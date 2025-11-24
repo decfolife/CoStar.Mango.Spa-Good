@@ -198,9 +198,15 @@
           [dataField]="columnField.dataFieldTableField | lowercase"
           [format]="columnField.dataTypeFormatString"
           [visible]="columnField.visible"
+          [cellTemplate]="'textWithNewlines'"
         >
         </dxi-column>
       </ng-container>
+
+      <!-- Cell Template for handling newline characters -->
+      <div *dxTemplate="let cell of 'textWithNewlines'">
+        <span style="white-space: pre-line">{{ cell.text }}</span>
+      </div>
       <!-- End Grid Columns -->
 
       <!-- Actions Column -->
