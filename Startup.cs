@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -295,18 +295,18 @@ public class Startup
 
         services.AddAuthorization(opts =>
         {
-            opts.AddPolicy("FullAccess", policy => policy.RequireAssertion(context =>
+            opts.AddPolicy(Policy.FullAccess, policy => policy.RequireAssertion(context =>
                 context.User.IsAdmin()));
 
-            opts.AddPolicy("AdminUserContact", policy => policy.RequireAssertion(context =>
+            opts.AddPolicy(Policy.AdminUserContact, policy => policy.RequireAssertion(context =>
                 context.User.IsAdminUserContact() ||
                 context.User.IsAdmin()));
 
-            opts.AddPolicy("SuperUserContact", policy => policy.RequireAssertion(context =>
+            opts.AddPolicy(Policy.SuperUserContact, policy => policy.RequireAssertion(context =>
                 context.User.IsSuperUserContact() ||
                 context.User.IsAdmin()));
 
-            opts.AddPolicy("AdminOrSuperUserContact", policy => policy.RequireAssertion(context =>
+            opts.AddPolicy(Policy.AdminOrSuperUserContact, policy => policy.RequireAssertion(context =>
                 context.User.IsAdminOrSuperUserContact() ||
                 context.User.IsAdmin()));
         });
