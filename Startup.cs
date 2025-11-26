@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
@@ -26,6 +27,7 @@ using StackExchange.Redis;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Threading.RateLimiting;
 using Yarp.ReverseProxy.Transforms;
 using static MangoSPA.Constants;
 
@@ -64,6 +66,7 @@ public class Startup
         AddDataProtection(services);
         AddServices(services);
         ConfigureOpenTelemetry(services, Configuration, Environment);
+        //AddRateLimiting(services);
 
         AddYarp(services);
 
@@ -179,6 +182,8 @@ public class Startup
         app.UseMiddleware<RequestLogContextMiddleware>();
         app.UseAuthorization();
         app.UseAntiforgery();
+
+        //app.UseRateLimiter();
 
         app.UseEndpoints(endpoints =>
         {
@@ -450,6 +455,40 @@ public class Startup
             });
 
         return services;
+    }
+
+    // Uses an in-memory store to track number of requests.
+    // To scale out, we should update this to use a distributed cache (Redis - which is already enabled)
+    //   - Requires custom code implementation 
+    // To turn on rate limiting, uncomment the relevant code in ConfigureServices and Configure methods
+    //   AND uncomment the appsettings.json section under ReverseProxy
+    void AddRateLimiting(IServiceCollection services)
+    {
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            var rateLimitOptions = Configuration.FixedWindowLimiterOptions();
+
+            // Basic
+            options.AddFixedWindowLimiter("fixed", options =>
+            {
+                options.Window = rateLimitOptions.Window;
+                options.PermitLimit = rateLimitOptions.PermitLimit;
+                //options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                //options.QueueLimit = 5;
+            });
+
+            // Rate Limit per user contact ID   
+            options.AddPolicy("fixed-by-user", httpContext =>
+            {
+                int contactId = httpContext.User.ContactId();
+
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: contactId,
+                    factory: _ => rateLimitOptions);
+            });
+        });
     }
 }
 
