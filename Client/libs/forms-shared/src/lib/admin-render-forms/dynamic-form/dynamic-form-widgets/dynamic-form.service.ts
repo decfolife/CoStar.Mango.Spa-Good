@@ -738,4 +738,52 @@ export class DynamicWidgetService {
     const uniqueItems = [...Object.values(mapByOid), ...itemsWithoutOid];
     return uniqueItems;
   }
+
+  /**
+   * Decode HTML entities like &amp; in string values
+   * to prevent showing encoded text in DataGrid/PivotGrid.
+   * @param value The string value to decode
+   * @returns The decoded string
+   */
+  decodeHtmlEntities(value: string): string {
+    if (typeof value !== 'string') {
+      return value as unknown as string;
+    }
+
+    // Fast check to avoid unnecessary work
+    if (!/&[a-zA-Z#0-9]+;/.test(value)) {
+      return value;
+    }
+
+    // Use browser HTML parser for robust entity decoding
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(value, 'text/html');
+    const decoded = doc.documentElement.textContent ?? value;
+    return decoded;
+  }
+
+  /**
+   * Decode HTML entities in widget row data.
+   * Decoding is done early so all downstream consumers (grids, exports)
+   * receive clean strings.
+   * @param widget The widget containing row data to decode
+   * @returns The widget with decoded row data
+   */
+  decodeWidgetHtmlEntities(widget: Widget): Widget {
+    const rows = widget?.renderFormWidgetData as Array<Record<string, unknown>>;
+
+    if (rows && rows.length) {
+      for (const row of rows) {
+        // Decode any string property that contains HTML entities
+        for (const key of Object.keys(row)) {
+          const v = row[key];
+          if (typeof v === 'string') {
+            row[key] = this.decodeHtmlEntities(v);
+          }
+        }
+      }
+    }
+
+    return widget;
+  }
 }

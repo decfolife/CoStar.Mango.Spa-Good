@@ -430,6 +430,8 @@ export class DynamicFormWidgetComponent
             clone.data.renderFormWidgetData
           );
           clone.data = this.convertDateStrings(clone.data);
+          // Decode any HTML entities so grids render clean text
+          clone.data = this.widgetService.decodeWidgetHtmlEntities(clone.data);
           this.columnFormatMap = this.buildColumnFormatting(clone.data);
           return clone;
         }),
