@@ -874,7 +874,7 @@ export class UtilityService {
             i
           );
           builtEntries[i][el.modify.replace] =
-            prevRow[el.modify.newData ? el.modify.newData : el.data];
+            prevRow?.[el.modify.newData ? el.modify.newData : el.data];
         } else {
           builtEntries[i][el.modify.replace] =
             IADCardData[i + (el.modify.offset ? el.modify.offset : 0)][
@@ -883,7 +883,7 @@ export class UtilityService {
         }
       } else {
         builtEntries[i][el.modify.compareWith] =
-          IADCardData[i][el.modify.compareWith].toString();
+          IADCardData[i]?.[el.modify.compareWith]?.toString();
       }
     });
     return builtEntries;
