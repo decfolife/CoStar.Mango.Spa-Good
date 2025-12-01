@@ -1893,27 +1893,6 @@ export class DynamicFormComponent
   }
 
   openLeaseVerificationModal() {
-    // Get current status from render form data
-    // Look for the specific form item with formID 4196 (Lease Verification Status)
-    let currentStatus: number | undefined;
-
-    this.dynamicFormsFacade.selectRenderFormData$
-      .pipe(take(1))
-      .subscribe((renderFormData) => {
-        if (renderFormData && renderFormData.length > 0) {
-          // Find the Lease Verification Status field (formID: 4196)
-          const leaseVerificationField = renderFormData.find(
-            (item) =>
-              item.formItemId === 4196 ||
-              item.formItemLabel === 'Lease Verification Status'
-          );
-
-          if (leaseVerificationField && leaseVerificationField.formItemAnswer) {
-            currentStatus = +leaseVerificationField.formItemAnswer;
-          }
-        }
-      });
-
     const dialogRef = this.dialog.open(DynamicFormLeaseVerificationComponent, {
       minWidth: '45vw',
       maxWidth: '90vw',
@@ -1925,7 +1904,6 @@ export class DynamicFormComponent
         objectTypeTypeId: this.objectTypeTypeId,
         parentObjectId: this.parentObjectId,
         parentObjectTypeId: this.parentObjectTypeId,
-        currentStatus: currentStatus,
       },
     });
     dialogRef.afterClosed().subscribe((results) => {

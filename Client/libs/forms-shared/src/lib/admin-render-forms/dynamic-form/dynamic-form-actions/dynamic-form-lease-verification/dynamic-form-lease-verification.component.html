@@ -23,7 +23,7 @@
         [required]="true"
         [showClearButton]="false"
         [dataSource]="workFlowStatus"
-        [initialSelectedValue]="oldStatus"
+        [initialSelectedValue]="selectedWorkflowStatus"
         displayExpr="wfsName"
         valueExpr="wfsID"
         (selectedItems)="onSelectedStatus($event)"
