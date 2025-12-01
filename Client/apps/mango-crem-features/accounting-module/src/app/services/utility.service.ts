@@ -567,7 +567,7 @@ export class UtilityService {
 
     // Fill missing years BEFORE applying modify transformations
     if (cardConfig.fillMissingYears) {
-      IADCardData = this.fillMissingYears(IADCardData, cardConfig);
+      IADCardData = this.fillMissingYears(IADCardData, cardConfig, paramStart);
     }
 
     // Transform cardData according to fieldTransform.modify object
@@ -651,12 +651,14 @@ export class UtilityService {
    *
    * @param {Array<any>} IADCardData - The raw card data
    * @param {CardConfig} cardConfig - The card configuration
+   * @param {number} [paramStart] - The starting year (reporting year) to begin filling from
    * @return {*}  {Array<any>} - Data with all years filled
    * @memberof UtilityService
    */
   fillMissingYears(
     IADCardData: Array<any>,
     cardConfig: CardConfig,
+    paramStart?: number,
     debug = false
   ): Array<any> {
     this._debug = debug;
@@ -685,14 +687,13 @@ export class UtilityService {
       return IADCardData;
     }
 
-    // Calculate the target end year based on starting year and range
-    const targetEndYear = minYear + yearRange - 1;
+    // Determine the starting year: use paramStart if provided and earlier than minYear
+    const startYear = paramStart && paramStart < minYear ? paramStart : minYear;
 
-    // Only fill if we need years AFTER the current max year
-    if (maxYear >= targetEndYear) {
-      // We already have all the years we need (or more)
-      return IADCardData;
-    }
+    // Calculate the target end year based on starting year and range
+    // Subtract one for Future Commitments because the final year in the range will be
+    // transformed to the Thereafter row.
+    const targetEndYear = startYear + yearRange - 1;
 
     // Extract unique dimension values from existing data
     const dimensions = this.extractDimensions(IADCardData);
@@ -701,19 +702,47 @@ export class UtilityService {
     // Start with existing data
     const completeData: Array<any> = [...IADCardData];
 
-    // Only add missing years at the END (from maxYear + 1 to targetEndYear)
-    for (let year = maxYear + 1; year <= targetEndYear; year++) {
-      dimensions.combinations.forEach((combo) => {
-        const zeroEntry = {
-          PeriodYear: year,
-          ...combo,
-          ScheduledPaymentsReporting: 0,
-          RemainingPaymentsReporting: 0,
-        };
-        this._debug &&
-          console.debug('Pushed missing year entry', JSON.stringify(zeroEntry));
-        completeData.push(zeroEntry);
-      });
+    // Add missing years at the BEGINNING (from startYear to minYear - 1)
+    if (startYear < minYear) {
+      const beginningEntries: Array<any> = [];
+      // Future Commitments needs startYear + 1 (start at next year (the future))
+      for (let year = startYear + 1; year < minYear; year++) {
+        dimensions.combinations.forEach((combo) => {
+          const zeroEntry = {
+            PeriodYear: year,
+            ...combo,
+            ScheduledPaymentsReporting: 0,
+            RemainingPaymentsReporting: 0,
+          };
+          this._debug &&
+            console.debug(
+              'Pushed missing year entry (beginning)',
+              JSON.stringify(zeroEntry)
+            );
+          beginningEntries.push(zeroEntry);
+        });
+      }
+      completeData.unshift(...beginningEntries);
+    }
+
+    // Add missing years at the END (from maxYear + 1 to targetEndYear)
+    if (maxYear < targetEndYear) {
+      for (let year = maxYear + 1; year <= targetEndYear; year++) {
+        dimensions.combinations.forEach((combo) => {
+          const zeroEntry = {
+            PeriodYear: year,
+            ...combo,
+            ScheduledPaymentsReporting: 0,
+            RemainingPaymentsReporting: 0,
+          };
+          this._debug &&
+            console.debug(
+              'Pushed missing year entry (end)',
+              JSON.stringify(zeroEntry)
+            );
+          completeData.push(zeroEntry);
+        });
+      }
     }
 
     this._debug &&
@@ -721,6 +750,8 @@ export class UtilityService {
         original: IADCardData.length,
         filled: completeData.length,
         yearRange,
+        paramStart,
+        startYear,
         minYear,
         maxYear,
         targetEndYear,
