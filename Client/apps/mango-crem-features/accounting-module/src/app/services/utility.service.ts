@@ -691,9 +691,7 @@ export class UtilityService {
     const startYear = paramStart && paramStart < minYear ? paramStart : minYear;
 
     // Calculate the target end year based on starting year and range
-    // Subtract one for Future Commitments because the final year in the range will be
-    // transformed to the Thereafter row.
-    const targetEndYear = startYear + yearRange - 1;
+    const targetEndYear = startYear + yearRange;
 
     // Extract unique dimension values from existing data
     const dimensions = this.extractDimensions(IADCardData);
