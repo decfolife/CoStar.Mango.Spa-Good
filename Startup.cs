@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -24,7 +25,9 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using StackExchange.Redis;
+using System;
 using System.IO;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading.RateLimiting;
@@ -460,6 +463,8 @@ public class Startup
     // Uses an in-memory store to track number of requests.
     // To scale out, we should update this to use a distributed cache (Redis - which is already enabled)
     //   - Requires custom code implementation 
+    //   - OR use NuGet package: RedisRateLimiting and RedisRateLimiting.AspNetCore
+    //         - https://github.com/cristipufu/aspnetcore-redis-rate-limiting
     // To turn on rate limiting, uncomment the relevant code in ConfigureServices and Configure methods
     //   AND uncomment the appsettings.json section under ReverseProxy
     void AddRateLimiting(IServiceCollection services)
@@ -488,6 +493,23 @@ public class Startup
                     partitionKey: contactId,
                     factory: _ => rateLimitOptions);
             });
+
+            options.OnRejected = async (context, cancellationToken) =>
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                context.HttpContext.Response.Headers.RetryAfter = rateLimitOptions.Window.ToString();
+
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                logger.LogWarning("Rate limit exceeded for {User} | {Client} | {ContactID}",
+                    context.HttpContext.User.Email(), context.HttpContext.User.ClientKey(), context.HttpContext.User.ContactId());
+
+                await context.HttpContext.Response.WriteAsJsonAsync(new ProblemDetails
+                {
+                    Type = "TooManyRequests",
+                    Title = "Rate limit exceeded.",
+                    Detail = $"Rate limit exceeded. Please try again after {rateLimitOptions.Window} seconds"
+                }, cancellationToken);
+            };
         });
     }
 }
