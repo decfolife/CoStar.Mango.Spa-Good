@@ -69,7 +69,7 @@ public class Startup
         AddDataProtection(services);
         AddServices(services);
         ConfigureOpenTelemetry(services, Configuration, Environment);
-        //AddRateLimiting(services);
+        AddRateLimiting(services);
 
         AddYarp(services);
 
@@ -186,7 +186,7 @@ public class Startup
         app.UseAuthorization();
         app.UseAntiforgery();
 
-        //app.UseRateLimiter();
+        app.UseRateLimiter();
 
         app.UseEndpoints(endpoints =>
         {
@@ -465,8 +465,6 @@ public class Startup
     //   - Requires custom code implementation 
     //   - OR use NuGet package: RedisRateLimiting and RedisRateLimiting.AspNetCore
     //         - https://github.com/cristipufu/aspnetcore-redis-rate-limiting
-    // To turn on rate limiting, uncomment the relevant code in ConfigureServices and Configure methods
-    //   AND uncomment the appsettings.json section under ReverseProxy
     void AddRateLimiting(IServiceCollection services)
     {
         services.AddRateLimiter(options =>
@@ -494,6 +492,17 @@ public class Startup
                     factory: _ => rateLimitOptions);
             });
 
+            // Rate Limit per user contact ID and API path 
+            options.AddPolicy("fixed-by-user-and-path", httpContext =>
+            {
+                int contactId = httpContext.User.ContactId();
+                var path = httpContext.Request.Path.ToString();
+
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: $"{contactId}:{path}",
+                    factory: _ => rateLimitOptions);
+            });
+
             options.OnRejected = async (context, cancellationToken) =>
             {
                 context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
@@ -507,7 +516,7 @@ public class Startup
                 {
                     Type = "TooManyRequests",
                     Title = "Rate limit exceeded.",
-                    Detail = $"Rate limit exceeded. Please try again after {rateLimitOptions.Window} seconds"
+                    Detail = $"Rate limit exceeded. Please try again after {rateLimitOptions.Window.Seconds} seconds"
                 }, cancellationToken);
             };
         });
