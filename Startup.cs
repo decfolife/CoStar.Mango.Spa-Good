@@ -21,6 +21,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Prometheus;
+using RedisRateLimiting.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
@@ -61,15 +62,18 @@ public class Startup
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 
+        var configOptions = Configuration.RedisConfigurationOptions();
+        var redisMultiplexer = ConnectionMultiplexer.Connect(configOptions);
+
         AddLogging(services);
         AddAppSettings(services);
         AddCache(services, Configuration);
         AddAuth(services, Environment);
         AddAddAntiforgery(services, Environment);
-        AddDataProtection(services);
+        AddDataProtection(services, redisMultiplexer);
         AddServices(services);
         ConfigureOpenTelemetry(services, Configuration, Environment);
-        AddRateLimiting(services);
+        AddRateLimiting(services, redisMultiplexer);
 
         AddYarp(services);
 
@@ -411,7 +415,7 @@ public class Startup
 
     // Configure data protection to use the same key ring and app identifier persisted to Redis.
     // Needed for production scenarios where we may have multiple instances of this app running
-    public void AddDataProtection(IServiceCollection services)
+    public void AddDataProtection(IServiceCollection services, ConnectionMultiplexer multiplexer)
     {
         var builder = services.AddDataProtection()
             .SetApplicationName("mangospa_bff");
@@ -419,9 +423,6 @@ public class Startup
         if (Configuration.UseInMemoryCaching())
             return;
 
-        var configOptions = Configuration.RedisConfigurationOptions();
-
-        var multiplexer = ConnectionMultiplexer.Connect(configOptions);
         builder.PersistKeysToStackExchangeRedis(multiplexer, "dataprotection");     
     }
 
@@ -460,12 +461,7 @@ public class Startup
         return services;
     }
 
-    // Uses an in-memory store to track number of requests.
-    // To scale out, we should update this to use a distributed cache (Redis - which is already enabled)
-    //   - Requires custom code implementation 
-    //   - OR use NuGet package: RedisRateLimiting and RedisRateLimiting.AspNetCore
-    //         - https://github.com/cristipufu/aspnetcore-redis-rate-limiting
-    void AddRateLimiting(IServiceCollection services)
+    void AddRateLimiting(IServiceCollection services, ConnectionMultiplexer multiplexer)
     {
         services.AddRateLimiter(options =>
         {
@@ -473,16 +469,28 @@ public class Startup
 
             var rateLimitOptions = Configuration.FixedWindowLimiterOptions();
 
-            // Basic
-            options.AddFixedWindowLimiter("fixed", options =>
+            // Rate Limit Type - Fixed Window
+            if (Configuration.UseInMemoryCaching())
             {
-                options.Window = rateLimitOptions.Window;
-                options.PermitLimit = rateLimitOptions.PermitLimit;
-                //options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                //options.QueueLimit = 5;
-            });
+                options.AddFixedWindowLimiter("fixed", options =>
+                {
+                    options.Window = rateLimitOptions.Window;
+                    options.PermitLimit = rateLimitOptions.PermitLimit;
+                    //options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    //options.QueueLimit = 5;
+                });
+            } 
+            else
+            {
+                options.AddRedisFixedWindowLimiter("fixed", (opt) =>
+                {
+                    opt.ConnectionMultiplexerFactory = () => multiplexer;
+                    opt.PermitLimit = rateLimitOptions.PermitLimit;
+                    opt.Window = rateLimitOptions.Window;
+                });
+            }
 
-            // Rate Limit per user contact ID   
+            // Rate Limit Policies
             options.AddPolicy("fixed-by-user", httpContext =>
             {
                 int contactId = httpContext.User.ContactId();
@@ -492,7 +500,6 @@ public class Startup
                     factory: _ => rateLimitOptions);
             });
 
-            // Rate Limit per user contact ID and API path 
             options.AddPolicy("fixed-by-user-and-path", httpContext =>
             {
                 int contactId = httpContext.User.ContactId();
