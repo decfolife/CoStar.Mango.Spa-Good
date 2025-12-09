@@ -1,5 +1,5 @@
 # Used for STAGE/PROD
-# This is a copy of the Dockerfile that uses nginx-spa-prod.conf
+# This is a copy of the Dockerfile that uses nginx-ca-prod.conf
 
 # Stage 1: Compile and Build angular codebase
 FROM public.ecr.aws/docker/library/node:16.19-alpine as build
