@@ -25,6 +25,9 @@ import notify from 'devextreme/ui/notify';
 import { EtlTemplatesSelectPortfolioComponent } from '../etl-modals/etl-templates-select-portfolio/etl-templates-select-portfolio.component';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 import { DownloadExcelTemplateDto } from '@etl/model/download-excel-template-dto';
+import { EtlTemplatesCopyTemplateComponent } from '../etl-modals/etl-templates-copy-template/etl-templates-copy-template.component';
+import { DataGridQueryDto } from '@etl/model/data-grid-query-dto';
+import { EtlTemplatesDeleteTemplateComponent } from '../etl-modals/etl-templates-delete-template/etl-templates-delete-template.component';
 
 @Component({
   selector: 'mango-etl-templates',
@@ -110,17 +113,7 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
         }
       })
     );
-
-    this.subs.add(
-      this.etlService.getETLTemplates().subscribe((result) => {
-        if (result.success) {
-          this.templates = result.data;
-          this.isLoading = false;
-        } else {
-          this.handleError(result.errorMessage);
-        }
-      })
-    );
+    this.refreshTemplates();
   }
 
   downloadTemplate(e) {
@@ -272,6 +265,105 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
     );
   }
 
+  copyTemplate(e) {
+    let dialogRef = this.dialog.open(EtlTemplatesCopyTemplateComponent, {
+      disableClose: false,
+      height: '28%',
+      width: '40%',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.isLoading = true;
+        this.etlService
+          .getTemplateDetails(e.data.templateId)
+          .subscribe((templateDetails) => {
+            templateDetails.data.isCopy = true;
+            templateDetails.data.templateName = result;
+            templateDetails.data.isImportForAccounting =
+              templateDetails.data.isImportForAccounting ?? false;
+            templateDetails.data.isImportForFinancials =
+              templateDetails.data.isImportForFinancials ?? false;
+            let data = new DataGridQueryDto();
+            data.objectTypeId = templateDetails.data.objectTypeId;
+            data.formId = templateDetails.data.formId ?? 0;
+            data.initialDataFormId = templateDetails.data.formId ?? 0;
+            data.templateId = templateDetails.data.templateId;
+            data.templateTypeId = templateDetails.data.templateTypeId;
+            data.objectTypeTypeId = templateDetails.data.objectTypeTypeId;
+            data.keySourceColumn = templateDetails.data.keyField;
+            data.parentKeySourceColumn = templateDetails.data.parentLookupValue;
+            data.updateOnly = templateDetails.data.updateOnly;
+            data.keyFieldDisplayName = templateDetails.data.keyFieldDisplayName;
+            templateDetails.data.modifiedBy = e.data.modifiedBy;
+            templateDetails.data.userID = e.data.userID;
+            if (
+              templateDetails.data.templateTypeId === 0 &&
+              templateDetails.data.templateId === 0 &&
+              templateDetails.data.formId === 0
+            ) {
+              return;
+            }
+            let gridColumns = [];
+            this.etlService.getDataGridFields(data).subscribe((result) => {
+              if (result.success) {
+                result.data.forEach((item, index) => {
+                  gridColumns.push({
+                    include: item.included || false,
+                    required: item.required || '',
+                    displayLabel: item.displayLabel || '',
+                    controlType: item.controlType || '',
+                    dataType: item.dataType || '',
+                    helpText: item.helpText || '',
+                  });
+                });
+                const filteredGridColumns = gridColumns.filter(
+                  (column) => column.include
+                );
+                templateDetails.data.templateId = 0;
+                this.etlService
+                  .saveTemplateForm({
+                    ...templateDetails.data,
+                    gridColumns: filteredGridColumns,
+                  })
+                  .subscribe((saveResult) => {
+                    this.isLoading = false;
+                    this.router.navigate(
+                      ['/crem/admin/etl/templates/details', saveResult.data],
+                      {
+                        relativeTo: this.route,
+                        queryParamsHandling: 'merge',
+                      }
+                    );
+                  });
+              }
+            });
+          });
+      }
+    });
+  }
+
+  deleteTemplate(e) {
+    let dialogRef = this.dialog.open(EtlTemplatesDeleteTemplateComponent, {
+      disableClose: false,
+      height: '25%',
+      width: '40%',
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.etlService
+          .deleteTemplate(e.data.templateId)
+          .subscribe((deleteResult) => {
+            if (deleteResult.success) {
+              this.successNotify('Template Deleted Successfully');
+              this.refreshTemplates();
+            } else {
+              this.handleError(deleteResult.errorMessage);
+            }
+          });
+      }
+    });
+  }
+
   searchDataGrid(data) {
     this.searchText = data;
     this.templatesDataGrid.instance.searchByText(data);
@@ -339,6 +431,20 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
       maxWidth: '400px',
       closeOnClick: true,
     });
+  }
+
+  private refreshTemplates() {
+    this.isLoading = true;
+    this.subs.add(
+      this.etlService.getETLTemplates().subscribe((result) => {
+        if (result.success) {
+          this.templates = result.data;
+          this.isLoading = false;
+        } else {
+          this.handleError(result.errorMessage);
+        }
+      })
+    );
   }
 
   ngOnDestroy() {
