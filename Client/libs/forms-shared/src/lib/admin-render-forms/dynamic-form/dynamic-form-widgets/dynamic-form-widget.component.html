@@ -205,7 +205,7 @@
 
       <!-- Cell Template for handling newline characters -->
       <div *dxTemplate="let cell of 'textWithNewlines'">
-        <span style="white-space: pre-line">{{ cell.text }}</span>
+        <span class="multiline">{{ cell.text }}</span>
       </div>
       <!-- End Grid Columns -->
 
@@ -449,7 +449,7 @@
                 }"
               >
                 <dt>{{ col.label }}</dt>
-                <dd>
+                <dd class="multiline">
                   {{
                     detail.data[col.dataFieldTableField | lowercase]
                       | masterDetailFormat
