@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ETLService } from '@etl/services/etl.service';
 import {
   ButtonModule,
@@ -32,7 +32,8 @@ export class EtlTemplatesDeleteTemplateComponent {
 
   constructor(
     public dialogRef: MatDialogRef<EtlTemplatesDeleteTemplateComponent>,
-    public etlService: ETLService
+    public etlService: ETLService,
+    @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
   onClose() {
