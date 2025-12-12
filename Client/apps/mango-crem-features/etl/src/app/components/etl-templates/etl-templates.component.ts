@@ -351,8 +351,8 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
   deleteTemplate(e) {
     let dialogRef = this.dialog.open(EtlTemplatesDeleteTemplateComponent, {
       disableClose: false,
-      height: '22%',
-      width: '30%',
+      height: '23%',
+      width: '40%',
       data: e.data.templateName,
     });
     dialogRef.afterClosed().subscribe((result) => {
