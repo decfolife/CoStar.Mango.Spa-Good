@@ -1001,7 +1001,8 @@ export class DynamicFormWidgetComponent
 
     this.dynamicFormsService.downloadDocument(urlPath).subscribe(
       (data) => {
-        fileSaver.saveAs(data.body, path[1]);
+        // Use a global regex replace for compatibility with older TS lib targets
+        fileSaver.saveAs(data.body, path[1].replace(/%23/g, '#'));
       },
       (error) => {
         console.error('Error downloading file', error);
