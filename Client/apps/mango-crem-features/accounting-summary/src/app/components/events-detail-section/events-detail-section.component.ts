@@ -1058,6 +1058,7 @@ export class EventsDetailSectionComponent
               .map((item) => ({
                 ...item,
                 endDate: formatDate(item.endDate, this.dateFormat, 'en-US'),
+                endDateSortValue: new Date(item.endDate),
               }));
 
             this.eventsCount = this.gridDataSource?.length;
