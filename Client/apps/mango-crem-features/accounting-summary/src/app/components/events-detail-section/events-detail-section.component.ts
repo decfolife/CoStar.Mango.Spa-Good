@@ -579,7 +579,11 @@ export class EventsDetailSectionComponent
   }
 
   onRowClick(e) {
-    this.eventScheduleSelectedEvent.emit([e.data, this.gridsState]);
+    this.eventScheduleSelectedEvent.emit([
+      e.data,
+      this.gridsState,
+      this.gridDataSource,
+    ]);
     this.eventsDataGrid.instance.repaint();
   }
 

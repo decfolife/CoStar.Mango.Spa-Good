@@ -49,7 +49,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   isAccountingEventEmpty: boolean;
   sendToExcelClicked = false;
   accountingEventSelector: AccountingEventSelector;
-  leaseRecognitionScheduleIDArray: number[];
+  leaseRecognitionScheduleIDs: number[];
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -172,7 +172,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     const selectedOption = event.trim();
 
     selectedOption === 'Send All to Excel'
-      ? this.sendToExcel(this.leaseRecognitionScheduleIDArray)
+      ? this.sendToExcel(this.leaseRecognitionScheduleIDs)
       : this.openConsolidatedReport();
   }
 
@@ -276,7 +276,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
       accountingEventSelector: any
     ]
   ) {
-    this.leaseRecognitionScheduleIDArray = emittedEvent[2]?.map(
+    this.leaseRecognitionScheduleIDs = emittedEvent[2]?.map(
       (item) => item.leaseRecognitionScheduleID
     );
     this.gridState = emittedEvent[1];
