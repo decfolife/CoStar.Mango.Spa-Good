@@ -269,6 +269,7 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
       disableClose: false,
       height: '28%',
       width: '40%',
+      data: this.templates,
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -361,7 +362,11 @@ export class EtlTemplatesComponent implements OnInit, OnDestroy {
           .deleteTemplate(e.data.templateId)
           .subscribe((deleteResult) => {
             if (deleteResult.success) {
-              this.successNotify('Template Deleted Successfully');
+              this.successNotify(
+                'You have successfully deleted template ' +
+                  e.data.templateName +
+                  '!'
+              );
               this.refreshTemplates();
             } else {
               this.handleError(deleteResult.errorMessage);

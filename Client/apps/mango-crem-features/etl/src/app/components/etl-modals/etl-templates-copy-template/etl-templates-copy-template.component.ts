@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ETLService } from '@etl/services/etl.service';
+import { ToastState } from '@mango/data-models/lib-data-models';
 import {
   ButtonModule,
+  CremToastService,
   InputComponent,
   LibUiElementsModule,
   LoaderModule,
@@ -33,7 +35,9 @@ export class EtlTemplatesCopyTemplateComponent {
 
   constructor(
     public dialogRef: MatDialogRef<EtlTemplatesCopyTemplateComponent>,
-    public etlService: ETLService
+    private toastService: CremToastService,
+    public etlService: ETLService,
+    @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
   onClose() {
@@ -41,6 +45,20 @@ export class EtlTemplatesCopyTemplateComponent {
   }
 
   onSubmit() {
+    for (const template of this.data) {
+      if (template.templateName === this.selectedItem) {
+        this.toastService.show(
+          'The template name already exists, please choose a unique name',
+          '',
+          ToastState.ERROR,
+          {
+            position: 'bottom right',
+            maxWidth: '350px',
+          }
+        );
+        return;
+      }
+    }
     this.dialogRef.close(this.selectedItem);
   }
 }
