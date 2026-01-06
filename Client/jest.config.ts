@@ -35,8 +35,6 @@ export default {
     // './apps/mango-crem-features/start-page-selection',
     // './apps/mango-crem-features/user-maintenance',
   ],
-  coverageReporters: ['text', 'text-summary'],
-  displayName: 'mango',
   reporters: [
     'default',
     [
