@@ -243,7 +243,7 @@ export class EventsDetailSectionComponent
           this.addPriorROUAssetObtainedToDetailsGridData();
 
           this.portfolioSettings =
-            this.accountingSummaryService.getSavedPortfolioSettings();
+            this.accountingSummaryService.getPortfolioSettingsFromSession();
 
           if (eventDetailsResponse.data.length > 1) {
             const getPriorRow = eventDetailsResponse.data.length - 2;
@@ -1027,10 +1027,11 @@ export class EventsDetailSectionComponent
       this.storageService.deleteData('accounting_summary');
       return;
     }
+    const leaseInfo = this.accountingSummaryService.getLeaseInfoFromSession();
     this.storageService.saveSyncedSessionData(
       {
         gridBoxValue: this.gridBoxValue[0],
-        leaseAbstractID: localStorage.getItem('accSumLeaseAbstractId'),
+        leaseAbstractID: leaseInfo.leaseAbstractID,
       },
       'accounting_summary'
     );
@@ -1053,9 +1054,9 @@ export class EventsDetailSectionComponent
             //  If an accounting event for the current lease ID has been selected before try refetching selection
             const sessionLease: { [key: string]: any } =
               this.storageService.getData('accounting_summary');
-            const leaseAbstractID: string = localStorage.getItem(
-              'accSumLeaseAbstractId'
-            );
+            const leaseInfo =
+              this.accountingSummaryService.getLeaseInfoFromSession();
+            const leaseAbstractID = leaseInfo.leaseAbstractID;
 
             this.gridDataSource = response.data
               .filter((eventItem) => eventItem.isPublished)
