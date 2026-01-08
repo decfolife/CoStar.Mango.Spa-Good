@@ -114,7 +114,9 @@ export class PasswordResetRequestComponent implements OnInit {
     this.isLoading = false;
     this.isErrored = true;
 
-    this.notificationService[NOTIFICATION_ERROR_TYPES_MAP[MangoErrorTypes.WARNING]](
+    let type = error.status === 429 ? MangoErrorTypes.WARNING : MangoErrorTypes.FATAL;
+
+    this.notificationService[NOTIFICATION_ERROR_TYPES_MAP[type]](
       error.message,
       error.title
     );
