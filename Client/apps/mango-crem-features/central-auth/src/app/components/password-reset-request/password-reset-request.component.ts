@@ -113,6 +113,11 @@ export class PasswordResetRequestComponent implements OnInit {
     this.requestHasBeenSent = false;
     this.isLoading = false;
     this.isErrored = true;
+
+    this.notificationService[NOTIFICATION_ERROR_TYPES_MAP[MangoErrorTypes.WARNING]](
+      error.message,
+      error.title
+    );
   }
 
   private validateForm(): boolean {
