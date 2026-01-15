@@ -55,5 +55,9 @@
     </ng-container>
   </crem-tabs>
 
-  <crem-empty-state *ngIf="searchResults.length === 0"></crem-empty-state>
+  <crem-empty-state
+    *ngIf="emptyState"
+    [type]="emptyType"
+    color="info"
+  ></crem-empty-state>
 </ng-container>
