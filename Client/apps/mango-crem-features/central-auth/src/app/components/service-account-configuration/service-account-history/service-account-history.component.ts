@@ -47,22 +47,29 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
 
   ngOnInit() {
     this.histories.forEach((e: any) => {
-      e.fieldName = e.fieldName == 'ScopeName' ? 'EndPoints' : e.fieldName;
       var endpoint = e.beforeChange != null ? e.beforeChange : e.afterChange;
-      e.description =
-        endpoint
-          .replace(/-inbound/, '')
-          .replace(/-outbound/, '')
-          .replace(/api./, '')
-          .replace(/-/g, ' ')
-          .replace(/^./, (match: any) => match.toUpperCase()) +
-        ' endpoint has been updated';
-      if (e.beforeChange != null) {
-        e.beforeChange = 'TRUE';
-        e.afterChange = 'FALSE';
-      } else {
-        e.beforeChange = 'FALSE';
-        e.afterChange = 'TRUE';
+      e.fieldName = e.fieldName == 'API Access' ? 'Sites' : e.fieldName;
+
+      if (e.fieldName === 'ScopeName') {
+        e.fieldName = 'EndPoints';
+
+        e.description =
+          endpoint
+            .replace(/-inbound/, ' INBOUND')
+            .replace(/-outbound/, ' OUTBOUND')
+            .replace(/api./, '')
+            .replace(/-/g, ' ')
+            .replace(/(^|\s)\S/g, (match: any) => {
+              return match.toUpperCase();
+            }) + ' endpoint has been updated';
+
+        if (e.beforeChange != null) {
+          e.beforeChange = 'TRUE';
+          e.afterChange = 'FALSE';
+        } else {
+          e.beforeChange = 'FALSE';
+          e.afterChange = 'TRUE';
+        }
       }
     });
   }
