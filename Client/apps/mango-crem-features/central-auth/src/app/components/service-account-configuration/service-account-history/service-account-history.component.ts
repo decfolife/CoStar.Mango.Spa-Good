@@ -51,7 +51,7 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
       e.fieldName = e.fieldName == 'API Access' ? 'Sites' : e.fieldName;
 
       if (e.fieldName === 'ScopeName') {
-        e.fieldName = 'EndPoints';
+        e.fieldName = 'Endpoints';
 
         e.description =
           endpoint
@@ -64,11 +64,11 @@ export class ServiceAccountHistoryComponent implements OnDestroy {
             }) + ' endpoint has been updated';
 
         if (e.beforeChange != null) {
-          e.beforeChange = 'TRUE';
-          e.afterChange = 'FALSE';
+          e.beforeChange = 'True';
+          e.afterChange = 'False';
         } else {
-          e.beforeChange = 'FALSE';
-          e.afterChange = 'TRUE';
+          e.beforeChange = 'False';
+          e.afterChange = 'True';
         }
       }
     });
