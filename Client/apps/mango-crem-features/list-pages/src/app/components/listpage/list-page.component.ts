@@ -282,7 +282,6 @@ export class ListPageComponent implements OnInit, OnDestroy {
   private _showDeleteButton = true;
   private _showHeaderFilter = true;
 
-  private hasListener = false;
   private unmodifiedOriginalListView: ListView = null;
   public initializingApplication = true;
   private isCurrentViewRemoved = false;
@@ -1584,12 +1583,14 @@ export class ListPageComponent implements OnInit, OnDestroy {
         const closeButton =
           choosers[i].getElementsByClassName('dx-closebutton')[0];
 
-        if (closeButton && !this.hasListener) {
-          closeButton.addEventListener('click', () => {
-            this.columnChooserClosed();
-          });
-
-          this.hasListener = true;
+        if (closeButton) {
+          closeButton.addEventListener(
+            'click',
+            () => {
+              this.columnChooserClosed();
+            },
+            { once: true }
+          );
         }
       }
     }, 100);
