@@ -863,7 +863,8 @@ export class EventsDetailSectionComponent
       beginGroup: true,
       visible: e.row.data.isPublished && this.showEditIcon,
       onItemClick: () => {
-        let dialogRef = this.dialog.open(DeleteHistoricScheduleComponent, {
+        this.accountingSummaryService.setLockAddButton(true);
+        const dialogRef = this.dialog.open(DeleteHistoricScheduleComponent, {
           width: '600px',
           panelClass: 'client-delivery-modal',
           data: {
@@ -882,6 +883,8 @@ export class EventsDetailSectionComponent
         dialogRef.afterClosed().subscribe((response) => {
           if (response === true) {
             this.deleteSchedule(e);
+          } else {
+            this.accountingSummaryService.setLockAddButton(false);
           }
         });
       },
@@ -1301,6 +1304,7 @@ export class EventsDetailSectionComponent
               false
             );
           }
+          this.accountingSummaryService.setLockAddButton(false);
           this.eventsDataGrid.instance.endCustomLoading();
         })
     );
