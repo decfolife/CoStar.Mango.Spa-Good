@@ -52,34 +52,7 @@ export class FileUploadService {
     this.uploadStatus = '';
     this.uploadProgress = 0;
 
-    const chunks: Array<{
-      formData: FormData;
-      chunkIndex: number;
-      chunkSize: number;
-    }> = [];
-
-    for (
-      let start = 0, chunkIndex = 0;
-      start < file.size;
-      start += chunkSizeBytes, chunkIndex++
-    ) {
-      const chunk = file.slice(
-        start,
-        Math.min(start + chunkSizeBytes, file.size)
-      );
-
-      const formData = new FormData();
-      formData.append('chunkFile', chunk, filename);
-      formData.append('chunkIndex', chunkIndex.toString());
-      formData.append('totalChunks', totalChunks.toString());
-      formData.append('fileName', filename);
-      formData.append('fileSize', file.size.toString());
-
-      chunks.push({ formData, chunkIndex, chunkSize: chunk.size });
-    }
-
     const loadedByChunk = new Map<number, number>();
-
     const updateOverallProgress = () => {
       let loadedTotal = 0;
       for (const v of loadedByChunk.values()) loadedTotal += v;
@@ -88,38 +61,70 @@ export class FileUploadService {
         : 100;
     };
 
+    const buildChunk = (chunkIndex: number) => {
+      const start = chunkIndex * chunkSizeBytes;
+      const end = Math.min(start + chunkSizeBytes, file.size);
+      const chunkBlob = file.slice(start, end);
+      const chunkSize = end - start;
+
+      const formData = new FormData();
+      formData.append('chunkFile', chunkBlob, filename);
+      formData.append('chunkIndex', chunkIndex.toString());
+      formData.append('totalChunks', totalChunks.toString());
+      formData.append('fileName', filename);
+      formData.append('fileSize', file.size.toString());
+
+      return { formData, chunkIndex, chunkSize };
+    };
+
+    const uploadChunkIndex$ = (chunkIndex: number) => {
+      const { formData, chunkSize } = buildChunk(chunkIndex);
+
+      return from(this.etlService.chunkFileUpload(formData)).pipe(
+        mergeMap((http$) => http$),
+        tap((event: any) => {
+          if (!event) return;
+
+          if (event.type === HttpEventType.UploadProgress) {
+            const chunkLoaded = Math.min(event.loaded ?? 0, chunkSize);
+            loadedByChunk.set(chunkIndex, chunkLoaded);
+            updateOverallProgress();
+          }
+
+          if (event.type === HttpEventType.Response) {
+            loadedByChunk.set(chunkIndex, chunkSize);
+            updateOverallProgress();
+            this.onUploadFinished.emit(event.body);
+          }
+        }),
+        filter((event: any) => event?.type === HttpEventType.Response),
+        map(() => true),
+        catchError((err: HttpErrorResponse) => {
+          this.uploadStatus = `Error uploading file. Status: ${err.status} ${err.statusText} Message: ${err.message}`;
+          return throwError(err);
+        })
+      );
+    };
+
     try {
-      await from(chunks)
-        .pipe(
-          concatMap(({ formData, chunkIndex, chunkSize }) =>
-            from(this.etlService.chunkFileUpload(formData)).pipe(
-              mergeMap((http$) => http$),
-              tap((event: any) => {
-                if (!event) return;
+      const lastIndex = totalChunks - 1;
 
-                if (event.type === HttpEventType.UploadProgress) {
-                  const chunkLoaded = Math.min(event.loaded ?? 0, chunkSize);
-                  loadedByChunk.set(chunkIndex, chunkLoaded);
-                  updateOverallProgress();
-                }
+      // Phase 1: upload 0..lastIndex-1 with 2 in parallel
+      if (lastIndex > 0) {
+        const indices = Array.from({ length: lastIndex }, (_, i) => i);
 
-                if (event.type === HttpEventType.Response) {
-                  loadedByChunk.set(chunkIndex, chunkSize);
-                  updateOverallProgress();
-                  this.onUploadFinished.emit(event.body);
-                }
-              }),
-              filter((event: any) => event?.type === HttpEventType.Response),
-              map(() => true),
-              catchError((err: HttpErrorResponse) => {
-                this.uploadStatus = `Error uploading file. Status: ${err.status} ${err.statusText} Message: ${err.message}`;
-                return throwError(err);
-              })
-            )
-          ),
-          toArray()
-        )
-        .toPromise();
+        await from(indices)
+          .pipe(
+            mergeMap((i) => uploadChunkIndex$(i), 2),
+            toArray()
+          )
+          .toPromise();
+      }
+
+      // Phase 2: upload last chunk by itself
+      if (lastIndex >= 0) {
+        await uploadChunkIndex$(lastIndex).toPromise();
+      }
 
       this.uploadProgress = 100;
       return true;
@@ -129,13 +134,12 @@ export class FileUploadService {
   };
 
   handleLongProcessPooling(processName: ETLDocImportLongProcess) {
-    let milliseconds: number = 0.01 * 60 * 1000;
+    const milliseconds = 1000 * 2; // Poll for status every 2 seconds
     return new Promise<ETLDocumentImportStatus>((resolve, reject) => {
       interval(milliseconds)
         .pipe(
           switchMap(() => this.etlService.getDocumentImportStatus()),
           takeWhile((response: { success: boolean; data: any }) => {
-            milliseconds = 0.5 * 60 * 1000;
             switch (processName) {
               case ETLDocImportLongProcess.UPLOADEXTRACTFILES:
                 return (
