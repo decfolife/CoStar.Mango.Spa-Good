@@ -13,7 +13,15 @@ import { Component, Input } from '@angular/core';
   selector: 'crem-tab-item',
   imports: [CommonModule],
   template: `
-    <div *ngIf="active" class="tab-content" [ngStyle]="{ height: height }">
+    <div
+      *ngIf="active"
+      class="tab-content"
+      role="tabpanel"
+      tabindex="0"
+      [attr.id]="'tabpanel-' + id"
+      [attr.aria-labelledby]="id"
+      [ngStyle]="{ height: height }"
+    >
       <ng-content></ng-content>
     </div>
   `,
@@ -22,15 +30,21 @@ import { Component, Input } from '@angular/core';
       state(
         'leave',
         style({
-          display: 'none',
+          opacity: 0,
+          visibility: 'hidden',
         })
       ),
       transition('* => enter', [
         style({
-          display: 'block',
           opacity: 0,
+          visibility: 'visible',
         }),
-        animate('0.3s'),
+        animate(
+          '0.3s',
+          style({
+            opacity: 1,
+          })
+        ),
       ]),
       transition('* => leave, :leave', [
         style({
@@ -45,9 +59,6 @@ import { Component, Input } from '@angular/core';
             opacity: 0,
           })
         ),
-        style({
-          display: 'none',
-        }),
       ]),
     ]),
   ],
