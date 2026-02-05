@@ -393,7 +393,7 @@ export class EtlDocumentImportComponent {
 
   private waitTillTemplateValidated() {
     this.fileUploadService
-      .handleLongProcessPooling(ETLDocImportLongProcess.VALIDTEMPLATE)
+      .handleLongProcessPolling(ETLDocImportLongProcess.VALIDTEMPLATE)
       .then((status) => {
         if (status === ETLDocumentImportStatus.TEMPLATEVALIDATED) {
           this.templateValidating = false;
@@ -418,7 +418,7 @@ export class EtlDocumentImportComponent {
 
   private waitTillFilesValidated() {
     this.fileUploadService
-      .handleLongProcessPooling(ETLDocImportLongProcess.UPLOADEXTRACTFILES)
+      .handleLongProcessPolling(ETLDocImportLongProcess.UPLOADEXTRACTFILES)
       .then((status) => {
         // If already validated, skip to showing results
         if (status === ETLDocumentImportStatus.FILESVALIDATED) {
@@ -429,7 +429,7 @@ export class EtlDocumentImportComponent {
         if (status === ETLDocumentImportStatus.FILESEXTRACTED) {
           this.displayFileValidatingMsg();
           this.fileUploadService
-            .handleLongProcessPooling(ETLDocImportLongProcess.VALIDATEFILES)
+            .handleLongProcessPolling(ETLDocImportLongProcess.VALIDATEFILES)
             .then((validateStatus) => {
               if (validateStatus === ETLDocumentImportStatus.FILESVALIDATED) {
                 this.showFilesValidatinResult();
@@ -465,7 +465,7 @@ export class EtlDocumentImportComponent {
 
   private waitTillMapToObjectsCompleted() {
     this.fileUploadService
-      .handleLongProcessPooling(ETLDocImportLongProcess.MAPTOOBJECTS)
+      .handleLongProcessPolling(ETLDocImportLongProcess.MAPTOOBJECTS)
       .then((status) => {
         if (status === ETLDocumentImportStatus.PROCESSCOMPLETED) {
           this.executingCompleted = true;
