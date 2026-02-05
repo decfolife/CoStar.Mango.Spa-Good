@@ -1,15 +1,12 @@
 import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { EventEmitter, Injectable, Output } from '@angular/core';
-import { from, interval, Subject, throwError } from 'rxjs';
+import { from, interval, of, throwError } from 'rxjs';
 import {
   catchError,
-  concatMap,
+  exhaustMap,
   filter,
   map,
   mergeMap,
-  switchMap,
-  takeUntil,
-  takeWhile,
   tap,
   toArray,
 } from 'rxjs/operators';
@@ -24,11 +21,8 @@ import { ETLService } from './etl.service';
 })
 export class FileUploadService {
   @Output() public onUploadFinished = new EventEmitter();
-  longProcessCompleted = false;
-  isDocumentImportFailed = false;
   uploadStatus = '';
   uploadProgress = 0;
-  stopSignal = new Subject<void>();
 
   constructor(private etlService: ETLService) {}
 
@@ -133,78 +127,108 @@ export class FileUploadService {
     }
   };
 
-  handleLongProcessPooling(processName: ETLDocImportLongProcess) {
+  isProcessCompleted(
+    statusId: ETLDocumentImportStatus,
+    processName: ETLDocImportLongProcess
+  ): boolean {
+    switch (processName) {
+      case ETLDocImportLongProcess.UPLOADEXTRACTFILES:
+        return (
+          statusId === ETLDocumentImportStatus.FILESEXTRACTED ||
+          statusId === ETLDocumentImportStatus.FILESVALIDATED
+        );
+      case ETLDocImportLongProcess.VALIDATEFILES:
+        return statusId === ETLDocumentImportStatus.FILESVALIDATED;
+      case ETLDocImportLongProcess.VALIDTEMPLATE:
+        return statusId === ETLDocumentImportStatus.TEMPLATEVALIDATED;
+      case ETLDocImportLongProcess.MAPTOOBJECTS:
+        return statusId === ETLDocumentImportStatus.PROCESSCOMPLETED;
+      default:
+        return false;
+    }
+  }
+
+  // Get the status that indicates the process failed and reverted to previous step
+  getPreviousStepStatus(
+    processName: ETLDocImportLongProcess
+  ): ETLDocumentImportStatus | null {
+    switch (processName) {
+      case ETLDocImportLongProcess.VALIDATEFILES:
+        return ETLDocumentImportStatus.FILESUPLOADED;
+      case ETLDocImportLongProcess.VALIDTEMPLATE:
+        return ETLDocumentImportStatus.FILESVALIDATED;
+      case ETLDocImportLongProcess.MAPTOOBJECTS:
+        return ETLDocumentImportStatus.TEMPLATEVALIDATED;
+      default:
+        // ETLDocImportLongProcess.UPLOADEXTRACTFILES does not have a previous step.
+        // If it errors out, it will be set to NOTSTARTED which is handled separately in handleLongProcessPolling
+        return null;
+    }
+  }
+
+  handleLongProcessPolling(processName: ETLDocImportLongProcess) {
     const milliseconds = 1000 * 2; // Poll for status every 2 seconds
+
+    const previousStepStatus = this.getPreviousStepStatus(processName);
+
     return new Promise<ETLDocumentImportStatus>((resolve, reject) => {
-      interval(milliseconds)
+      const subscription = interval(milliseconds)
         .pipe(
-          switchMap(() => this.etlService.getDocumentImportStatus()),
-          takeWhile((response: { success: boolean; data: any }) => {
-            switch (processName) {
-              case ETLDocImportLongProcess.UPLOADEXTRACTFILES:
-                return (
-                  response.data.StatusId !==
-                    ETLDocumentImportStatus.FILESEXTRACTED &&
-                  response.data.StatusId !==
-                    ETLDocumentImportStatus.FILESVALIDATED
-                );
-              case ETLDocImportLongProcess.VALIDATEFILES:
-                return (
-                  response.data.StatusId !==
-                  ETLDocumentImportStatus.FILESVALIDATED
-                );
-              case ETLDocImportLongProcess.VALIDTEMPLATE:
-                return (
-                  response.data.StatusId !==
-                  ETLDocumentImportStatus.TEMPLATEVALIDATED
-                );
-              case ETLDocImportLongProcess.MAPTOOBJECTS:
-                return (
-                  response.data.StatusId !==
-                  ETLDocumentImportStatus.PROCESSCOMPLETED
-                );
-            }
-          }, true),
-          takeUntil(this.stopSignal)
+          // ExhaustMap ensures only one inner observable is active at a time
+          // Ex: Polling every 2 seconds but a request is taking longer than 2 seconds,
+          // wait until that request completes before sending another. In other words,
+          // poll at most every two seconds.
+          exhaustMap(() =>
+            this.etlService.getDocumentImportStatus().pipe(
+              catchError((err) => {
+                console.warn('[Polling] API error, will retry:', err);
+                return of(null);
+              })
+            )
+          )
         )
         .subscribe({
           next: (response) => {
-            let processCompleted = false;
-            switch (processName) {
-              case ETLDocImportLongProcess.UPLOADEXTRACTFILES:
-                processCompleted =
-                  response.data.StatusId ===
-                    ETLDocumentImportStatus.FILESEXTRACTED ||
-                  response.data.StatusId ===
-                    ETLDocumentImportStatus.FILESVALIDATED;
-                break;
-              case ETLDocImportLongProcess.VALIDATEFILES:
-                processCompleted =
-                  response.data.StatusId ===
-                  ETLDocumentImportStatus.FILESVALIDATED;
-                break;
-              case ETLDocImportLongProcess.VALIDTEMPLATE:
-                processCompleted =
-                  response.data.StatusId ===
-                  ETLDocumentImportStatus.TEMPLATEVALIDATED;
-                break;
-              case ETLDocImportLongProcess.MAPTOOBJECTS:
-                processCompleted =
-                  response.data.StatusId ===
-                  ETLDocumentImportStatus.PROCESSCOMPLETED;
-                break;
+            const resp = response as { success: boolean; data: any } | null;
+            // Skip invalid responses (but allow StatusId 0)
+            if (
+              !resp?.data ||
+              (resp.data.StatusId === undefined && resp.data.StatusId !== 0)
+            ) {
+              return;
             }
-            if (processCompleted) {
-              this.longProcessCompleted = true;
-              this.stopSignal.next();
-              this.stopSignal.complete();
-              return resolve(response.data.StatusId);
+
+            const statusId: ETLDocumentImportStatus = resp.data.StatusId;
+
+            // Check if process was cancelled
+            if (statusId === ETLDocumentImportStatus.NOTSTARTED) {
+              console.warn('[Polling] Process Cancelled');
+              subscription.unsubscribe();
+              reject('Process Cancelled');
+              return;
+            }
+
+            // Check if the process was set back to the last good step
+            if (previousStepStatus && statusId <= previousStepStatus) {
+              subscription.unsubscribe();
+              console.error(
+                '[Polling] Process Cancelled or Reverted',
+                statusId,
+                previousStepStatus
+              );
+              reject('Process Cancelled or Reverted');
+              return;
+            }
+
+            if (this.isProcessCompleted(statusId, processName)) {
+              subscription.unsubscribe();
+              resolve(statusId);
             }
           },
-          complete: () => {
-            //console.log('interval Observable completed')
+          error: (err) => {
+            console.error('[Polling] Error:', err);
+            reject(`Error occurred. - ${err}`);
           },
-          error: (err) => reject(`Error occurred. - ${err}`),
         });
     });
   }
