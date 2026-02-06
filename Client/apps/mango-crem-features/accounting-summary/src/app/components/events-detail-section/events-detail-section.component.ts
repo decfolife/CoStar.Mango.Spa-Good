@@ -1112,6 +1112,7 @@ export class EventsDetailSectionComponent
             this.isAccountingEventEmpty = false;
             this.eventsGridSetup(this.masterScheduleID);
             this.emitDataChanged();
+            this.accountingSummaryService.setLockAddButton(false);
           } else if (!response.success) {
             this.accountingSummaryService.errorNotify(
               response.clientErrorMessage
@@ -1124,6 +1125,7 @@ export class EventsDetailSectionComponent
             );
             this.emitDataChanged();
           }
+          this.accountingSummaryService.setLockAddButton(false);
         })
     );
   }
@@ -1303,8 +1305,10 @@ export class EventsDetailSectionComponent
               'error',
               false
             );
+            if (this.accountingSummaryService.lockAddButton) {
+              this.accountingSummaryService.setLockAddButton(false);
+            }
           }
-          this.accountingSummaryService.setLockAddButton(false);
           this.eventsDataGrid.instance.endCustomLoading();
         })
     );
