@@ -66,7 +66,11 @@ import CheckBox from 'devextreme/ui/check_box';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 import { AddCompanyModalComponent } from '@mango/ui-shared/lib-ui-shared';
 import { AddContactModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-contact-modal/add-contact-modal.component';
-import { ObjectType, RequestType } from '@mango/data-models/lib-data-models';
+import {
+  ObjectType,
+  ObjectTypeTypeID,
+  RequestType,
+} from '@mango/data-models/lib-data-models';
 import { AddNoteComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-note/add-note.component';
 
 type VBBool = boolean | string;
@@ -1131,9 +1135,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
     this.isButtonClick = true;
     const objectId = cellNav?.objectId;
     const objectTypeId = cellNav?.objectTypeId;
+    const objectTypeTypeId = cellNav?.objectTypeTypeId;
     if (cellNav.fieldType === FieldType.PopupWindow) {
       this.saveStateToSession();
-      this.openNotesModal(objectId, objectTypeId);
+      this.openNotesModal(objectId, objectTypeId, objectTypeTypeId);
       return;
     }
 
@@ -2964,10 +2969,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  openNotesModal(objectId, objectTypeId) {
+  openNotesModal(objectId, objectTypeId, objectTypeTypeId) {
     const dataForNote = {
       objectId: objectId,
       objectTypeId: objectTypeId,
+      objectTypeTypeID: objectTypeTypeId,
     };
 
     const dialogRef = this.dialog.open(AddNoteComponent, {
