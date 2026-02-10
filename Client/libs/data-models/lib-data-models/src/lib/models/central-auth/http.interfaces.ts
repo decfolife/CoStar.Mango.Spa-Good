@@ -62,10 +62,6 @@ export interface OAuthTokenHTTPResponse {
 
 export interface CreateClientRequest {
   email: string;
-  //name: string;
-  //description: string;
-  //accessTokenLifetimeInSeconds: number;
-  //requestedScopes: string[];
 }
 
 export interface CreateClientResponse {
