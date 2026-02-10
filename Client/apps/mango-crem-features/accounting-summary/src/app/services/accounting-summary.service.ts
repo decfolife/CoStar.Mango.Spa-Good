@@ -385,7 +385,9 @@ export class AccountingSummaryService extends EndpointService {
   }
 
   setLockAddButton(lock: boolean) {
-    this.lockAddButton.next(lock);
+    if (this.lockAddButton.value !== lock) {
+      this.lockAddButton.next(lock);
+    }
   }
 
   getIsLocked() {
