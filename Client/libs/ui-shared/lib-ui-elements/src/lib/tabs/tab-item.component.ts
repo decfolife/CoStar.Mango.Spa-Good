@@ -30,21 +30,15 @@ import { Component, Input } from '@angular/core';
       state(
         'leave',
         style({
-          opacity: 0,
-          visibility: 'hidden',
+          display: 'none',
         })
       ),
       transition('* => enter', [
         style({
           opacity: 0,
-          visibility: 'visible',
+          display: 'block',
         }),
-        animate(
-          '0.3s',
-          style({
-            opacity: 1,
-          })
-        ),
+        animate('0.3s'),
       ]),
       transition('* => leave, :leave', [
         style({
@@ -59,6 +53,9 @@ import { Component, Input } from '@angular/core';
             opacity: 0,
           })
         ),
+        style({
+          display: 'none',
+        }),
       ]),
     ]),
   ],
