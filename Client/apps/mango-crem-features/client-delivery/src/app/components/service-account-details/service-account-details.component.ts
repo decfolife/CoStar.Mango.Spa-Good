@@ -12,6 +12,8 @@ import { ModalModule, ButtonModule } from '@mango/ui-shared/lib-ui-elements';
 import { ClientDeliveryService } from '../../services/client-delivery.service';
 import { ResetPasswordConfirmationComponent } from '../reset-password-confirmation/reset-password-confirmation.component';
 import { UserMaintenanceService } from '../../../../../user-maintenance/src/app/components/user-maintenance/user-maintenance.service';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
+import { ToastState } from '@mango/data-models/lib-data-models';
 
 @Component({
   standalone: true,
@@ -37,7 +39,8 @@ export class ServiceAccountDetailsComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<ServiceAccountDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: ClientDeliveryService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastService: CremToastService
   ) {}
 
   ngOnInit(): void {
@@ -45,8 +48,19 @@ export class ServiceAccountDetailsComponent implements OnInit, OnDestroy {
       this.userMaintenanceService.getServiceAccountChangeHistory(
         this.data.contactId
       );
-    this.active = this.data.contactActive ? 'Yes' : 'No';
-    this.emailAddress = this.data.contactEmailAddress;
+
+    this.changeHistoryData$.subscribe((data) => {
+      if (this.columns == null) {
+        this.toastService.show(
+          'Failed to retrieve service account change history.',
+          'Error',
+          ToastState.ERROR
+        );
+      } else {
+        this.active = this.data.contactActive ? 'Yes' : 'No';
+        this.emailAddress = this.data.contactEmailAddress;
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -196,11 +196,11 @@ export class ServiceAccountsComponent implements OnDestroy {
           delay(1200)
         )
         .subscribe((res) => {
-          const action = contactActiveFlg ? 'reactivated' : 'deactivated';
+          const action = contactActiveFlg ? 'reactivate' : 'deactivate';
 
           this.toastService.show(
             res.success
-              ? 'Service account has been successfully ' + action
+              ? 'Service account has been successfully ' + action + 'd.'
               : 'Failed to ' + action + ' service account.',
             res.success ? 'Success' : 'Error',
             res.success ? ToastState.SUCCESS : ToastState.ERROR
