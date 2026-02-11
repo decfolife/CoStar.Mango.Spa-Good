@@ -77,6 +77,7 @@ export class AddNoteComponent implements OnInit, OnDestroy {
   disableSaveBtn = false;
   isInEditMode = false;
   includeNoteHistory: boolean = null;
+  noteTypeFilter = null;
   private noteId: number;
   private objectId: number;
   private objectTypeId: number;
@@ -97,7 +98,8 @@ export class AddNoteComponent implements OnInit, OnDestroy {
     this.dragPosition = data.dragPosition;
     this.objectId = data.objectId;
     this.objectTypeId = data.objectTypeId;
-    this.objectTypeTypeID = data?.objectTypeTypeId || 0;
+    this.objectTypeTypeID = data?.objectTypeTypeID || 0;
+    this.noteTypeFilter = data?.noteTypeId || 0;
     this.commonNoteText = data?.commonNoteText;
     this.editNoteNoteTypeid = data?.selectedNoteTypeId;
     this.includeNoteHistory = data?.includeNoteHistory;
@@ -112,6 +114,7 @@ export class AddNoteComponent implements OnInit, OnDestroy {
     if (this.noteId > 0) {
       this.isInEditMode = true;
     }
+
     if (!this.isInEditMode || this.includeNoteHistory) {
       this.getNoteHistory();
     }
@@ -302,7 +305,7 @@ export class AddNoteComponent implements OnInit, OnDestroy {
   private getCommonNoteHistory() {
     this.subs.push(
       this.listNotesService
-        .getNotes(this.objectId, this.objectTypeId, this.objectTypeTypeID)
+        .getNotes(this.objectId, this.objectTypeId, this.noteTypeFilter)
         .subscribe((res) => {
           if (!!res && res.success) {
             this.notesList = res.data.commonNotes;

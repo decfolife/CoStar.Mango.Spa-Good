@@ -66,11 +66,7 @@ import CheckBox from 'devextreme/ui/check_box';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 import { AddCompanyModalComponent } from '@mango/ui-shared/lib-ui-shared';
 import { AddContactModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-contact-modal/add-contact-modal.component';
-import {
-  ObjectType,
-  ObjectTypeTypeID,
-  RequestType,
-} from '@mango/data-models/lib-data-models';
+import { ObjectType } from '@mango/data-models/lib-data-models';
 import { AddNoteComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-note/add-note.component';
 
 type VBBool = boolean | string;
@@ -1136,9 +1132,13 @@ export class ListPageComponent implements OnInit, OnDestroy {
     const objectId = cellNav?.objectId;
     const objectTypeId = cellNav?.objectTypeId;
     const objectTypeTypeId = cellNav?.objectTypeTypeId;
+    let noteTypeId = null;
+    if (cellNav?.urlLink?.includes('isNoteType=')) {
+      noteTypeId = cellNav.urlLink.split('isNoteType=')[1].split('&')[0];
+    }
     if (cellNav.fieldType === FieldType.PopupWindow) {
       this.saveStateToSession();
-      this.openNotesModal(objectId, objectTypeId, objectTypeTypeId);
+      this.openNotesModal(objectId, objectTypeId, objectTypeTypeId, noteTypeId);
       return;
     }
 
@@ -2969,11 +2969,12 @@ export class ListPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  openNotesModal(objectId, objectTypeId, objectTypeTypeId) {
+  openNotesModal(objectId, objectTypeId, objectTypeTypeId, noteTypeId) {
     const dataForNote = {
       objectId: objectId,
       objectTypeId: objectTypeId,
       objectTypeTypeID: objectTypeTypeId,
+      noteTypeId: noteTypeId,
     };
 
     const dialogRef = this.dialog.open(AddNoteComponent, {
