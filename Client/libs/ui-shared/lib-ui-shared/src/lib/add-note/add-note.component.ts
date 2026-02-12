@@ -114,8 +114,14 @@ export class AddNoteComponent implements OnInit, OnDestroy {
     if (this.noteId > 0) {
       this.isInEditMode = true;
     }
-
-    if (!this.isInEditMode || this.includeNoteHistory) {
+    if (
+      this.includeNoteHistory === undefined ||
+      this.includeNoteHistory === null
+    ) {
+      if (!this.isInEditMode) {
+        this.getNoteHistory();
+      }
+    } else if (this.includeNoteHistory) {
       this.getNoteHistory();
     }
   }
