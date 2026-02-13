@@ -123,16 +123,8 @@ export class ServiceAccountsComponent implements OnDestroy {
   }
 
   openAccountDetails(e: any): void {
-    try {
-      if (e.rowType != 'header' && e.column.dataField !== 'Actions') {
-        this.openServiceAccountDetailsComponentPopup(e.data);
-      }
-    } catch (error) {
-      this.toastService.show(
-        'An error occurred while opening service account details.',
-        'Error',
-        ToastState.ERROR
-      );
+    if (e.rowType != 'header' && e.column.dataField !== 'Actions') {
+      this.openServiceAccountDetailsComponentPopup(e.data);
     }
   }
 
