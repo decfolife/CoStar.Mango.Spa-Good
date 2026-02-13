@@ -123,7 +123,11 @@ export class ServiceAccountsComponent implements OnDestroy {
   }
 
   openAccountDetails(e: any): void {
-    if (e.rowType != 'header' && e.column.dataField !== 'Actions') {
+    if (
+      e.rowIndex != -1 &&
+      e.rowType != 'header' &&
+      e.column.dataField !== 'Actions'
+    ) {
       this.openServiceAccountDetailsComponentPopup(e.data);
     }
   }
