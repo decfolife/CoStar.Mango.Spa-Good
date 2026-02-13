@@ -200,7 +200,7 @@ export class ServiceAccountsComponent implements OnDestroy {
 
           this.toastService.show(
             res.success
-              ? 'Service account has been successfully ' + action + 'd.'
+              ? 'Service account successfully ' + action + 'd.'
               : 'Failed to ' + action + ' service account.',
             res.success ? 'Success' : 'Error',
             res.success ? ToastState.SUCCESS : ToastState.ERROR
@@ -310,23 +310,21 @@ export class ServiceAccountsComponent implements OnDestroy {
   }
 
   private getServiceAccounts() {
-    try {
-      this.subs.push(
-        this.userMaintenanceService
-          .getServiceAccounts()
-          .subscribe((serviceAccounts) => {
-            this.allServiceAccounts = serviceAccounts;
-            this.filterServiceAccountData(this.selectedFilter);
-            this.searchDataGrid(this.searchText);
-          })
-      );
-    } catch (error) {
-      this.toastService.show(
-        'An error occurred while fetching service accounts.',
-        'Error',
-        ToastState.ERROR
-      );
-    }
+    this.subs.push(
+      this.userMaintenanceService.getServiceAccounts().subscribe((res) => {
+        if (res && res.length > 0) {
+          this.allServiceAccounts = res;
+          this.filterServiceAccountData(this.selectedFilter);
+          this.searchDataGrid(this.searchText);
+        } else {
+          this.toastService.show(
+            'An error occurred while fetching service accounts.',
+            'Error',
+            ToastState.ERROR
+          );
+        }
+      })
+    );
   }
 
   private filterServiceAccountData(filterBy: Status) {

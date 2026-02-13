@@ -50,15 +50,15 @@ export class ServiceAccountDetailsComponent implements OnInit, OnDestroy {
       );
 
     this.changeHistoryData$.subscribe((data) => {
-      if (this.columns == null) {
+      if (data && data.length > 0) {
+        this.active = this.data.contactActive ? 'Yes' : 'No';
+        this.emailAddress = this.data.contactEmailAddress;
+      } else {
         this.toastService.show(
-          'Failed to retrieve service account change history.',
+          'Error fetching change history for this service account.',
           'Error',
           ToastState.ERROR
         );
-      } else {
-        this.active = this.data.contactActive ? 'Yes' : 'No';
-        this.emailAddress = this.data.contactEmailAddress;
       }
     });
   }
@@ -75,12 +75,24 @@ export class ServiceAccountDetailsComponent implements OnInit, OnDestroy {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
         this.subs.push(
-          this.service.resetPassword(this.emailAddress).subscribe((result) => {
-            if (result) {
-              this.closeDialog();
+          this.service.resetPassword(this.emailAddress).subscribe((res) => {
+            this.closeDialog();
+
+            if (res && res === true) {
+              this.toastService.show(
+                'Password successfully reset for this service account.',
+                'Success',
+                ToastState.SUCCESS
+              );
+            } else {
+              this.toastService.show(
+                'Error resetting password for this service account.',
+                'Error',
+                ToastState.ERROR
+              );
             }
           })
         );

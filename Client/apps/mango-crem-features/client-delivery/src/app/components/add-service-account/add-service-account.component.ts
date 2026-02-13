@@ -86,40 +86,23 @@ export class AddServiceAccountComponent {
       )
         this.errorMsg = 'This email address already exists.';
       else
-        try {
-          this.clientDeliveryService
-            .addServiceAccount(request)
-            .subscribe((res) => {
-              if (res.success) {
-                this.errorMsg = '';
-                this.toastService.show(
-                  'Service account has been added successfully.',
-                  'Success',
-                  ToastState.SUCCESS
-                );
+        this.clientDeliveryService
+          .addServiceAccount(request)
+          .subscribe((res) => {
+            if (res.success) {
+              this.errorMsg = '';
+              this.toastService.show(
+                'Service account successfully added.',
+                'Success',
+                ToastState.SUCCESS
+              );
 
-                this.dialogRef.close(request);
-              } else if (
-                res.clientErrorMessage.includes(
-                  'User updates were not successful'
-                )
-              )
-                this.errorMsg =
-                  'Failed to create the service account. Please try again or contact your administrator.';
-              else
-                this.toastService.show(
-                  'An error occurred while adding the service account.',
-                  'Error',
-                  ToastState.ERROR
-                );
-            });
-        } catch (error) {
-          this.toastService.show(
-            'An error occurred while adding the service account.',
-            'Error',
-            ToastState.ERROR
-          );
-        }
+              this.dialogRef.close(request);
+            } else {
+              this.errorMsg =
+                'Failed to create the service account. Please try again or contact your administrator.';
+            }
+          });
     } else {
       this.errorMsg =
         request.email.length === 0
