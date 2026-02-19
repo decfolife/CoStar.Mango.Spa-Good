@@ -186,6 +186,9 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
             this.loadImportTemplateTypes();
             this.loadGrid();
             this.onFormChange();
+            this.SetIncludeColumnVisibility(
+              this.templateDetails.templateTypeId
+            );
             this.isLoading = false;
             this.subscribeToAllFormControls();
           } else {
@@ -619,6 +622,66 @@ export class EtlTemplatesDetailsComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  SetIncludeColumnVisibility(templateTypeId: number) {
+    switch (templateTypeId) {
+      case TemplateTypes.Forms:
+        this.isIncludedColumnVisible = true;
+        break;
+
+      case TemplateTypes.Financials:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.Accounting:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.AccountingCalendar:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.Notes:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.Options:
+        this.isIncludedColumnVisible = true;
+        break;
+
+      case TemplateTypes.OptionCharges:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.ExchangeRates:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.PortfolioAllocations:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.LeaseAllocations:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.APHistory:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      case TemplateTypes.DiscountRates:
+        this.isIncludedColumnVisible = true;
+        break;
+
+      case TemplateTypes.DocumentMapping:
+        this.isIncludedColumnVisible = false;
+        break;
+
+      default:
+        this.isIncludedColumnVisible = false;
+        break;
+    }
   }
 
   loadKeyField() {
