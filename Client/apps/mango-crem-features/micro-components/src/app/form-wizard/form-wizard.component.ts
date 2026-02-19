@@ -955,7 +955,7 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
         this.formData.CurrencyID?.value?.[0]?.exchangeRateID;
     }
 
-    if (this.formData.country?.value?.[0]?.Country) {
+    if (this.formData.country?.value) {
       saveObject.Country = this.formData.country?.value?.[0]?.country;
     }
 
