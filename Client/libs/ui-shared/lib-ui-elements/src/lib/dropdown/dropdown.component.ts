@@ -25,6 +25,7 @@ import {
 } from 'devextreme-angular';
 import { CremValidatedComponent } from '../base';
 import { dxValidatorResult } from 'devextreme/ui/validator';
+import CustomStore from 'devextreme/data/custom_store';
 
 /**
  *
@@ -296,8 +297,9 @@ export class DropdownComponent
   ngOnChanges(changes: SimpleChanges): void {
     const { previousValue, currentValue } = changes.dataSource || {};
 
-    if (this.sort)
+    if (this.sort && Array.isArray(this.dataSource)) {
       this.dataSource = this.sortByParameter(this.dataSource, this.sort);
+    }
 
     if (
       previousValue !== currentValue &&
@@ -419,59 +421,84 @@ export class DropdownComponent
       this.dataGrid.instance ? this.dataGrid.instance.clearSelection() : null;
       this.selectedItems.emit([]);
     } else if (this.useSelectBox) {
-      let index = -1;
-      let itemIndex = -1;
-      let groupIndex = -1;
-      if (this.grouped) {
-        (this.dataSource?._items || this.dataSource || []).forEach(
-          (group, gIndex) => {
-            const tempItemIndex = group.items?.findIndex((data) => {
-              return data?.[this.valueExpr] === $event?.value;
-            });
-
-            if (tempItemIndex !== -1) {
-              groupIndex = gIndex;
-              itemIndex = tempItemIndex;
+      // When dataSource is a DataSource with a CustomStore, we can't iterate _items
+      // because only the currently loaded page is available. Use byKey instead.
+      const store = this.dataSource?.store?.();
+      if (store instanceof CustomStore && store.key() && $event.value != null) {
+        store.byKey($event.value).then((item) => {
+          if (item) {
+            if (this.emitWholeEvent) {
+              this.selectedItems.emit($event);
+            } else {
+              this.modalValueChanging = true;
+              this.selectedItems.emit([item]);
+              setTimeout(() => {
+                this.selectBox.instance.close();
+              });
+              setTimeout(() => {
+                this.modalValueChanging = false;
+              }, 400);
             }
+          } else {
+            this.clearSelectBox();
+            this.selectedItems.emit([]);
           }
-        );
+        });
       } else {
-        index = (this.dataSource?._items || this.dataSource || []).findIndex(
-          (data) => {
-            return data?.[this.valueExpr] === $event?.value;
-          }
-        );
-      }
+        let index = -1;
+        let itemIndex = -1;
+        let groupIndex = -1;
+        if (this.grouped) {
+          (this.dataSource?._items || this.dataSource || []).forEach(
+            (group, gIndex) => {
+              const tempItemIndex = group.items?.findIndex((data) => {
+                return data?.[this.valueExpr] === $event?.value;
+              });
 
-      if (this.emitWholeEvent) {
-        this.selectedItems.emit($event);
-      } else {
-        if (!this.grouped && index !== -1) {
-          this.modalValueChanging = true;
-          this.selectedItems.emit([
-            (this.dataSource?._items || this.dataSource || [])[index],
-          ]);
-          setTimeout(() => {
-            this.selectBox.instance.close();
-          });
-          setTimeout(() => {
-            this.modalValueChanging = false;
-          }, 400);
-        } else if (this.grouped && itemIndex !== -1) {
-          this.modalValueChanging = true;
-          this.selectedItems.emit([
-            (this.dataSource?._items || this.dataSource || [])[groupIndex]
-              .items[itemIndex],
-          ]);
-          setTimeout(() => {
-            this.selectBox.instance.close();
-          });
-          setTimeout(() => {
-            this.modalValueChanging = false;
-          }, 400);
+              if (tempItemIndex !== -1) {
+                groupIndex = gIndex;
+                itemIndex = tempItemIndex;
+              }
+            }
+          );
         } else {
-          this.clearSelectBox();
-          this.selectedItems.emit([]);
+          index = (this.dataSource?._items || this.dataSource || []).findIndex(
+            (data) => {
+              return data?.[this.valueExpr] === $event?.value;
+            }
+          );
+        }
+
+        if (this.emitWholeEvent) {
+          this.selectedItems.emit($event);
+        } else {
+          if (!this.grouped && index !== -1) {
+            this.modalValueChanging = true;
+            this.selectedItems.emit([
+              (this.dataSource?._items || this.dataSource || [])[index],
+            ]);
+            setTimeout(() => {
+              this.selectBox.instance.close();
+            });
+            setTimeout(() => {
+              this.modalValueChanging = false;
+            }, 400);
+          } else if (this.grouped && itemIndex !== -1) {
+            this.modalValueChanging = true;
+            this.selectedItems.emit([
+              (this.dataSource?._items || this.dataSource || [])[groupIndex]
+                .items[itemIndex],
+            ]);
+            setTimeout(() => {
+              this.selectBox.instance.close();
+            });
+            setTimeout(() => {
+              this.modalValueChanging = false;
+            }, 400);
+          } else {
+            this.clearSelectBox();
+            this.selectedItems.emit([]);
+          }
         }
       }
     }

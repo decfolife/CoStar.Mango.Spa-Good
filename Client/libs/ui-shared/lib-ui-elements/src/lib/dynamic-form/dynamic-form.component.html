@@ -110,7 +110,8 @@
                 [isDisabled]="
                   configKey[data.dataField]?.disabled ||
                   (!configKey[data.dataField]?.required &&
-                    !configKey[data.dataField]?.dataSource?.length) ||
+                    !configKey[data.dataField]?.dataSource?.length &&
+                    !configKey[data.dataField]?.dataSource?._store) ||
                   readOnly
                 "
                 dropDownContainerCustomClass="dynamicFormDropDown"
@@ -146,6 +147,8 @@
                 "
                 (selectedItems)="onChange($event, 'dropdown', data.dataField)"
                 [containerized]="true"
+                [searchMode]="'contains'"
+                [searchExpr]="configKey[data.dataField].searchExpr"
               ></crem-dropdown>
 
               <crem-dropdown

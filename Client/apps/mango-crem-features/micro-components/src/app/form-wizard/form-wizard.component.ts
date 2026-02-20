@@ -12,6 +12,8 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { DynamicFormComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/dynamic-form/dynamic-form.component';
+import DataSource from 'devextreme/data/data_source';
+import CustomStore from 'devextreme/data/custom_store';
 
 interface ISaveObject {
   CompanyID?: number;
@@ -78,6 +80,8 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
   @ViewChild('FormWizardDynamicForm')
   dynamicForm: DynamicFormComponent;
   private onDestroy$: Subject<void> = new Subject<void>();
+  public loadedBuildings = new Map<number, any>();
+  private MAX_PAGE_SIZE = 100000;
 
   constructor(private formWizardService: FormWizardService) {}
   ngOnInit(): void {
@@ -229,7 +233,17 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
                         }
 
                         this.formWizardService
-                          .getRenderSelect(noStateCountry, 73)
+                          .getRenderSelect(
+                            noStateCountry,
+                            73,
+                            '0',
+                            '0',
+                            '0',
+                            '0',
+                            1,
+                            this.MAX_PAGE_SIZE,
+                            false
+                          )
                           .subscribe((buildingData) => {
                             this.buildingDropdownItem = buildingData.data;
                             this.buildingDropdownItem.sort((a, b) => {
@@ -303,7 +317,17 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
                             '"' + countryName + '--' + stateName + '"';
 
                           this.formWizardService
-                            .getRenderSelect(countryState, 73)
+                            .getRenderSelect(
+                              countryState,
+                              73,
+                              '0',
+                              '0',
+                              '0',
+                              '0',
+                              1,
+                              this.MAX_PAGE_SIZE,
+                              false
+                            )
                             .subscribe((data) => {
                               this.buildingDropdownItem = data.data;
                               this.buildingDropdownItem.sort((a, b) => {
@@ -747,19 +771,11 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
               this.stateProvinceDropdownItem = data.data;
               config.values['stateProvince'].dataSource =
                 this.stateProvinceDropdownItem;
-              config.values['building'].dataSource = [];
               if (data?.data?.length === 0) {
-                this.formWizardService
-                  .getRenderSelect(noStateCountry, 73)
-                  .subscribe((data) => {
-                    this.buildingDropdownItem = data.data;
-                    this.buildingDropdownItem.sort((a, b) => {
-                      return this.compareObjectByKey(a, b, 'buildingName');
-                    });
-                    config.values['building'].dataSource =
-                      this.buildingDropdownItem;
-                    this.setLoadingCondition(false);
-                  });
+                config.values['building'].dataSource =
+                  this.buildBuildingDataSource(noStateCountry);
+                config.values['building'].searchExpr = 'buildingName';
+
                 config.values['stateProvince'].combinationType = 'text';
                 config.values['stateProvince'].value = '';
               } else {
@@ -808,16 +824,9 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
 
         if (countryName && stateName) {
           this.setLoadingCondition(true);
-          this.formWizardService
-            .getRenderSelect(countryState, 73)
-            .subscribe((data) => {
-              this.buildingDropdownItem = data.data;
-              this.buildingDropdownItem.sort((a, b) => {
-                return this.compareObjectByKey(a, b, 'buildingName');
-              });
-              config.values['building'].dataSource = this.buildingDropdownItem;
-              this.setLoadingCondition(false);
-            });
+          config.values['building'].dataSource =
+            this.buildBuildingDataSource(countryState);
+          config.values['building'].searchExpr = 'buildingName';
         } else {
           config.values['building'].dataSource = [];
         }
@@ -1015,5 +1024,67 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
 
   private setLoadingCondition(loadCondition) {
     this.loadCondition.emit(loadCondition);
+  }
+
+  private buildBuildingDataSource(lookupId: string) {
+    return new DataSource({
+      paginate: true,
+      pageSize: 25,
+      searchExpr: 'buildingName',
+      searchOperation: 'contains',
+      store: new CustomStore({
+        key: 'buildingID',
+        load: async (loadOptions) => {
+          try {
+            const params = {
+              page: loadOptions.skip / loadOptions.take + 1 || 1,
+              pageSize: loadOptions.take || 25,
+              searchValue: loadOptions.searchValue || '',
+            };
+            const result = await this.formWizardService
+              .getRenderSelect(
+                lookupId,
+                73,
+                params.searchValue,
+                '',
+                '',
+                '',
+                params.page,
+                params.pageSize
+              )
+              .toPromise();
+
+            if (!result.success) {
+              return { data: [], totalCount: 0 };
+            }
+
+            // Cache every loaded item. "byKey" is required to be defined for the DataSource to work,
+            // even if we are not using it to load single items. This is because when an item is selected in the dropdown,
+            // it tries to find that item in the cache using "byKey" before displaying it
+            (result.data ?? []).forEach((item) =>
+              this.loadedBuildings.set(item.buildingID, item)
+            );
+
+            return {
+              data: result.data,
+              // Make devextreme think there are more items to load unless
+              // the number of results returned is less than the page size,
+              // then we know for sure there are no more items to load and we can stop further calls to the API.
+              totalCount:
+                result.data?.length < params.pageSize
+                  ? loadOptions.skip + result.data.length
+                  : loadOptions.skip + loadOptions.take + 100000,
+            };
+          } catch (error) {
+            return { data: [], totalCount: 0 };
+          } finally {
+            this.setLoadingCondition(false);
+          }
+        },
+        byKey: async (key) => {
+          return this.loadedBuildings.get(key) ?? null;
+        },
+      }),
+    });
   }
 }
