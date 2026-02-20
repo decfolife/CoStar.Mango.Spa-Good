@@ -61,6 +61,10 @@ export class CriteriaFormSegmentComponent {
     });
   }
 
+  private stripTime(date: Date): string {
+    return date?.toISOString().split('T')[0];
+  }
+
   public setconfigObjects() {
     this.loading = true;
     let selectedPortfolioIndex;
@@ -611,22 +615,22 @@ export class CriteriaFormSegmentComponent {
         if (!isDependent) {
           saveItem1 = {
             FieldName: config[item].dataField1,
-            DateData: config[item].value1?.toJSON() || null,
+            DateData: this.stripTime(config[item].value1) || null,
           };
 
           saveItem2 = {
             FieldName: config[item].dataField2,
-            DateData: config[item].value2?.toJSON() || null,
+            DateData: this.stripTime(config[item].value2) || null,
           };
         } else {
           saveItem1 = {
             CriteriaID: config[item].dataField1,
-            DateData: config[item].value1?.toJSON() || null,
+            DateData: this.stripTime(config[item].value1) || null,
           };
 
           saveItem2 = {
             CriteriaID: config[item].dataField2,
-            DateData: config[item].value2?.toJSON() || null,
+            DateData: this.stripTime(config[item].value2) || null,
           };
         }
 
@@ -636,12 +640,12 @@ export class CriteriaFormSegmentComponent {
         if (!isDependent) {
           let saveItem = {
             FieldName: config[item].dataField,
-            DateData: config[item].value?.toString(),
+            DateData: this.stripTime(config[item].value),
           };
         } else {
           let saveItem = {
             CriteriaID: config[item].dataField,
-            Values: config[item].value?.toString(),
+            Values: this.stripTime(config[item].value),
           };
         }
 
@@ -822,12 +826,12 @@ export class CriteriaFormSegmentComponent {
 
         saveItem1 = {
           CriteriaID: config[item].data.criteriaID1,
-          DateData: config[item].value1?.toJSON() || null,
+          DateData: this.stripTime(config[item].value1) || null,
         };
 
         saveItem2 = {
           CriteriaID: config[item].data.criteriaID2,
-          DateData: config[item].value2?.toJSON() || null,
+          DateData: this.stripTime(config[item].value2) || null,
         };
         saveObject.push(saveItem1);
         saveObject.push(saveItem2);
@@ -858,7 +862,7 @@ export class CriteriaFormSegmentComponent {
         }
         let saveItem = {
           CriteriaID: config[item].data.criteriaID,
-          DateData: config[item].value?.toJSON() || null,
+          DateData: this.stripTime(config[item].value) || null,
         };
 
         saveObject.push(saveItem);
