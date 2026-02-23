@@ -2294,6 +2294,7 @@ export class ProjectTasksComponent
 
   refreshTasksGrid(): void {
     this.getGridData();
+    this.showQuickApprovalPopup = false;
   }
 
   onSaveTasksClick(): void {
@@ -2309,7 +2310,7 @@ export class ProjectTasksComponent
     enableApprove: boolean;
     approvalCount: number;
   }) {
-    this.saveButtonText = enableApply ? 'Apply' : null;
+    this.saveButtonText = enableApply ? 'Save' : null;
     this.selectedTaskCount$.next(approvalCount);
 
     if (approvalCount !== 0) {

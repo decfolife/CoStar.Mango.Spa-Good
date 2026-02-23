@@ -1,7 +1,7 @@
 @use 'styles' as *;
 
 .crem-quick-approval-data-grid {
-  height: 634px;
+  height: 600px;
   .dx-field-value {
     width: 100%;
   }
@@ -33,6 +33,10 @@
     & .qp-proxyMsg {
       font-style: italic;
     }
+  }
+
+  .dx-datagrid-table .dx-checkbox-container .dx-checkbox-icon {
+    border: 1px solid #3c3c3c;
   }
 }
 

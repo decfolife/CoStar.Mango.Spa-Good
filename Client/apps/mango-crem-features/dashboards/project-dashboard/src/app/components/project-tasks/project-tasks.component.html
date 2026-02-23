@@ -154,18 +154,6 @@
           <button
             type="button"
             mat-menu-item
-            class="actnBtn-copyTransaction"
-            id="pt-copyTransaction"
-            (click)="copyTransactionTemplate()"
-            [disabled]="
-              checkUserLevelRequirement(availableActions.COPY_TRANSACTION)
-            "
-          >
-            <span>Copy Transaction</span>
-          </button>
-          <button
-            type="button"
-            mat-menu-item
             class="actnBtn-quickApproval"
             id="pt-quickApproval"
             (click)="openQuickApprovalPopup()"
@@ -174,6 +162,18 @@
             "
           >
             <span>Quick Approval</span>
+          </button>
+          <button
+            type="button"
+            mat-menu-item
+            class="actnBtn-copyTransaction"
+            id="pt-copyTransaction"
+            (click)="copyTransactionTemplate()"
+            [disabled]="
+              checkUserLevelRequirement(availableActions.COPY_TRANSACTION)
+            "
+          >
+            <span>Copy Transaction</span>
           </button>
           <button
             type="button"
