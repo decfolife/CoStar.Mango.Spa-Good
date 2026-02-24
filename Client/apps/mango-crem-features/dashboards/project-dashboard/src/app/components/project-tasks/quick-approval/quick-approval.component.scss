@@ -38,6 +38,14 @@
   .dx-datagrid-table .dx-checkbox-container .dx-checkbox-icon {
     border: 1px solid #3c3c3c;
   }
+
+  tr.dx-row {
+    &.dx-data-row {
+      td {
+        border-bottom: 1px solid lightgray;
+      }
+    }
+  }
 }
 
 .qa-summaryText {
