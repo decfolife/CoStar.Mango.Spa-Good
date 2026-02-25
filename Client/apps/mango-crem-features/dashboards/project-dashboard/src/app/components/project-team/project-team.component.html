@@ -1,11 +1,9 @@
 <div id="projectTeam-container">
   <div class="teams-toolBar-wrapper">
     <div class="controls-left">
-      <h3 class="title">
-        <crem-current-object-text
-          [data$]="currentObject"
-        ></crem-current-object-text>
-      </h3>
+      <crem-current-object-text
+        [data$]="currentObject"
+      ></crem-current-object-text>
       <div class="searchProjectTeam">
         <cs-search
           #SearchBox

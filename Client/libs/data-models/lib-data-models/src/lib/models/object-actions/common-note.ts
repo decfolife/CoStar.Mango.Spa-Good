@@ -21,4 +21,5 @@ export interface ObjectNotes {
   canView: boolean;
   canAdd: boolean;
   notes: CommonNote[];
+  displayString: string;
 }

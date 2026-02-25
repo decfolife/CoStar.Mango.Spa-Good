@@ -1,3 +1,4 @@
 <div *ngIf="transformedData$ | async as data">
-  <strong>{{data.objectType}}</strong>{{ data.objectName }}
+  <strong>{{ data?.objectType }}</strong
+  >{{ data?.displayString ?? data?.objectName }}
 </div>

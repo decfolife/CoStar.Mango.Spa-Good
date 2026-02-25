@@ -81,6 +81,7 @@ export class CurrentObjectService extends EndpointService {
               otid: parseInt(otid),
               objectName: data.objectName,
               objectType: data.objectType,
+              displayString: data.displayString,
             };
 
             this.cache.set(cacheKey, fullData);
