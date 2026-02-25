@@ -190,8 +190,11 @@ export class ObjectHistoryComponent implements OnInit, OnDestroy {
           if (nameResponse.success) {
             this.object = nameResponse.data;
             this.tabTitle = `${this.object[0].objectType.trim()}:`;
-            this.pageTitle =
-              this.object[0].displayString ?? this.object[0].objectName;
+            if (!this.object[0].displayString) {
+              this.pageTitle = this.object[0].objectName;
+            } else {
+              this.pageTitle = this.object[0].displayString;
+            }
           } else {
             this.showErrorToast();
           }

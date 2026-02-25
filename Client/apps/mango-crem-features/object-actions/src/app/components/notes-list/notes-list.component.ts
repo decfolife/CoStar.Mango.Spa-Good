@@ -117,7 +117,11 @@ export class NotesListComponent implements OnInit, OnDestroy {
         const objectNotes: ObjectNotes = notes.data;
         this.userHasViewRight = objectNotes.canView;
         this.userHasAddRight = objectNotes.canAdd;
-        this.objectName = objectNotes.displayString ?? objectNotes.objectName;
+        if (!objectNotes.displayString) {
+          this.objectName = objectNotes.objectName;
+        } else {
+          this.objectName = objectNotes.displayString;
+        }
         this.objectType = `${objectNotes.objectType.trim()}:`;
         this.notes = objectNotes.notes;
         this.noteColumns = this.notesGridColumnsService.getNoteGridColumns();
