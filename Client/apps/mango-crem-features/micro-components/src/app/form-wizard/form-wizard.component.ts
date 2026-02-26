@@ -236,10 +236,10 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
                           .getRenderSelect(
                             noStateCountry,
                             73,
-                            '0',
-                            '0',
-                            '0',
-                            '0',
+                            '',
+                            '',
+                            '',
+                            '',
                             1,
                             this.MAX_PAGE_SIZE,
                             false
@@ -320,10 +320,10 @@ export class FormWizardAppComponent implements OnInit, OnDestroy {
                             .getRenderSelect(
                               countryState,
                               73,
-                              '0',
-                              '0',
-                              '0',
-                              '0',
+                              '',
+                              '',
+                              '',
+                              '',
                               1,
                               this.MAX_PAGE_SIZE,
                               false
