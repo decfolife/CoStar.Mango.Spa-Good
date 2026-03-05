@@ -9,6 +9,7 @@ class EnvironmentsCrem implements Environment {
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
   baseApiUrl = 'http://api.ops.corp.virtualpremise.com:30080/';
   logRocketAppId = '';
+  rootHostName = '';
 }
 
 export const environment = new EnvironmentsCrem();
