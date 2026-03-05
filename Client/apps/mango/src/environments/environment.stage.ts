@@ -8,7 +8,8 @@ class EnvironmentsCrem implements Environment {
   CAUrl = 'https://login.stage.costarremanager.com';
   // Only needed for localhost. Otherwise use `${window.location.origin}/api`
   baseApiUrl = 'https://api.stage.costarremanager.com/';
-  logRocketAppId = '6vmxfr/spa-stage';
+  logRocketAppId = '6vmxfr/stage-rrlzr';
+  rootHostName =  '*.costarremanager.com';
 }
 
 export const environment = new EnvironmentsCrem();

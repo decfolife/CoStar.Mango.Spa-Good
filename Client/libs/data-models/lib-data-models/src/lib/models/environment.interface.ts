@@ -6,4 +6,5 @@ export abstract class Environment {
   abstract readonly baseApiUrl?: string;
   abstract readonly showPayload: boolean;
   abstract readonly logRocketAppId?: string;
+  abstract readonly rootHostName?: string;
 }

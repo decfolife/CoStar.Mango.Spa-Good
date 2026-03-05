@@ -259,7 +259,9 @@ export class AppComponent implements OnInit, OnDestroy {
   setupLogRocket() {
     if (!UtilitiesService.isUpperEnvironments()) return;
 
-    LogRocket.init(environment.logRocketAppId);
+    LogRocket.init(environment.logRocketAppId,{
+      rootHostName: environment.rootHostName
+    });
 
     this.subscriptions.push(
       combineLatest([
