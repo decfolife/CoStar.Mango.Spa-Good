@@ -3,6 +3,8 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  NgZone,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -39,7 +41,10 @@ import { CremDataIdDirective } from 'libs/core-shared/src/lib/directives/data-id
   templateUrl: './field-history.component.html',
   styleUrls: ['./field-history.component.scss'],
 })
-export class FieldHistoryComponent extends PendoDataId implements OnInit {
+export class FieldHistoryComponent
+  extends PendoDataId
+  implements OnInit, OnDestroy
+{
   @Input() helpTextID: string;
   @Input() dataSource: FieldHistoryDataSource;
   @Input() dateFormat = 'MM/dd/yyyy h:mm a';
@@ -99,8 +104,20 @@ export class FieldHistoryComponent extends PendoDataId implements OnInit {
    * regardless of whether `showInfoTab` exists.
    */
   private _historyTabIndex = 1 as number;
+  // TODO(ada-dx-upgrade): Capture-phase listener needed because DevExtreme 23 calls
+  // stopPropagation() on keydown inside widgets, blocking bubble-phase document listeners.
+  // Revisit when upgrading to a DevExtreme version with native ESC-close support on dxPopover.
+  private _escapeHandler: (e: KeyboardEvent) => void;
 
   static uniqueNum = 0 as number;
+
+  constructor(private ngZone: NgZone) {
+    super();
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('keydown', this._escapeHandler, true);
+  }
 
   ngOnInit(): void {
     this._historyTabIndex = this.showInfoTab ? 1 : 0; // If showInfoTab false then the index of the history tab is 0
@@ -165,6 +182,33 @@ export class FieldHistoryComponent extends PendoDataId implements OnInit {
     this._gridHeight = `${
       parsedHeight + tabInternalOffset + gridInternalOffset
     }px`;
+
+    this._escapeHandler = (e: KeyboardEvent) => {
+      if ((e.key === 'Escape' || e.key === 'Esc') && this.visible) {
+        this.ngZone.run(() => {
+          this.visible = false;
+          // Move focus immediately so Narrator stops reading the popover
+          // before the DevExtreme hide animation completes.
+          this.TriggerIcon?.nativeElement?.focus();
+        });
+      }
+    };
+    document.addEventListener('keydown', this._escapeHandler, true);
+  }
+
+  /**
+   * Provides attributes for the DevExtreme overlay wrapper element.
+   * role/aria-modal/aria-label must go here because DevExtreme renders
+   * the overlay outside the host element and ignores attributes set
+   * directly on <dx-popover>.
+   */
+  get popoverWrapperAttr() {
+    return {
+      class: 'field-history-popover',
+      role: 'dialog',
+      'aria-modal': 'true',
+      'aria-label': this.popoverConf?.ariaLabel,
+    };
   }
 
   toggleVisible() {
@@ -181,8 +225,8 @@ export class FieldHistoryComponent extends PendoDataId implements OnInit {
     }
   }
 
-  toggleFieldHistory(event){
-    if(event.code === 'Enter' || event.code === ' ') {
+  toggleFieldHistory(event) {
+    if (event.code === 'Enter' || event.code === ' ') {
       event.preventDefault();
       this.toggleVisible();
     }

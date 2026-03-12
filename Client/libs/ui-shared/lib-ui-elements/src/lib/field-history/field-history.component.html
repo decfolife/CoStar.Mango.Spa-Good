@@ -38,8 +38,6 @@
       [target]="'#' + helpTextID"
       *ngIf="dataSource"
       [position]="popoverConf.position"
-      role="tooltip"
-      [attr.aria-label]="popoverConf.ariaLabel"
       [width]="popoverConf.width"
       [minWidth]="popoverConf.minWidth"
       [maxWidth]="popoverConf.maxWidth"
@@ -47,7 +45,7 @@
       [minHeight]="popoverConf.minHeight"
       [maxHeight]="popoverConf.maxHeight"
       [(visible)]="visible"
-      [wrapperAttr]="{ class: 'field-history-popover' }"
+      [wrapperAttr]="popoverWrapperAttr"
       (onHidden)="onPopoverHidden()"
     >
       <dxo-animation>
@@ -60,15 +58,10 @@
         <dxo-hide type="fade" [from]="1" [to]="0"></dxo-hide>
       </dxo-animation>
 
-      <div id="popoverWrapper" class="tooltipAppPopover" aria-live="assertive">
+      <div id="popoverWrapper" class="tooltipAppPopover">
         <!-- Info/Help Tab -->
         <div *ngIf="dataSource?.helpTextSubject">
-          <div
-            class="popoverTitle"
-            #popoverTitle
-            tabindex="0"
-            (keydown.escape)="toggleVisible()"
-          >
+          <div class="popoverTitle" #popoverTitle tabindex="0">
             {{ dataSource?.helpTextSubject }}
           </div>
         </div>
