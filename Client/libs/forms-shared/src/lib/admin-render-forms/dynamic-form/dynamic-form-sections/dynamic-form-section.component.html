@@ -1544,7 +1544,18 @@
       [showFieldName]="true"
       (getInitialData)="getInitialHepTextInfo(data)"
       (getHistData)="getFieldHistoryData(data)"
-      [attr.title]="'Information and History'"
+      [attr.title]="
+        'View help text and history for' +
+        (data?.name?.formItemSectionDetail?.formItemLabel
+          ? ': ' + data.name.formItemSectionDetail.formItemLabel
+          : '')
+      "
+      [attr.aria-label]="
+        'View help text and history for' +
+        (data?.name?.formItemSectionDetail?.formItemLabel
+          ? ': ' + data.name.formItemSectionDetail.formItemLabel
+          : '')
+      "
     ></crem-field-history>
   </div>
 </ng-template>

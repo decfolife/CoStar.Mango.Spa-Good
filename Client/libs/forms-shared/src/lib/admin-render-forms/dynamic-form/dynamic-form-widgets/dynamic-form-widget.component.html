@@ -38,6 +38,12 @@
             (editMode && widget.allowCreation)
           "
           (click)="onAddWidget(widget)"
+          [attr.title]="
+            'Add new ' + (widget.widgetDisplayName ?? widget.widgetName)
+          "
+          [attr.aria-label]="
+            'Add new ' + (widget.widgetDisplayName ?? widget.widgetName)
+          "
           >Add</crem-button
         >
 
@@ -67,8 +73,16 @@
           [icon]="isCreatingExport ? 'faSpinner' : 'cremExportToExcel'"
           [text]="isCreatingExport ? 'Sending to Excel' : 'Send to Excel'"
           className="send-to-excel"
-          title="Download as an Excel file"
-          ariaLabel="Download as an Excel file"
+          [attr.title]="
+            (isCreatingExport ? 'Sending ' : 'Download ') +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            (isCreatingExport ? ' to Excel' : ' as an Excel file')
+          "
+          [attr.aria-label]="
+            (isCreatingExport ? 'Sending ' : 'Download ') +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            (isCreatingExport ? ' to Excel' : ' as an Excel file')
+          "
           [dataId]="{
             suffix: (widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID,
           }"
@@ -91,7 +105,8 @@
           [historyGridConfiguration]="
             dynamicWidgetConfiguration.historyGridConf
           "
-          [attr.title]="'History Details ' + widget.widgetName"
+          [ariaLabel]="'History Details ' + widget.widgetName"
+          [title]="'History Details ' + widget.widgetName"
         ></crem-field-history>
 
         <!-- Widget Preferences -->
@@ -317,7 +332,12 @@
           [historyGridConfiguration]="
             dynamicWidgetConfiguration.historyGridConf
           "
-          [attr.title]="'History Details ' + widget.widgetName"
+          [attr.title]="'View change history for ' + widget.widgetName + ' row'"
+          [attr.aria-label]="
+            'View change history and previous values for ' +
+            widget.widgetName +
+            ' row'
+          "
           [cremDataId]="{
               prefix: 'row',
               suffix: ((widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID),
