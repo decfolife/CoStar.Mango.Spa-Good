@@ -52,6 +52,7 @@ export class FieldHistoryComponent
   @Input() displayIcon = '' as string;
   @Input() ariaLabel: string;
   @Input() showFieldName = false as boolean;
+  @Input() triggerTabIndex = 0;
   /**
    * Define the columns configuration using DevExtreme's Column Type
    * @see https://js.devexpress.com/Angular/Documentation/ApiReference/UI_Components/dxDataGrid/Configuration/columns/

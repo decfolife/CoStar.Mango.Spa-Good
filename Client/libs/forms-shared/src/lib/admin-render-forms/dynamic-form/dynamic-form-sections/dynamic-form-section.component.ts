@@ -7,6 +7,7 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
+  AfterViewInit,
   Output,
   QueryList,
   SimpleChanges,
@@ -62,7 +63,7 @@ import {
 } from '@mango/ui-shared/lib-ui-elements';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { environment } from '@mangoSpa/src/environments/environment.local';
-import { DxDataGridComponent, DxListModule } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular';
 import { DxSortableTypes } from 'devextreme-angular/ui/sortable';
 import { DevExpressModule } from 'libs/ui-shared/lib-external-libraries/src/lib/3rdParty/dev-express.module';
 import { CheckBoxComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/checkbox';
@@ -161,7 +162,6 @@ const falsyRadioVals = ['0', 'false', 'no', false, 'n'];
     MatCardModule,
     DropdownModule,
     DevExpressModule,
-    DxListModule,
     InputComponent,
     SkeletonModule,
     DynamicFormEditFieldDialogComponent,
@@ -189,7 +189,7 @@ const falsyRadioVals = ['0', 'false', 'no', false, 'n'];
   ],
 })
 export class DynamicFormSectionComponent
-  implements OnInit, OnDestroy, OnChanges
+  implements OnInit, OnDestroy, OnChanges, AfterViewInit
 {
   @ViewChild('availableFieldsGrid') availableFieldsGrid: DxDataGridComponent;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
@@ -342,6 +342,10 @@ export class DynamicFormSectionComponent
     private formWizardService: FormWizardService,
     private toastService: CremToastService
   ) {}
+
+  ngAfterViewInit(): void {
+    this.onContentReady();
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -1016,6 +1020,17 @@ export class DynamicFormSectionComponent
     }
   }
 
+  onAccordionEnterKey(e: Event) {
+    if (this.isSuperUser && !this.editMode) {
+      e.preventDefault();
+      if (!this.sectionLabelEntered) {
+        this.openSectionLabelMenu();
+      } else {
+        this.closeSectionLabelMenu();
+      }
+    }
+  }
+
   handleKeyboardEventsSection(e) {
     if (this.trigger.menuOpen) {
       if (e.key === 'ArrowDown') {
@@ -1349,7 +1364,7 @@ export class DynamicFormSectionComponent
       if (widget.getElementsByClassName('dx-datagrid-nodata'))
         widget.parentElement.remove();
 
-      if (!card.getElementsByClassName('dx-item dx-list-item').length)
+      if (!card.getElementsByClassName('df-formSection-field').length)
         card.remove();
     }
 
