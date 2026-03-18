@@ -50,6 +50,7 @@ export class FieldHistoryComponent
   @Input() dateFormat = 'MM/dd/yyyy h:mm a';
   @Input() visible = false;
   @Input() displayIcon = '' as string;
+  @Input() ariaLabel: string;
   @Input() showFieldName = false as boolean;
   /**
    * Define the columns configuration using DevExtreme's Column Type

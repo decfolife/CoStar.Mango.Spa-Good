@@ -105,8 +105,12 @@
           [historyGridConfiguration]="
             dynamicWidgetConfiguration.historyGridConf
           "
-          [ariaLabel]="'History Details ' + widget.widgetName"
-          [title]="'History Details ' + widget.widgetName"
+          [ariaLabel]="
+            'History Details ' + (widget.widgetDisplayName ?? widget.widgetName)
+          "
+          [attr.title]="
+            'History Details ' + (widget.widgetDisplayName ?? widget.widgetName)
+          "
         ></crem-field-history>
 
         <!-- Widget Preferences -->
@@ -264,8 +268,18 @@
           btnStyle="basic"
           color="secondary"
           className="cremEdit"
-          ariaLabel="Edit Row"
-          [attr.title]="'Edit'"
+          [attr.title]="
+            'Edit ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
+          [ariaLabel]="
+            'Edit ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
           (buttonClick)="onEditClick(data, widget)"
           [cremDataId]="{
               prefix: 'row',
@@ -287,8 +301,18 @@
           btnStyle="basic"
           color="secondary"
           className="cremDelete"
-          ariaLabel="Delete Row"
-          [attr.title]="'Delete'"
+          [attr.title]="
+            'Delete ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
+          [ariaLabel]="
+            'Delete ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
           (buttonClick)="onDeleteClick(data, widget)"
           [cremDataId]="{
               prefix: 'row',
@@ -332,11 +356,17 @@
           [historyGridConfiguration]="
             dynamicWidgetConfiguration.historyGridConf
           "
-          [attr.title]="'View change history for ' + widget.widgetName + ' row'"
-          [attr.aria-label]="
-            'View change history and previous values for ' +
-            widget.widgetName +
-            ' row'
+          [attr.title]="
+            'View change history for ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data.rowIndex + 1)
+          "
+          [ariaLabel]="
+            'View change history for ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data.rowIndex + 1)
           "
           [cremDataId]="{
               prefix: 'row',
