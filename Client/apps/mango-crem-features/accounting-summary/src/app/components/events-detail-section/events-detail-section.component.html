@@ -408,23 +408,29 @@
         </div>
 
         <div *dxTemplate="let data of 'actionsTemplate'" #actionTemplate>
-          <div class="actions-icon">
+          <button
+            type="button"
+            class="actions-button"
+            [id]="
+              accountingSummaryService.getId(
+                componentName,
+                'action',
+                'icon',
+                data.data.scheduleIndex
+              )
+            "
+            [attr.aria-label]="'Actions for event ' + data.data.scheduleIndex"
+            (click)="openActionsMenu($event, data)"
+            (keydown)="handleActionsKeydown($event, data)"
+          >
             <crem-icon
-              [id]="
-                accountingSummaryService.getId(
-                  componentName,
-                  'action',
-                  'icon',
-                  data.data.scheduleIndex
-                )
-              "
               pack="solid"
               icon="faEllipsisH"
               color="primary"
               size="lg"
             >
             </crem-icon>
-          </div>
+          </button>
         </div>
         <div *dxTemplate="let detail of 'eventMasterDetail'">
           <crem-tabs>

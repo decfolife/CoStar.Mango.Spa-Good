@@ -19,7 +19,6 @@ import {
   DxDataGridComponent,
   DxDropDownBoxComponent,
 } from 'devextreme-angular';
-import { trigger } from 'devextreme/events';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '@mango/core-shared';
@@ -31,6 +30,11 @@ import { AddEditScheduleService } from '@accounting-summary/services/add-edit-sc
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AccountingEventSelector } from '@accounting-summary/models/interfaces/accounting-events-selector.interfaces';
 import { formatDate } from '@angular/common';
+import {
+  createButtonKeydownHandler,
+  openContextMenu,
+  setupMenuFocusRestoration,
+} from '../../utils/accessibility.util';
 @Component({
   selector: 'mango-events-detail-section',
   templateUrl: './events-detail-section.component.html',
@@ -558,6 +562,21 @@ export class EventsDetailSectionComponent
     gridDataRow.periods = gridDataRow.termInPeriods.toFixed(2);
   }
 
+  openActionsMenu(event: MouseEvent | KeyboardEvent, data: any) {
+    openContextMenu(event, {
+      setupCloseHandler: (triggerElement) => {
+        setupMenuFocusRestoration(triggerElement);
+      },
+    });
+  }
+
+  handleActionsKeydown(event: KeyboardEvent, data: any) {
+    const handler = createButtonKeydownHandler(() => {
+      this.openActionsMenu(event, data);
+    });
+    handler(event);
+  }
+
   onCellClick(e) {
     /*
     ClassificationID's:
@@ -569,15 +588,7 @@ export class EventsDetailSectionComponent
     5 - Operating (Lessor)
     6 - Sales Type (Lessor) - INACTIVE Currently
     */
-
-    if (
-      e.column.dataField === 'leaseRecognitionScheduleId' &&
-      e.rowType === 'data'
-    ) {
-      const newEvent = Object.assign({}, e.event, { type: 'dxcontextmenu' });
-      e.event.stopPropagation();
-      trigger(e.cellElement, newEvent);
-    }
+    // Actions column now handled by button - no cell click needed
   }
 
   onRowClick(e) {

@@ -490,7 +490,7 @@ export class AccountingSummaryService extends EndpointService {
   setDefaultGridHeight(gridName: any) {
     const totalRowCount = gridName.instance.totalCount();
     let customGridHeight: number | string;
-    if (totalRowCount >= 3) {
+    if (totalRowCount > 3) {
       customGridHeight = this.setGridHeight(gridName, 3);
     } else {
       customGridHeight = 'auto';
