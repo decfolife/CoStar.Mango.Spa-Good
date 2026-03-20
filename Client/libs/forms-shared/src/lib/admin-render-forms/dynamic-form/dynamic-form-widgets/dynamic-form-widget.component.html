@@ -74,12 +74,12 @@
           [text]="isCreatingExport ? 'Sending to Excel' : 'Send to Excel'"
           className="send-to-excel"
           [attr.title]="
-            (isCreatingExport ? 'Sending ' : 'Download ') +
+            (isCreatingExport ? 'Sending for ' : 'Download for ') +
             (widget.widgetDisplayName ?? widget.widgetName) +
             (isCreatingExport ? ' to Excel' : ' as an Excel file')
           "
           [attr.aria-label]="
-            (isCreatingExport ? 'Sending ' : 'Download ') +
+            (isCreatingExport ? 'Sending for ' : 'Download for ') +
             (widget.widgetDisplayName ?? widget.widgetName) +
             (isCreatingExport ? ' to Excel' : ' as an Excel file')
           "
@@ -106,10 +106,12 @@
             dynamicWidgetConfiguration.historyGridConf
           "
           [ariaLabel]="
-            'History Details ' + (widget.widgetDisplayName ?? widget.widgetName)
+            'History Details for ' +
+            (widget.widgetDisplayName ?? widget.widgetName)
           "
           [attr.title]="
-            'History Details ' + (widget.widgetDisplayName ?? widget.widgetName)
+            'History Details for ' +
+            (widget.widgetDisplayName ?? widget.widgetName)
           "
         ></crem-field-history>
 
@@ -269,13 +271,7 @@
           color="secondary"
           className="cremEdit"
           [attr.title]="
-            'Edit ' +
-            (widget.widgetDisplayName ?? widget.widgetName) +
-            ' row ' +
-            (data?.rowIndex + 1)
-          "
-          [ariaLabel]="
-            'Edit ' +
+            'Edit for ' +
             (widget.widgetDisplayName ?? widget.widgetName) +
             ' row ' +
             (data?.rowIndex + 1)
@@ -302,13 +298,13 @@
           color="secondary"
           className="cremDelete"
           [attr.title]="
-            'Delete ' +
+            'Delete for ' +
             (widget.widgetDisplayName ?? widget.widgetName) +
             ' row ' +
             (data?.rowIndex + 1)
           "
           [ariaLabel]="
-            'Delete ' +
+            'Delete for ' +
             (widget.widgetDisplayName ?? widget.widgetName) +
             ' row ' +
             (data?.rowIndex + 1)
@@ -333,7 +329,18 @@
           btnStyle="basic"
           color="secondary"
           className="cremGoTo"
-          ariaLabel="Go to Row"
+          [attr.title]="
+            'Go for ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
+          [ariaLabel]="
+            'Go for ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
           (buttonClick)="onGoClick(data, widget)"
           [cremDataId]="{
               prefix: 'row',
