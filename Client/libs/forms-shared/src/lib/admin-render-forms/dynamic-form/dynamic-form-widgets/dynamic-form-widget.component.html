@@ -198,7 +198,7 @@
         dataId: 'grid',
         suffix: (widget.formWidgetTypeID | widgetName) ?? widget.formWidgetTypeID,
       }"
-      (onContentReady)="addTabIndex()"
+      (onContentReady)="addTabIndex(isExpanded)"
     >
       <dxo-load-panel [enabled]="true"></dxo-load-panel>
       <!-- Columns  -->

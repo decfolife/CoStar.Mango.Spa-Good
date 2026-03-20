@@ -169,7 +169,7 @@ export class DynamicFormWidgetComponent
   @Input() objectTypeId: number;
   @Input() objectTypeTypeId: number;
   @Input() formId: number;
-
+  @Input() isExpanded: boolean;
   /**
    * Hides the button locally. Useful to hide the button here but still
    * show it on a parent component via canShowDownload output
@@ -1286,7 +1286,8 @@ export class DynamicFormWidgetComponent
     this._destroy$.complete();
   }
 
-  addTabIndex() {
+  addTabIndex(isExpanded: boolean) {
+    if (!isExpanded) return;
     Array.from(
       document.getElementsByClassName('dx-datagrid-group-opened')
     ).forEach((i) => {
