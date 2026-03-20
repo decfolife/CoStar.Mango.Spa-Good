@@ -358,7 +358,9 @@
                                         [label]="
                                           data.name.formItemAnswerViewMode
                                         "
-                                        [attr.tabindex]="editMode ? -1 : 0"
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
+                                        "
                                         [attr.aria-label]="
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
@@ -414,7 +416,9 @@
                                                       : '0'))
                                             : data.name.formItemAnswer
                                         "
-                                        [attr.tabindex]="editMode ? -1 : 0"
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
+                                        "
                                         [attr.aria-label]="
                                           data?.name?.formItemSectionDetail
                                             ?.formItemLabel +
@@ -482,7 +486,9 @@
                                                     ? data.name.numDecimals
                                                     : '0')
                                         "
-                                        [attr.tabindex]="editMode ? -1 : 0"
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
+                                        "
                                         [attr.aria-label]="
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
@@ -539,7 +545,9 @@
                                                         : '0'))
                                             : ''
                                         "
-                                        [attr.tabindex]="editMode ? -1 : 0"
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
+                                        "
                                         [attr.aria-label]="
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
@@ -593,7 +601,9 @@
                                                     ? data.name.numDecimals
                                                     : '0')
                                         "
-                                        [attr.tabindex]="editMode ? -1 : 0"
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
+                                        "
                                         [attr.aria-label]="
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
@@ -625,7 +635,9 @@
                                           data?.name?.formItemViewOnly
                                         "
                                         [formControlName]="data?.dataField"
-                                        [attr.tabindex]="editMode ? -1 : 0"
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
+                                        "
                                         [attr.aria-label]="
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
@@ -712,7 +724,9 @@
                                         href="mailto:{{
                                           data?.name?.formItemAnswer
                                         }}"
-                                        [attr.tabindex]="editMode ? -1 : null"
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : null
+                                        "
                                         class="df-formSection-fieldContent"
                                         >{{ data?.name?.formItemAnswer }}</a
                                       >
@@ -925,7 +939,9 @@
                                   *ngIf="!editMode"
                                   class="text-area-label"
                                   [formControlName]="data?.dataField"
-                                  [attr.tabindex]="editMode ? -1 : 0"
+                                  [attr.tabindex]="
+                                    editMode || !isExpanded ? -1 : 0
+                                  "
                                   [attr.aria-label]="
                                     (data?.name?.formItemSectionDetail
                                       ?.formItemLabel || '') +
@@ -1665,7 +1681,7 @@
         'df-superLabel': isSuperUser,
         'clause-section-item-label': data?.name?.formItemTypeID === 10
       }"
-      [tabindex]="isSuperUser && !editMode ? 0 : -1"
+      [tabindex]="isSuperUser && !editMode && isExpanded ? 0 : -1"
       (keydown)="
         onKeyDownonLabel($event, data?.name.formItemSectionDetail.formItemID)
       "
@@ -1680,7 +1696,7 @@
       [helpTextID]="
         'df-helpTextId-' + data?.name.formItemSectionDetail.formItemID
       "
-      [triggerTabIndex]="editMode ? -1 : 0"
+      [triggerTabIndex]="editMode || !isExpanded ? -1 : 0"
       [visible]="false"
       [dateFormat]="(dateFormatPreference$ | async) + ' h:mm:ss a'"
       [dataSource]="controlInfoHistData"
