@@ -263,6 +263,7 @@ export class DropdownComponent
   @Input() searchExpr?: string | Array<string>;
 
   @Input() labelledby?: string;
+  @Input() inputId?: string;
   @Input() readOnlyStyle: 'input' | 'text-only' = 'input';
 
   // exsting usages of dropdown may rely on sourcing selectedDisplay from the valueExpr. setting this to false this allows the provided displayExpr to be used to drive the selectedDisplay

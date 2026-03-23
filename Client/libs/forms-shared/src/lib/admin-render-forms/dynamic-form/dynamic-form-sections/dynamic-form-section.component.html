@@ -315,6 +315,11 @@
                                           dateFormatPreference$ | async
                                         "
                                         [useMaskBehavior]="false"
+                                        [inputId]="
+                                          'df-input-' +
+                                          data?.name.formItemSectionDetail
+                                            .formItemID
+                                        "
                                         [id]="
                                           'df-datePicker-' +
                                           data?.name.formItemSectionDetail
@@ -875,6 +880,11 @@
                                       [labelledby]="
                                         data?.name?.formItemName + '_label'
                                       "
+                                      [inputId]="
+                                        'df-input-' +
+                                        data?.name.formItemSectionDetail
+                                          .formItemID
+                                      "
                                       [id]="
                                         'df-dropdown-' +
                                         data?.name.formItemSectionDetail
@@ -1160,6 +1170,11 @@
                                     [labelledby]="
                                       data?.name?.formItemName + '_label'
                                     "
+                                    [inputId]="
+                                      'df-input-' +
+                                      data?.name.formItemSectionDetail
+                                        .formItemID
+                                    "
                                     (keydown.space)="$event.preventDefault()"
                                   >
                                   </crem-dropdown>
@@ -1231,6 +1246,11 @@
                                     [readOnlyStyle]="'text-only'"
                                     [labelledby]="
                                       data?.name?.formItemName + '_label'
+                                    "
+                                    [inputId]="
+                                      'df-input-' +
+                                      data?.name.formItemSectionDetail
+                                        .formItemID
                                     "
                                     (keydown.space)="$event.preventDefault()"
                                   >
