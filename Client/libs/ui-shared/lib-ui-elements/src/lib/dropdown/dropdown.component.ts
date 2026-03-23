@@ -595,10 +595,15 @@ export class DropdownComponent
 
   onKeyUp(event) {
     const targetElement = event.target as HTMLElement;
-    if (targetElement) {
+    if (
+      targetElement &&
+      targetElement.tagName === 'INPUT' &&
+      targetElement.getAttribute('role') === 'textbox'
+    ) {
+      const filterValue = (targetElement as HTMLInputElement).value || '';
       targetElement.setAttribute(
         'aria-label',
-        'Search Filter For - ' + event.target.value + ' applied'
+        filterValue ? 'Search filter: ' + filterValue : 'Search filter'
       );
     }
   }
@@ -742,19 +747,16 @@ export class DropdownComponent
                 if (childEl.innerHTML.length > 0) {
                   if (childEl?.classList?.contains('dx-command-select')) {
                     if (childElment?.[1]) {
-                      const dropdownText = childElment?.[1]?.innerHTML;
-                      const elements = Array.from(childElment[0].children);
-                      const checkboxElement = elements[0];
+                      const dropdownText =
+                        childElment?.[1]?.textContent?.trim() || '';
+                      const checkboxElement =
+                        childElment[0].querySelector('.dx-checkbox');
                       if (checkboxElement) {
                         checkboxElement.setAttribute(
-                          'title',
-                          'Checkbox for ' + dropdownText
+                          'aria-label',
+                          'Select ' + dropdownText
                         );
-                        checkboxElement.setAttribute('type', 'checkbox');
-                        checkboxElement.setAttribute('role', 'group');
-                        checkboxElement.setAttribute('aria-label', 'checkBox');
                         checkboxElement.removeAttribute('aria-readonly');
-                        checkboxElement.removeAttribute('aria-checked');
                       }
                     }
                   } else {
@@ -958,6 +960,19 @@ export class DropdownComponent
         spanSearchInput.attr('aria-label', 'Search Filter Text');
       }
     }
+
+    // For multi-select grids, enhance checkbox labels with item names
+    if (this.selectMode === 'multiple') {
+      const rows = element.querySelectorAll('.dx-data-row');
+      rows.forEach((row) => {
+        const checkbox = row.querySelector('.dx-select-checkbox');
+        const textCell = row.querySelector('td:not(.dx-command-select)');
+        if (checkbox && textCell) {
+          const itemText = textCell.textContent?.trim() || '';
+          checkbox.setAttribute('aria-label', 'Select ' + itemText);
+        }
+      });
+    }
   }
 
   closeSelectBox() {
@@ -1022,6 +1037,29 @@ export class DropdownComponent
       ) {
         this.focusDropdown();
         this.dropDown.instance.close();
+      }
+    }
+
+    if (event?.event?.key === 'Enter') {
+      const rowIndex = this.dataGrid?.instance?.option('focusedRowIndex');
+      if (rowIndex != null && rowIndex >= 0) {
+        const rowKey = this.dataGrid.instance.getKeyByRowIndex(rowIndex);
+        if (rowKey != null) {
+          if (this.selectMode === 'multiple') {
+            const selected = this.dataGrid.instance.getSelectedRowKeys() || [];
+            const isSelected = selected.some(
+              (k) => JSON.stringify(k) === JSON.stringify(rowKey)
+            );
+            if (isSelected) {
+              this.dataGrid.instance.deselectRows([rowKey]);
+            } else {
+              this.dataGrid.instance.selectRows([rowKey], true);
+            }
+          } else {
+            this.dataGrid.instance.selectRows([rowKey], false);
+          }
+          event.event.preventDefault();
+        }
       }
     }
   }

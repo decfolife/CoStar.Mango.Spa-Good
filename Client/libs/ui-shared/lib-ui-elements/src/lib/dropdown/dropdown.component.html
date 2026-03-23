@@ -304,6 +304,7 @@
           [showColumnHeaders]="showColumnHeader"
           [selectedRowKeys]="selections"
           [showColumnLines]="false"
+          [focusedRowEnabled]="true"
           (onKeyDown)="onGridKeyDown($event, cell)"
           (onSelectionChanged)="getSelectedRowsData($event)"
           [scrolling]="{ mode: 'standard' }"
@@ -314,6 +315,7 @@
           (onCellClick)="onCellClick($event)"
           (keyup)="onKeyUp($event)"
         >
+          <dxo-keyboard-navigation [enabled]="true"></dxo-keyboard-navigation>
           <dxo-filter-row [visible]="allowSearch"></dxo-filter-row>
           <dxo-selection
             [mode]="selectMode"
