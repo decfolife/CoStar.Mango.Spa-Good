@@ -37,6 +37,8 @@
                 "
                 [ngClass]="activeLink === link.name ? 'selected' : ''"
                 (click)="onNavLinkClick(link)"
+                (keyup.enter)="onNavLinkClick(link)"
+                (keyup.space)="onNavLinkClick(link)"
                 [tabindex]="0"
               >
                 <span *ngIf="link.objectTypeName == null">{{
@@ -93,6 +95,8 @@
                         "
                         [ngClass]="activeLink === link.name ? 'selected' : ''"
                         (click)="onNavLinkClick(link)"
+                        (keyup.enter)="onNavLinkClick(link)"
+                        (keyup.space)="onNavLinkClick(link)"
                         [tabindex]="0"
                       >
                         <span>{{ link.dynamicName }}</span>
@@ -110,6 +114,8 @@
               #trigger="matMenuTrigger"
               (mouseenter)="openFlyOutMenu(trigger, linkObj.category)"
               (mouseleave)="closeFlyOutMenu(trigger)"
+              (keyup.enter)="openFlyOutMenu(trigger, linkObj.category)"
+              (keyup.space)="openFlyOutMenu(trigger, linkObj.category)"
             >
               <button
                 class="flyout_anchor"
@@ -162,6 +168,8 @@
                         link.isCurrentlyActiveLink ? 'childSelected' : ''
                       "
                       (click)="onNavLinkClick(link)"
+                      (keyup.enter)="onNavLinkClick(link)"
+                      (keyup.space)="onNavLinkClick(link)"
                       class="flyout-navitem"
                       [tabindex]="0"
                     >
@@ -209,6 +217,8 @@
                     'padding-left': (1 + subChildLink.subChildLevel) * 16 + 'px'
                   }"
                   (click)="onNavLinkClick(subChildLink)"
+                  (keyup.enter)="onNavLinkClick(subChildLink)"
+                  (keyup.space)="onNavLinkClick(subChildLink)"
                   class="flyout-navitem"
                   [tabindex]="0"
                   [innerHTML]="subChildLink.dynamicName"
@@ -248,6 +258,8 @@
               "
               [ngClass]="activeLink === link.name ? 'selected' : ''"
               (click)="onNavLinkClick(link)"
+              (keyup.enter)="onNavLinkClick(link)"
+              (keyup.space)="onNavLinkClick(link)"
               [tabindex]="0"
             >
               <span>{{ link.dynamicName }}</span>
