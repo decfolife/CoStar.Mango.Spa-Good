@@ -249,6 +249,8 @@
         *ngIf="!isLoading"
         [id]="'df-sectionPanel-' + section.formSectionID"
         role="region"
+        [attr.aria-hidden]="!isExpanded"
+        [attr.inert]="!isExpanded ? true : null"
         [attr.aria-labelledby]="'df-sectionId-' + section.formSectionID"
         class="df-sectionContent"
         [@expandCollapse]="isExpanded ? 'expanded' : 'collapsed'"
@@ -1325,7 +1327,6 @@
                                   [objectTypeId]="objectTypeId"
                                   [objectTypeTypeId]="objectTypeTypeId"
                                   (canShowDownload)="onCanShowDownload($event)"
-                                  [isExpanded]="isExpanded"
                                 ></mango-dynamic-form-widget>
                               </ng-template>
                               <!-- End Widget (Data Grid) -->
