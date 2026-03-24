@@ -1,11 +1,11 @@
 @use 'styles' as *;
 
 .classification-tests__form {
-  @include costar(padding-top, 3);
+  @include costar(padding-top, 4);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   &__controls {
-    flex: 50%;
+    flex: 1;
   }
   &__legend {
     @include costar(font-size, normal);
@@ -13,6 +13,55 @@
   &__list {
     &--unordered {
       list-style: none;
+    }
+    &--ordered {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 40px;
+      row-gap: 10px;
+      align-items: start;
+
+      > li {
+        padding-top: 0;
+        align-self: start;
+      }
+
+      > li:not(.ct-side-li):not(.ct-testResults-li) {
+        grid-column: 1;
+      }
+
+      > li:nth-child(1) {
+        grid-row: 1;
+      }
+      > li:nth-child(2) {
+        grid-row: 2;
+      }
+      > li:nth-child(3) {
+        grid-row: 3;
+      }
+
+      > li.ct-side-li--rel {
+        grid-column: 2;
+        grid-row: 1 / 3;
+        padding-bottom: 0;
+        padding-right: 20px;
+      }
+
+      > li.ct-side-li--fmv {
+        grid-column: 2;
+        grid-row: 3 / 5;
+        padding-bottom: 0;
+      }
+
+      > li.ct-side-li--implicit {
+        grid-column: 2;
+        grid-row: 4 / 5;
+        padding-top: 20px;
+      }
+
+      > li.ct-testResults-li {
+        grid-column: 1;
+      }
     }
   }
   &__list__item__label {
@@ -42,6 +91,16 @@
   .ct-sub-text {
     color: #757575;
     font-size: 13px;
+  }
+
+  .ct-testResults-li {
+    list-style: none;
+    counter-increment: none;
+  }
+
+  .ct-side-li {
+    list-style: none;
+    counter-increment: none;
   }
 
   .ct-testResults-horizontal-line {
@@ -117,6 +176,7 @@
   .fair_market-value {
     @include costar(color, dark);
     @include costar(font-size, body);
+    height: 36px !important;
   }
 
   .implicit-rate-warning-message {

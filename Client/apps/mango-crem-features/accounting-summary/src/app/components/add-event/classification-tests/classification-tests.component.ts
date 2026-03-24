@@ -364,8 +364,8 @@ export class ClassificationTestsComponent
       fairMarketValue: new FormControl({ value: null, disabled: false }),
       classificationTest1: new FormControl({ value: 3, disabled: false }),
       classificationTest2: new FormControl({ value: 3, disabled: false }),
-      classificationTest3: new FormControl({ value: null, disabled: true }),
-      classificationTest4: new FormControl({ value: null, disabled: true }),
+      classificationTest3: new FormControl({ value: null, disabled: false }),
+      classificationTest4: new FormControl({ value: null, disabled: false }),
       classificationTest5: new FormControl({ value: 3, disabled: false }),
     });
   }
