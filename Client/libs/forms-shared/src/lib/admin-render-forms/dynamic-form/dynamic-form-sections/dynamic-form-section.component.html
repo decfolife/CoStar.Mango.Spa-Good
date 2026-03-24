@@ -69,7 +69,7 @@
           <button
             type="button"
             class="df-accordion-trigger"
-            [attr.aria-expanded]="isExpanded"
+            [attr.aria-expanded]="isExpanded ? 'true' : 'false'"
             [attr.aria-controls]="'df-sectionPanel-' + section.formSectionID"
             id="df-sectionId-{{ section.formSectionID }}"
             (click)="toggleExpand()"
@@ -90,6 +90,7 @@
           *ngIf="isSuperUser"
           #sectionTitle
           #menuTrigger="matMenuTrigger"
+          role="button"
           [matMenuTriggerFor]="sectionLabelMenu"
           class="df-superuser-menu-trigger clickable"
           [tabindex]="!editMode ? 0 : -1"
@@ -265,6 +266,7 @@
                 [colCount]="section?.formSectionColumns"
                 labelLocation="left"
                 [showColonAfterLabel]="false"
+                [attr.aria-labelledby]="'df-sectionId-' + section.formSectionID"
               >
                 <dxi-item
                   *ngFor="let item of tempList; let i = index"
@@ -368,13 +370,6 @@
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
                                         "
-                                        [attr.aria-label]="
-                                          (data?.name?.formItemSectionDetail
-                                            ?.formItemLabel || '') +
-                                          ': ' +
-                                          (data?.name?.formItemAnswerViewMode ||
-                                            '')
-                                        "
                                       >
                                       </crem-input-label>
                                     </ng-container>
@@ -426,28 +421,6 @@
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
                                         "
-                                        [attr.aria-label]="
-                                          data?.name?.formItemSectionDetail
-                                            ?.formItemLabel +
-                                          ': ' +
-                                          ((data.name.formItemAnswer
-                                          | isNumericUI)
-                                            ? (data.name.formItemAnswer
-                                              | number
-                                                : '1.' +
-                                                    (isTruthy(
-                                                      data.name.numDecimals
-                                                    )
-                                                      ? data.name.numDecimals
-                                                      : '0') +
-                                                    '-' +
-                                                    (isTruthy(
-                                                      data.name.numDecimals
-                                                    )
-                                                      ? data.name.numDecimals
-                                                      : '0'))
-                                            : data.name.formItemAnswer)
-                                        "
                                       >
                                       </crem-input-label>
                                     </ng-container>
@@ -492,17 +465,6 @@
                                                   )
                                                     ? data.name.numDecimals
                                                     : '0')
-                                        "
-                                        [attr.tabindex]="
-                                          editMode || !isExpanded ? -1 : 0
-                                        "
-                                        [attr.aria-label]="
-                                          (data?.name?.formItemSectionDetail
-                                            ?.formItemLabel || '') +
-                                          ': ' +
-                                          (data?.name?.formItemAnswerViewMode ||
-                                            data?.name?.formItemAnswer ||
-                                            '')
                                         "
                                       >
                                       </crem-input-label>
@@ -555,14 +517,6 @@
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
                                         "
-                                        [attr.aria-label]="
-                                          (data?.name?.formItemSectionDetail
-                                            ?.formItemLabel || '') +
-                                          ': ' +
-                                          (data?.name?.formItemAnswerViewMode ||
-                                            data?.name?.formItemAnswer ||
-                                            '')
-                                        "
                                       >
                                       </crem-input-label>
                                     </ng-container>
@@ -608,17 +562,6 @@
                                                     ? data.name.numDecimals
                                                     : '0')
                                         "
-                                        [attr.tabindex]="
-                                          editMode || !isExpanded ? -1 : 0
-                                        "
-                                        [attr.aria-label]="
-                                          (data?.name?.formItemSectionDetail
-                                            ?.formItemLabel || '') +
-                                          ': ' +
-                                          (data?.name?.formItemAnswerViewMode ||
-                                            data?.name?.formItemAnswer ||
-                                            '')
-                                        "
                                       >
                                       </crem-input-label>
                                     </ng-container>
@@ -644,14 +587,6 @@
                                         [formControlName]="data?.dataField"
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
-                                        "
-                                        [attr.aria-label]="
-                                          (data?.name?.formItemSectionDetail
-                                            ?.formItemLabel || '') +
-                                          ': ' +
-                                          (data?.name?.formItemAnswerViewMode ||
-                                            data?.name?.formItemAnswer ||
-                                            '')
                                         "
                                       >
                                       </crem-input-label>
@@ -953,14 +888,6 @@
                                   [formControlName]="data?.dataField"
                                   [attr.tabindex]="
                                     editMode || !isExpanded ? -1 : 0
-                                  "
-                                  [attr.aria-label]="
-                                    (data?.name?.formItemSectionDetail
-                                      ?.formItemLabel || '') +
-                                    ': ' +
-                                    (data?.name?.formItemAnswerViewMode ||
-                                      data?.name?.formItemAnswer ||
-                                      '')
                                   "
                                 >
                                 </crem-input-label>
@@ -1732,7 +1659,7 @@
           data?.name?.formItemSectionDetail?.formItemDefaultLabel ||
           '')
       "
-      [attr.aria-label]="
+      [ariaLabel]="
         'View help text and history for ' +
         (data?.name?.formItemSectionDetail?.formItemLabel ||
           data?.name?.formItemSectionDetail?.formItemDefaultLabel ||

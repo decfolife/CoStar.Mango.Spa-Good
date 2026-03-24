@@ -161,8 +161,15 @@
       (onContentReady)="SummaryRowTabs()"
       #widgetDataGrid
       [ngClass]="{
-        'grid-no-alt': !(gridMasterDetail.masterView | isObjectEmpty)
+        'grid-no-alt': !(gridMasterDetail.masterView | isObjectEmpty),
+        'grid-empty':
+          !widget.renderFormWidgetData ||
+          widget.renderFormWidgetData?.length === 0
       }"
+      [attr.aria-hidden]="
+        !widget.renderFormWidgetData ||
+        widget.renderFormWidgetData?.length === 0
+      "
       *ngIf="widget && dynamicWidgetConfiguration.gridView === 'dataGrid'"
       [dataSource]="widget.renderFormWidgetData"
       [noDataText]="isRenderForm && dynamicWidgetConfiguration.noDataText"
@@ -253,8 +260,18 @@
           btnStyle="basic"
           color="secondary"
           className="cremOpenFile"
-          ariaLabel="Open File"
-          [attr.title]="'Open File'"
+          [attr.title]="
+            'Open file for ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
+          [ariaLabel]="
+            'Open file for ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
           (buttonClick)="onOpenFileClick(data)"
           [cremDataId]="{
               prefix: 'row',
@@ -271,6 +288,12 @@
           color="secondary"
           className="cremEdit"
           [attr.title]="
+            'Edit for ' +
+            (widget.widgetDisplayName ?? widget.widgetName) +
+            ' row ' +
+            (data?.rowIndex + 1)
+          "
+          [ariaLabel]="
             'Edit for ' +
             (widget.widgetDisplayName ?? widget.widgetName) +
             ' row ' +

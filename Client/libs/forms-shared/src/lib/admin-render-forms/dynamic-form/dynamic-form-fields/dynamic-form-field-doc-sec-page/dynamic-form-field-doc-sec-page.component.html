@@ -14,6 +14,7 @@
             fieldData?.dataField
           "
           [inputType]="'textarea'"
+          [ariaLabel]="fieldData?.name?.formItemSectionDetail?.formItemLabel"
           [maxLengthField]="7000"
           [required]="fieldData.name.formItemMandatory == '1' ? true : false"
           [formControlName]="fieldData?.dataField"
@@ -94,6 +95,7 @@
           class="df-clauseDocValue"
           [id]="'df-inputDoc-' + fieldData?.dataField"
           *ngIf="showDocEdit"
+          [ariaLabel]="'Document'"
           [inputType]="'text'"
           [maxLengthField]="100"
           [formControlName]="fieldData?.dataField + '_Document'"
@@ -120,6 +122,7 @@
           *ngIf="showSecEdit"
           [inputType]="'text'"
           [maxLengthField]="50"
+          [ariaLabel]="'Section'"
           [formControlName]="fieldData?.dataField + '_Section'"
         >
         </crem-input>
@@ -143,6 +146,7 @@
           [id]="'df-inputPage-' + fieldData?.dataField"
           *ngIf="showPageEdit"
           [inputType]="'text'"
+          [ariaLabel]="'Page'"
           [maxLengthField]="50"
           [formControlName]="fieldData?.dataField + '_Page'"
         >
