@@ -938,6 +938,14 @@ export class EventsDetailSectionComponent
     }
 
     e.items.push(scheduleId);
+
+    // Filter out invisible items so keyboard navigation skips directly to the next visible item
+    e.items = e.items.filter((item) => item.visible !== false);
+    e.items.forEach((item) => {
+      if (item.items?.length) {
+        item.items = item.items.filter((sub: any) => sub.visible !== false);
+      }
+    });
   }
 
   navigateToRemeasureEvent(
