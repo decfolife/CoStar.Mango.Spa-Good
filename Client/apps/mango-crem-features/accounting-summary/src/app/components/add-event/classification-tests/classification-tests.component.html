@@ -26,6 +26,7 @@
 
           <!-- 5 -->
           <li
+            value="5"
             class="classification-tests__form__list__item"
             [id]="accountingSummaryService.getId(componentName, 'test', '5')"
           >
@@ -70,6 +71,7 @@
       <ng-template #commonTests>
         <!-- 1 -->
         <li
+          value="1"
           class="classification-tests__form__list__item"
           [id]="accountingSummaryService.getId(componentName, 'test', '1')"
         >
@@ -109,6 +111,7 @@
 
         <!-- 2 -->
         <li
+          value="2"
           class="classification-tests__form__list__item"
           [id]="accountingSummaryService.getId(componentName, 'test', '2')"
         >
@@ -148,6 +151,7 @@
 
         <!-- 3 do we need calc engine for economic life-->
         <li
+          value="3"
           class="classification-tests__form__list__item"
           [id]="accountingSummaryService.getId(componentName, 'test', '3')"
         >
@@ -237,6 +241,7 @@
 
         <!-- 4-->
         <li
+          value="4"
           class="classification-tests__form__list__item"
           [id]="accountingSummaryService.getId(componentName, 'test', '4')"
         >
@@ -456,7 +461,7 @@
               <span class="ct-bold-text">{{ classificationResult }}</span>
             </div>
           </div>
-          <div class="results-reason-text-div">
+          <div class="results-reason-text-div" aria-hidden="true">
             <span class="ct-sub-text"
               >Test Result Reason: {{ classificationResultReason }}</span
             >
