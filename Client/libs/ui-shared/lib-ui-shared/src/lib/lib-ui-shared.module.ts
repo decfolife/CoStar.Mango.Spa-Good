@@ -22,6 +22,7 @@ import { AddCompanyModalComponent } from './add-company-modal/add-company-modal.
 import { AddLeaseModalModule } from './add-lease-modal/add-lease-modal.module';
 import { CremCurrentObjectTextModule } from './crem-current-object-text/crem-current-object-text.module';
 import { AddPremiseModalComponent } from './add-premise-modal/add-premise-modal.component';
+import { ObjectInfoComponent } from './object-info-modal/object-info.component';
 
 @NgModule({
   declarations: [],
@@ -45,6 +46,7 @@ import { AddPremiseModalComponent } from './add-premise-modal/add-premise-modal.
     AddCompanyModalComponent,
     AddLeaseModalModule,
     AddPremiseModalComponent,
+    ObjectInfoComponent,
   ],
   exports: [
     FormsModule,
@@ -65,6 +67,7 @@ import { AddPremiseModalComponent } from './add-premise-modal/add-premise-modal.
     AddBuildingModalModule,
     AddLeaseModalModule,
     AddPremiseModalComponent,
+    ObjectInfoComponent,
   ],
 })
 export class LibUiSharedModule {}
