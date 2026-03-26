@@ -295,6 +295,38 @@ export class DropdownComponent
     this.touched = true;
   };
 
+  get selectBoxInputAttr(): Record<string, string> {
+    const attr: Record<string, string> = {
+      title: this.hoverText || this.placeholder,
+      'aria-controls': this.id + '_select-box',
+    };
+    if (this.inputId) {
+      attr['id'] = this.inputId;
+    }
+    if (this.labelledby) {
+      attr['aria-labelledby'] = this.labelledby;
+    } else {
+      attr['aria-label'] = this.hoverText || this.placeholder;
+    }
+    return attr;
+  }
+
+  get dropDownBoxInputAttr(): Record<string, string> {
+    const attr: Record<string, string> = {
+      title: this.placeholder,
+      'aria-controls': this.id + 'dropdownContainer',
+    };
+    if (this.inputId) {
+      attr['id'] = this.inputId;
+    }
+    if (this.labelledby) {
+      attr['aria-labelledby'] = this.labelledby;
+    } else {
+      attr['aria-label'] = this.placeholder;
+    }
+    return attr;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     const { previousValue, currentValue } = changes.dataSource || {};
 

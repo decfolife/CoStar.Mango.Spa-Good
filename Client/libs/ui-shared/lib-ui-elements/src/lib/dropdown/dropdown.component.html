@@ -34,19 +34,7 @@
     [searchMode]="searchMode"
     [searchTimeout]="searchTimeout"
     [searchExpr]="searchExpr"
-    [inputAttr]="
-      inputId
-        ? {
-            id: inputId,
-            title: hoverText ? hoverText : placeholder,
-            'aria-controls': id + '_select-box'
-          }
-        : {
-            title: hoverText ? hoverText : placeholder,
-            'aria-controls': id + '_select-box',
-            'aria-label': hoverText ? hoverText : placeholder
-          }
-    "
+    [inputAttr]="selectBoxInputAttr"
   >
     <!-- Dropdown's header options -->
     <div *dxTemplate="let data of 'selectBoxCustomGroupTemplate'">
@@ -252,19 +240,7 @@
     (onKeyUp)="onSelectBoxDropDownKeyUp($event)"
     [deferRendering]="false"
     (onOpened)="openDropdown($event)"
-    [inputAttr]="
-      inputId
-        ? {
-            id: inputId,
-            title: placeholder,
-            'aria-controls': id + 'dropdownContainer'
-          }
-        : {
-            title: placeholder,
-            'aria-controls': id + 'dropdownContainer',
-            'aria-label': placeholder
-          }
-    "
+    [inputAttr]="dropDownBoxInputAttr"
     (onBlur)="onBlur($event)"
   >
     <!-- Validators -->
