@@ -4,16 +4,20 @@
   @include costar(padding-top, 4);
   display: flex;
   flex-direction: column;
+
   &__controls {
     flex: 1;
   }
+
   &__legend {
     @include costar(font-size, normal);
   }
+
   &__list {
     &--unordered {
       list-style: none;
     }
+
     &--ordered {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -33,9 +37,11 @@
       > li:nth-child(1) {
         grid-row: 1;
       }
+
       > li:nth-child(2) {
         grid-row: 2;
       }
+
       > li:nth-child(3) {
         grid-row: 3;
       }
@@ -64,13 +70,16 @@
       }
     }
   }
+
   &__list__item__label {
     display: flow;
     padding-right: 20px;
     width: 100%;
   }
+
   &__list__item {
     padding-top: 10px;
+
     &.side {
       padding-bottom: 20px;
     }
@@ -78,6 +87,7 @@
     .ct-li-div {
       display: flex;
       justify-content: space-between;
+
       div {
         width: 80px;
       }
@@ -165,8 +175,8 @@
     width: 98%;
     @include costar(background-color, gray07);
     height: 33px;
-    outline: 0;
     padding: 0.175rem 0.75rem;
+    cursor: default;
   }
 
   .dx-texteditor.dx-editor-outlined ::ng-deep {
@@ -183,6 +193,7 @@
     display: flex;
     flex-direction: row;
     @include costar(color, secondary-dark);
+
     crem-icon {
       @include costar(padding-right, 2);
     }

@@ -370,7 +370,7 @@
               'Implicit Interest Rate: ' + implicitInterestRate + '%'
             "
           >
-            {{ implicitInterestRate }}%
+            <span aria-hidden="true">{{ implicitInterestRate }}%</span>
           </div>
 
           <div
@@ -380,6 +380,7 @@
               implicitInterestRate !== undefined
             "
             class="implicit-rate-warning-message"
+            role="alert"
             tabindex="0"
             [attr.aria-label]="
               'Implicit Interest Rate Warning: ' + implicitRateWarningMessage
@@ -399,7 +400,7 @@
               aria-hidden="true"
             >
             </crem-icon>
-            {{ implicitRateWarningMessage }}
+            <span aria-hidden="true">{{ implicitRateWarningMessage }}</span>
           </div>
         </li>
       </ng-template>
@@ -410,12 +411,7 @@
           <div
             class="ct-testResults-div"
             tabindex="0"
-            [attr.aria-label]="
-              'Test Result: ' +
-              classificationResult +
-              '. Reason: ' +
-              classificationResultReason
-            "
+            [attr.aria-label]="'Test Result: ' + classificationResult"
           >
             <div class="results-text-div">Test Result</div>
             <div
@@ -462,7 +458,12 @@
             </div>
           </div>
           <div class="results-reason-text-div" aria-hidden="true">
-            <span class="ct-sub-text"
+            <span
+              tabindex="0"
+              [attr.aria-label]="
+                'Test Result Reason: ' + classificationResultReason
+              "
+              class="ct-sub-text"
               >Test Result Reason: {{ classificationResultReason }}</span
             >
           </div>
