@@ -85,7 +85,6 @@ export class AlertsGridComponent implements OnInit {
   currentLeaseStatusFilter: string;
   customMessageAlert: LeaseAlert;
   isInitialLoading = true;
-  firstPageLoad = true;
   isLoadingData = false;
   isArchived = false;
   filterBuilderVisible = false;
@@ -94,6 +93,7 @@ export class AlertsGridComponent implements OnInit {
   isDismissed = false;
 
   customReasonString = 'Enter Custom Reason';
+  private pendingFocusLeaseAlertID: number | null = null;
   selectedDismissToggleReason = '';
   dismissReasonText = '';
   dismissToggleReasonText = '';
@@ -512,6 +512,7 @@ export class AlertsGridComponent implements OnInit {
       return;
     }
 
+    this.captureFocusTarget(leaseAlert.leaseAlertID);
     this.setIsLoading(true);
 
     this.toggleLeaseAlerts([leaseAlert.leaseAlertID]);
@@ -873,14 +874,29 @@ export class AlertsGridComponent implements OnInit {
 
     this.buildGridDataSource();
 
-    if (this.firstPageLoad) {
-      this.isInitialLoading = true;
-      // This timeout is required to use devextreme's function to load preferences from session state
-      setTimeout(() => {
-        this.isInitialLoading = false;
-      }, 10);
-      this.firstPageLoad = false;
-    }
+    this.isInitialLoading = true;
+    setTimeout(() => {
+      this.isInitialLoading = false;
+
+      if (this.pendingFocusLeaseAlertID != null) {
+        const targetKey = this.pendingFocusLeaseAlertID;
+        this.pendingFocusLeaseAlertID = null;
+        setTimeout(() => {
+          const grid = this.leaseAlertsGrid?.instance;
+          if (!grid) return;
+          grid.navigateToRow(targetKey).then(() => {
+            grid.option('focusedRowKey', targetKey);
+            const rowIndex = grid.getRowIndexByKey(targetKey);
+            if (rowIndex >= 0) {
+              const cellEl = grid.getCellElement(rowIndex, 0) as Element;
+              if (cellEl) {
+                grid.focus(cellEl);
+              }
+            }
+          });
+        });
+      }
+    }, 10);
 
     this.selectedColumnsCopy = JSON.parse(JSON.stringify(this.selectedColumns));
   }
@@ -1002,6 +1018,17 @@ export class AlertsGridComponent implements OnInit {
     return filterCount;
   }
 
+  private captureFocusTarget(leaseAlertID: number): void {
+    const grid = this.leaseAlertsGrid?.instance;
+    if (!grid) return;
+    const rowIndex = grid.getRowIndexByKey(leaseAlertID);
+    const visibleRows = grid.getVisibleRows();
+    if (rowIndex >= 0 && visibleRows?.length) {
+      const nextRow = visibleRows[rowIndex + 1] ?? visibleRows[rowIndex - 1];
+      this.pendingFocusLeaseAlertID = nextRow?.data?.leaseAlertID ?? null;
+    }
+  }
+
   private resetPopupData() {
     this.selectedKeys = [];
 
@@ -1093,6 +1120,11 @@ export class AlertsGridComponent implements OnInit {
   }
 
   onDropDownKeyDown(e: KeyboardEvent, cellInfo?: any): void {
+    if (e.key === ' ' || e.key === 'Enter') {
+      this.onDismissButtonClick(cellInfo.data, e);
+      return;
+    }
+
     if (e.key !== 'Escape' && e.key !== 'Tab') return;
 
     e.stopPropagation();
