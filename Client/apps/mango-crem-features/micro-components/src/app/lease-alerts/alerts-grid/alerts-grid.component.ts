@@ -1064,4 +1064,51 @@ export class AlertsGridComponent implements OnInit {
   private isObject(object) {
     return object != null && typeof object === 'object';
   }
+
+  dismissDropDownOptions = {
+    closeOnOutsideClick: true,
+    onShown: (e: any) => {
+      const popupContent = e.component.content();
+      if (popupContent) {
+        const escHandler = (event: KeyboardEvent) => {
+          if (event.key === 'Escape') {
+            event.stopPropagation();
+            e.component.hide();
+            popupContent.removeEventListener('keydown', escHandler);
+          }
+        };
+        popupContent.addEventListener('keydown', escHandler);
+      }
+    },
+  };
+
+  onDismissItemClick(data: any, event: any): void {
+    event.event?.stopPropagation();
+    this.toggleAlert(data, event);
+  }
+
+  onDismissButtonClick(data: any, event: any): void {
+    event.event?.stopPropagation();
+    this.toggleAlert(data, event, true);
+  }
+
+  onDropDownKeyDown(e: KeyboardEvent, cellInfo?: any): void {
+    if (e.key !== 'Escape' && e.key !== 'Tab') return;
+
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (e.key === 'Escape') return;
+
+    const grid = this.leaseAlertsGrid?.instance;
+    if (!grid || !cellInfo) return;
+
+    const nextRowIndex = cellInfo.rowIndex + 1;
+    if (nextRowIndex >= grid.getVisibleRows().length) return;
+
+    const cellEl = grid.getCellElement(nextRowIndex, 0) as Element;
+    if (cellEl) {
+      grid.focus(cellEl);
+    }
+  }
 }
