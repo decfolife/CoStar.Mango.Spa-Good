@@ -5,9 +5,9 @@ import {
   CardModule,
   CremPopupComponent,
 } from '@mango/ui-shared/lib-ui-elements';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { Subscription } from 'rxjs';
 import { ObjectActionsService } from 'apps/mango-crem-features/object-actions/src/app/components/object-actions/object-actions.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'crem-object-info',
@@ -29,36 +29,24 @@ export class ObjectInfoComponent implements OnInit, OnDestroy {
   data = {};
 
   constructor(
-    private mangoAppFacade: MangoAppFacade,
-    private objectService: ObjectActionsService
+    private objectService: ObjectActionsService,
+    private route: ActivatedRoute
   ) {}
   ngOnInit(): void {
+    this.getRouteInfo();
     this.subs.push(
-      this.mangoAppFacade.breadcrumbs$.subscribe((breadcrumbs) => {
-        if (breadcrumbs && breadcrumbs.length > 0) {
-          const lastCrumb = breadcrumbs[breadcrumbs.length - 1];
-          this.OTID = lastCrumb.params.otid;
-          this.OID = lastCrumb.params.oid;
-          this.NavPageId = lastCrumb.params.navpageid;
-          this.subs.push(
-            this.objectService
-              .getObjectInfo(this.OID, this.OTID, this.NavPageId)
-              .subscribe((res) => {
-                if (res && res.success && res.data) {
-                  this.data = res.data;
-                  this.isLoading = false;
-                } else {
-                  console.error('Failed to fetch object info:', res);
-                  this.isError = true;
-                  this.isLoading = false;
-                }
-              })
-          );
-        } else {
-          this.isError = true;
-          this.isLoading = false;
-        }
-      })
+      this.objectService
+        .getObjectInfo(this.OID, this.OTID, this.NavPageId)
+        .subscribe((res) => {
+          if (res && res.success && res.data) {
+            this.data = res.data;
+            this.isLoading = false;
+          } else {
+            console.error('Failed to fetch object info:', res);
+            this.isError = true;
+            this.isLoading = false;
+          }
+        })
     );
   }
 
@@ -71,5 +59,13 @@ export class ObjectInfoComponent implements OnInit, OnDestroy {
     const parts = text.split('|');
 
     return parts;
+  }
+
+  getRouteInfo() {
+    const queryParams = this.route.snapshot.queryParamMap;
+
+    this.NavPageId = Number(queryParams.get('navpageid') ?? 0);
+    this.OTID = Number(queryParams.get('otid') ?? 0);
+    this.OID = Number(queryParams.get('oid') ?? 0);
   }
 }
