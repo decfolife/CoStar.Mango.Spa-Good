@@ -36,6 +36,8 @@ export class SharedLeftNavComponent implements OnChanges {
   flyOutEntered: boolean = false;
   currentFlyOutMenuTrigger: MatMenuTrigger = null;
   currentFlyOutMenuCategory: string = null;
+  currentSubChildLevelMenuList: NodeListOf<Element> = null;
+  currentSubChildIndex: number = 0;
 
   constructor(private facade: MangoAppFacade) {}
 
@@ -65,7 +67,10 @@ export class SharedLeftNavComponent implements OnChanges {
             'left-nav__' +
             navLink.moduleID +
             '-' +
-            navLink.dynamicName.toLowerCase().replace(' ', '-');
+            navLink.dynamicName
+              .toLowerCase()
+              .replace(' ', '-')
+              .replace('.', '_');
 
           const element = document.getElementById(id);
 
@@ -279,11 +284,147 @@ export class SharedLeftNavComponent implements OnChanges {
     this.closeFlyOutMenu(this.currentFlyOutMenuTrigger);
   }
 
+  keydownFlyout(event: KeyboardEvent, navLink: SharedLeftNavLink) {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      //Move focus to sub child level menu items if they exist
+      if (navLink.subChildLevel > 0) {
+        if (this.currentSubChildLevelMenuList !== null) {
+          let previousLinkElement = this.currentSubChildLevelMenuList[
+            this.currentSubChildIndex
+          ] as HTMLElement;
+          let increment = event.key === 'ArrowDown' ? 1 : -1;
+          this.currentSubChildIndex += increment;
+          let linkElement = this.currentSubChildLevelMenuList[
+            this.currentSubChildIndex
+          ] as HTMLElement;
+          if (linkElement) {
+            event.stopPropagation();
+            previousLinkElement.blur();
+            linkElement.focus();
+          }
+        }
+      } else {
+        this.currentSubChildLevelMenuList = null;
+        this.currentSubChildIndex = 0;
+
+        //Execution should only enter this block of code when pressing the down arrow key on a nav link that has sub child level menu items or when pressing the up arrow key to move focus back
+        //to a sub child link.
+        if (
+          (this.currentSubChildLevelMenuList === null &&
+            this.hasSubChildLevelMenuItems(navLink)) ||
+          event.key === 'ArrowUp'
+        ) {
+          //The default settings here is for the down arrow key.  The up arrow key settings are in the if statement below
+          let anchorElement = event.target as HTMLElement;
+          let hasSclMenuItems = this.hasSubChildLevelMenuItems(navLink);
+          let navLinkToGetSubChildLevelMenuItemsFrom = navLink;
+          if (event.key === 'ArrowUp') {
+            let previousSiblingNavLink =
+              this.getPreviousSiblingNavLink(navLink);
+            if (previousSiblingNavLink) {
+              hasSclMenuItems = this.hasSubChildLevelMenuItems(
+                previousSiblingNavLink
+              );
+              navLinkToGetSubChildLevelMenuItemsFrom = previousSiblingNavLink;
+              //If the format of the nav link id is changed, this logic will need to be updated
+              anchorElement = document.getElementById(
+                'left-nav__' +
+                  previousSiblingNavLink.moduleID +
+                  '-' +
+                  previousSiblingNavLink.dynamicName
+                    .toLowerCase()
+                    .replace(' ', '-')
+                    .replace('.', '_')
+              ) as HTMLElement;
+            } else {
+              return;
+            }
+          }
+
+          if (!hasSclMenuItems) {
+            return;
+          }
+
+          let parentSpanElement = anchorElement.parentElement.parentElement;
+          if (parentSpanElement.tagName.toLowerCase() === 'span') {
+            let childAnchorClassName =
+              navLinkToGetSubChildLevelMenuItemsFrom?.dynamicName
+                ?.toLowerCase()
+                ?.replace(' ', '-')
+                .replace('.', '_') +
+              '_' +
+              'subChildLevel_link';
+            const anchorTags = parentSpanElement.querySelectorAll(
+              'a.' + childAnchorClassName
+            );
+            if (anchorTags.length > 0) {
+              this.currentSubChildLevelMenuList = anchorTags;
+              // Focus on the child anchor tag based on the index which is determined by whether the user pressed the up or down arrow key
+              this.currentSubChildIndex =
+                event.key === 'ArrowDown' ? 0 : anchorTags.length - 1;
+
+              event.stopPropagation();
+              let linkElement = this.currentSubChildLevelMenuList[
+                this.currentSubChildIndex
+              ] as HTMLElement;
+              linkElement.focus();
+            }
+          }
+        }
+      }
+    }
+  }
+
   hasSubChildLevelMenuItems(leftNavLink: SharedLeftNavLink) {
     return leftNavLink.subChildLevelNavLinks !== null;
   }
 
-  hasSubChildLevelMenuItems2(subNavLink: SharedLeftNavLink) {
-    return subNavLink.subChildLevelNavLinks !== null;
+  getPreviousSiblingNavLink(
+    navLink: SharedLeftNavLink
+  ): SharedLeftNavLink | null {
+    const index = this.navigationLinks.indexOf(navLink);
+    if (index <= 0) {
+      return null;
+    }
+    return this.navigationLinks[index - 1];
+  }
+
+  getParentLinkDynamicName(navLink: SharedLeftNavLink): string {
+    const topParentNavLink = this.getTopParentNavLink(navLink);
+    return topParentNavLink ? topParentNavLink.dynamicName : '';
+  }
+
+  private getTopParentNavLink(
+    navLink: SharedLeftNavLink
+  ): SharedLeftNavLink | null {
+    if (!navLink || navLink.subChildLevel === 0) {
+      return null;
+    }
+
+    const findParent = (
+      links: SharedLeftNavLink[],
+      target: SharedLeftNavLink
+    ): SharedLeftNavLink | null => {
+      for (const link of links) {
+        if (link.subChildLevelNavLinks?.includes(target)) {
+          return link;
+        }
+        const found = findParent(link.subChildLevelNavLinks ?? [], target);
+        if (found) {
+          return found;
+        }
+      }
+      return null;
+    };
+
+    let current = navLink;
+    let parent = findParent(this.navigationLinks, current);
+
+    while (parent && parent.subChildLevel > 0) {
+      current = parent;
+      parent = findParent(this.navigationLinks, current);
+    }
+
+    return parent;
   }
 }
