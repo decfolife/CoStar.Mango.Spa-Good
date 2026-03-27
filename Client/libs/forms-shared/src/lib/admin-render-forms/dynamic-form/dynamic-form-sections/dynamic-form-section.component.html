@@ -1523,6 +1523,10 @@
                                 "
                                 [formControlName]="data?.dataField"
                                 [name]="'radio-group' + data?.dataField"
+                                [ariaLabel]="
+                                  data?.name?.formItemSectionDetail
+                                    ?.formItemLabel
+                                "
                                 (change)="
                                   onRadioGroupChange($event, data?.name)
                                 "
