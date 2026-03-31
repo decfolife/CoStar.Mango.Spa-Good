@@ -359,19 +359,30 @@
                                         "
                                       >
                                       </crem-date-picker>
-                                      <crem-input-label
-                                        *ngIf="
-                                          !editMode ||
-                                          data?.name?.formItemViewOnly
-                                        "
-                                        [label]="
-                                          data.name.formItemAnswerViewMode
-                                        "
+                                      <span
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
                                         "
                                       >
-                                      </crem-input-label>
+                                        <span class="sr-only">{{
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                            ', ' +
+                                            (data?.name
+                                              ?.formItemAnswerViewMode || '')
+                                        }}</span>
+                                        <crem-input-label
+                                          *ngIf="
+                                            !editMode ||
+                                            data?.name?.formItemViewOnly
+                                          "
+                                          aria-hidden="true"
+                                          [label]="
+                                            data.name.formItemAnswerViewMode
+                                          "
+                                        >
+                                        </crem-input-label>
+                                      </span>
                                     </ng-container>
                                     <ng-container *ngSwitchCase="3">
                                       <crem-input
@@ -394,35 +405,61 @@
                                           )
                                         "
                                       ></crem-input>
-                                      <crem-input-label
+                                      <span
                                         *ngIf="
                                           !editMode ||
                                           data?.name?.formItemViewOnly
-                                        "
-                                        [label]="
-                                          (data.name.formItemAnswer
-                                          | isNumericUI)
-                                            ? (data.name.formItemAnswer
-                                              | number
-                                                : '1.' +
-                                                    (isTruthy(
-                                                      data.name.numDecimals
-                                                    )
-                                                      ? data.name.numDecimals
-                                                      : '0') +
-                                                    '-' +
-                                                    (isTruthy(
-                                                      data.name.numDecimals
-                                                    )
-                                                      ? data.name.numDecimals
-                                                      : '0'))
-                                            : data.name.formItemAnswer
                                         "
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
                                         "
                                       >
-                                      </crem-input-label>
+                                        <span class="sr-only">{{
+                                          data?.name?.formItemSectionDetail
+                                            ?.formItemLabel +
+                                            ', ' +
+                                            ((data.name.formItemAnswer
+                                            | isNumericUI)
+                                              ? (data.name.formItemAnswer
+                                                | number
+                                                  : '1.' +
+                                                      (isTruthy(
+                                                        data.name.numDecimals
+                                                      )
+                                                        ? data.name.numDecimals
+                                                        : '0') +
+                                                      '-' +
+                                                      (isTruthy(
+                                                        data.name.numDecimals
+                                                      )
+                                                        ? data.name.numDecimals
+                                                        : '0'))
+                                              : data.name.formItemAnswer)
+                                        }}</span>
+                                        <crem-input-label
+                                          aria-hidden="true"
+                                          [label]="
+                                            (data.name.formItemAnswer
+                                            | isNumericUI)
+                                              ? (data.name.formItemAnswer
+                                                | number
+                                                  : '1.' +
+                                                      (isTruthy(
+                                                        data.name.numDecimals
+                                                      )
+                                                        ? data.name.numDecimals
+                                                        : '0') +
+                                                      '-' +
+                                                      (isTruthy(
+                                                        data.name.numDecimals
+                                                      )
+                                                        ? data.name.numDecimals
+                                                        : '0'))
+                                              : data.name.formItemAnswer
+                                          "
+                                        >
+                                        </crem-input-label>
+                                      </span>
                                     </ng-container>
                                     <ng-container *ngSwitchCase="5">
                                       <crem-input
@@ -445,29 +482,45 @@
                                           )
                                         "
                                       ></crem-input>
-                                      <crem-input-label
+                                      <span
                                         *ngIf="
                                           !editMode ||
                                           data?.name?.formItemViewOnly
                                         "
-                                        [label]="
-                                          data.name.formItemAnswer
-                                            | number
-                                              : '1.' +
-                                                  (isTruthy(
-                                                    data.name.numDecimals
-                                                  )
-                                                    ? data.name.numDecimals
-                                                    : '0') +
-                                                  '-' +
-                                                  (isTruthy(
-                                                    data.name.numDecimals
-                                                  )
-                                                    ? data.name.numDecimals
-                                                    : '0')
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
                                         "
                                       >
-                                      </crem-input-label>
+                                        <span class="sr-only">{{
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                            ', ' +
+                                            (data?.name
+                                              ?.formItemAnswerViewMode ||
+                                              data?.name?.formItemAnswer ||
+                                              '')
+                                        }}</span>
+                                        <crem-input-label
+                                          aria-hidden="true"
+                                          [label]="
+                                            data.name.formItemAnswer
+                                              | number
+                                                : '1.' +
+                                                    (isTruthy(
+                                                      data.name.numDecimals
+                                                    )
+                                                      ? data.name.numDecimals
+                                                      : '0') +
+                                                    '-' +
+                                                    (isTruthy(
+                                                      data.name.numDecimals
+                                                    )
+                                                      ? data.name.numDecimals
+                                                      : '0')
+                                          "
+                                        >
+                                        </crem-input-label>
+                                      </span>
                                     </ng-container>
                                     <ng-container *ngSwitchCase="6">
                                       <crem-input
@@ -490,35 +543,50 @@
                                           )
                                         "
                                       ></crem-input>
-                                      <crem-input-label
+                                      <span
                                         *ngIf="
                                           !editMode ||
                                           data?.name?.formItemViewOnly
-                                        "
-                                        [label]="
-                                          data.name.formItemAnswer
-                                            ? '$' +
-                                              (data.name.formItemAnswer
-                                                | number
-                                                  : '1.' +
-                                                      (isTruthy(
-                                                        data.name.numDecimals
-                                                      )
-                                                        ? data.name.numDecimals
-                                                        : '0') +
-                                                      '-' +
-                                                      (isTruthy(
-                                                        data.name.numDecimals
-                                                      )
-                                                        ? data.name.numDecimals
-                                                        : '0'))
-                                            : ''
                                         "
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
                                         "
                                       >
-                                      </crem-input-label>
+                                        <span class="sr-only">{{
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                            ', ' +
+                                            (data?.name
+                                              ?.formItemAnswerViewMode ||
+                                              data?.name?.formItemAnswer ||
+                                              '')
+                                        }}</span>
+                                        <crem-input-label
+                                          aria-hidden="true"
+                                          [label]="
+                                            data.name.formItemAnswer
+                                              ? '$' +
+                                                (data.name.formItemAnswer
+                                                  | number
+                                                    : '1.' +
+                                                        (isTruthy(
+                                                          data.name.numDecimals
+                                                        )
+                                                          ? data.name
+                                                              .numDecimals
+                                                          : '0') +
+                                                        '-' +
+                                                        (isTruthy(
+                                                          data.name.numDecimals
+                                                        )
+                                                          ? data.name
+                                                              .numDecimals
+                                                          : '0'))
+                                              : ''
+                                          "
+                                        >
+                                        </crem-input-label>
+                                      </span>
                                     </ng-container>
                                     <ng-container *ngSwitchCase="206">
                                       <crem-input
@@ -541,29 +609,45 @@
                                           )
                                         "
                                       ></crem-input>
-                                      <crem-input-label
+                                      <span
                                         *ngIf="
                                           !editMode ||
                                           data?.name?.formItemViewOnly
                                         "
-                                        [label]="
-                                          data.name.formItemAnswer
-                                            | number
-                                              : '1.' +
-                                                  (isTruthy(
-                                                    data.name.numDecimals
-                                                  )
-                                                    ? data.name.numDecimals
-                                                    : '0') +
-                                                  '-' +
-                                                  (isTruthy(
-                                                    data.name.numDecimals
-                                                  )
-                                                    ? data.name.numDecimals
-                                                    : '0')
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
                                         "
                                       >
-                                      </crem-input-label>
+                                        <span class="sr-only">{{
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                            ', ' +
+                                            (data?.name
+                                              ?.formItemAnswerViewMode ||
+                                              data?.name?.formItemAnswer ||
+                                              '')
+                                        }}</span>
+                                        <crem-input-label
+                                          aria-hidden="true"
+                                          [label]="
+                                            data.name.formItemAnswer
+                                              | number
+                                                : '1.' +
+                                                    (isTruthy(
+                                                      data.name.numDecimals
+                                                    )
+                                                      ? data.name.numDecimals
+                                                      : '0') +
+                                                    '-' +
+                                                    (isTruthy(
+                                                      data.name.numDecimals
+                                                    )
+                                                      ? data.name.numDecimals
+                                                      : '0')
+                                          "
+                                        >
+                                        </crem-input-label>
+                                      </span>
                                     </ng-container>
                                     <ng-container *ngSwitchDefault>
                                       <crem-input
@@ -579,17 +663,30 @@
                                         "
                                         [formControlName]="data?.dataField"
                                       ></crem-input>
-                                      <crem-input-label
+                                      <span
                                         *ngIf="
                                           !editMode ||
                                           data?.name?.formItemViewOnly
                                         "
-                                        [formControlName]="data?.dataField"
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : 0
                                         "
                                       >
-                                      </crem-input-label>
+                                        <span class="sr-only">{{
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                            ', ' +
+                                            (data?.name
+                                              ?.formItemAnswerViewMode ||
+                                              data?.name?.formItemAnswer ||
+                                              '')
+                                        }}</span>
+                                        <crem-input-label
+                                          aria-hidden="true"
+                                          [formControlName]="data?.dataField"
+                                        >
+                                        </crem-input-label>
+                                      </span>
                                     </ng-container>
                                   </div>
                                 </div>
@@ -668,6 +765,12 @@
                                         }}"
                                         [attr.tabindex]="
                                           editMode || !isExpanded ? -1 : null
+                                        "
+                                        [attr.aria-label]="
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                          ', ' +
+                                          (data?.name?.formItemAnswer || '')
                                         "
                                         class="df-formSection-fieldContent"
                                         >{{ data?.name?.formItemAnswer }}</a
@@ -815,6 +918,20 @@
                                       [labelledby]="
                                         data?.name?.formItemName + '_label'
                                       "
+                                      [attr.tabindex]="
+                                        !editMode && isExpanded ? 0 : null
+                                      "
+                                      [attr.aria-label]="
+                                        !editMode
+                                          ? (data?.name?.formItemSectionDetail
+                                              ?.formItemLabel || '') +
+                                            ', ' +
+                                            (data?.name
+                                              ?.formItemAnswerViewMode ||
+                                              data?.name?.formItemAnswer ||
+                                              '')
+                                          : null
+                                      "
                                       [inputId]="
                                         'df-input-' +
                                         data?.name.formItemSectionDetail
@@ -882,15 +999,27 @@
                               <div
                                 class="field-content df-formSection-fieldContent"
                               >
-                                <crem-input-label
+                                <span
                                   *ngIf="!editMode"
                                   class="text-area-label"
-                                  [formControlName]="data?.dataField"
                                   [attr.tabindex]="
                                     editMode || !isExpanded ? -1 : 0
                                   "
                                 >
-                                </crem-input-label>
+                                  <span class="sr-only">{{
+                                    (data?.name?.formItemSectionDetail
+                                      ?.formItemLabel || '') +
+                                      ', ' +
+                                      (data?.name?.formItemAnswerViewMode ||
+                                        data?.name?.formItemAnswer ||
+                                        '')
+                                  }}</span>
+                                  <crem-input-label
+                                    aria-hidden="true"
+                                    [formControlName]="data?.dataField"
+                                  >
+                                  </crem-input-label>
+                                </span>
                                 <crem-input
                                   class="text-area"
                                   *ngIf="editMode"
@@ -1022,12 +1151,27 @@
                                   }
                                 "
                               ></ng-container>
-                              <crem-input-label
+                              <span
                                 class="df-formSection-fieldContent"
                                 *ngIf="!editMode"
-                                [formControlName]="data?.dataField"
+                                [attr.tabindex]="
+                                  editMode || !isExpanded ? -1 : 0
+                                "
                               >
-                              </crem-input-label>
+                                <span class="sr-only">{{
+                                  (data?.name?.formItemSectionDetail
+                                    ?.formItemLabel || '') +
+                                    ', ' +
+                                    (data?.name?.formItemAnswerViewMode ||
+                                      data?.name?.formItemAnswer ||
+                                      '')
+                                }}</span>
+                                <crem-input-label
+                                  aria-hidden="true"
+                                  [formControlName]="data?.dataField"
+                                >
+                                </crem-input-label>
+                              </span>
                               <crem-input
                                 class="df-formSection-fieldContent field-content"
                                 *ngIf="editMode"
@@ -1096,6 +1240,19 @@
                                     [readOnlyStyle]="'text-only'"
                                     [labelledby]="
                                       data?.name?.formItemName + '_label'
+                                    "
+                                    [attr.tabindex]="
+                                      !editMode && isExpanded ? 0 : null
+                                    "
+                                    [attr.aria-label]="
+                                      !editMode
+                                        ? (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                          ', ' +
+                                          (data?.name?.formItemAnswerViewMode ||
+                                            data?.name?.formItemAnswer ||
+                                            '')
+                                        : null
                                     "
                                     [inputId]="
                                       'df-input-' +
@@ -1173,6 +1330,19 @@
                                     [readOnlyStyle]="'text-only'"
                                     [labelledby]="
                                       data?.name?.formItemName + '_label'
+                                    "
+                                    [attr.tabindex]="
+                                      !editMode && isExpanded ? 0 : null
+                                    "
+                                    [attr.aria-label]="
+                                      !editMode
+                                        ? (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                          ', ' +
+                                          (data?.name?.formItemAnswerViewMode ||
+                                            data?.name?.formItemAnswer ||
+                                            '')
+                                        : null
                                     "
                                     [inputId]="
                                       'df-input-' +
@@ -1310,12 +1480,26 @@
                                 <div *ngIf="isRenderForm">
                                   <div [ngSwitch]="data?.name?.dataTypeID">
                                     <ng-container *ngSwitchCase="7">
-                                      <crem-input-label
-                                        [label]="
-                                          data.name.formItemAnswerViewMode
+                                      <span
+                                        [attr.tabindex]="
+                                          editMode || !isExpanded ? -1 : 0
                                         "
                                       >
-                                      </crem-input-label>
+                                        <span class="sr-only">{{
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
+                                            ', ' +
+                                            (data?.name
+                                              ?.formItemAnswerViewMode || '')
+                                        }}</span>
+                                        <crem-input-label
+                                          aria-hidden="true"
+                                          [label]="
+                                            data.name.formItemAnswerViewMode
+                                          "
+                                        >
+                                        </crem-input-label>
+                                      </span>
                                     </ng-container>
                                     <ng-container *ngSwitchDefault>
                                       <div
@@ -1367,9 +1551,25 @@
                                             ) as sanitizedValue
                                           "
                                         >
-                                          <div
-                                            [innerHTML]="sanitizedValue"
-                                          ></div>
+                                          <span
+                                            [attr.tabindex]="
+                                              editMode || !isExpanded ? -1 : 0
+                                            "
+                                          >
+                                            <span class="sr-only">{{
+                                              (data?.name?.formItemSectionDetail
+                                                ?.formItemLabel || '') +
+                                                ', ' +
+                                                (data?.name
+                                                  ?.formItemAnswerViewMode ||
+                                                  data?.name?.formItemAnswer ||
+                                                  '')
+                                            }}</span>
+                                            <div
+                                              aria-hidden="true"
+                                              [innerHTML]="sanitizedValue"
+                                            ></div>
+                                          </span>
                                         </ng-container>
                                       </ng-template>
 
@@ -1471,16 +1671,28 @@
                                 "
                                 [formControlName]="data?.dataField"
                               ></crem-check-box>
-                              <crem-input-label
+                              <span
                                 class="df-formSection-fieldContent"
                                 *ngIf="
                                   isRenderForm &&
                                   (!editMode || data?.name?.formItemViewOnly)
                                 "
-                                [label]="
-                                  data.name.formItemAnswer ? 'Yes' : 'No'
+                                [attr.tabindex]="
+                                  editMode || !isExpanded ? -1 : 0
                                 "
-                              ></crem-input-label>
+                                ><span class="sr-only">{{
+                                  (data?.name?.formItemSectionDetail
+                                    ?.formItemLabel || '') +
+                                    ', ' +
+                                    (data.name.formItemAnswer ? 'Yes' : 'No')
+                                }}</span
+                                ><crem-input-label
+                                  aria-hidden="true"
+                                  [label]="
+                                    data.name.formItemAnswer ? 'Yes' : 'No'
+                                  "
+                                ></crem-input-label
+                              ></span>
                               <crem-check-box
                                 *ngIf="!isRenderForm"
                                 [id]="
