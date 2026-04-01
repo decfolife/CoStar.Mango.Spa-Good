@@ -91,6 +91,12 @@ export class AddEventComponent implements OnDestroy, OnInit {
   effectiveRate: number;
   minROUActionDate: any;
 
+  get blockerText(): string {
+    if (this.calculateValuesLoading) return 'Calculating...';
+    if (this.isSaveAndCloseClicked || this.isApplyClicked) return 'Saving...';
+    return '';
+  }
+
   constructor(
     public accountingSummaryService: AccountingSummaryService,
     public location: Location,

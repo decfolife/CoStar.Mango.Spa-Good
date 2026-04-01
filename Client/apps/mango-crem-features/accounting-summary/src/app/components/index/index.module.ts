@@ -19,6 +19,7 @@ import {
   CremTabItemComponent,
   CremPopoverComponent,
   SearchComponent,
+  CremBlockUIComponent,
 } from '@mango/ui-shared/lib-ui-elements';
 import { HttpClientModule } from '@angular/common/http';
 import {
@@ -132,6 +133,7 @@ import { SplitButtonComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/spl
     AccountingAdaDirective,
     SearchComponent,
     SplitButtonComponent,
+    CremBlockUIComponent,
   ],
 
   providers: [
