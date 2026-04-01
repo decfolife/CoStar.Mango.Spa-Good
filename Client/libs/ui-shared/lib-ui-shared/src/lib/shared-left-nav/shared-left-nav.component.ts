@@ -233,6 +233,10 @@ export class SharedLeftNavComponent implements OnChanges {
       }
     }
 
+    if (this.flyOutMenuEntered && this.flyOutEntered) {
+      this.flyOutMenuLeave();
+    }
+
     this.toActiveLink.emit(this.activeLink);
     this.navigateSpa.emit(navLink);
   }
