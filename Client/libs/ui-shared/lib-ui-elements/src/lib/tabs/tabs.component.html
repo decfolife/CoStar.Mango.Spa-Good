@@ -11,6 +11,9 @@
       role="tab"
       [disabled]="tab.disabled"
       [attr.id]="tab.id || null"
+      [attr.aria-label]="
+        tab.title + ', ' + (tab.active ? 'Selected' : 'Not Selected')
+      "
       [attr.aria-selected]="tab.active ? 'true' : 'false'"
       [attr.aria-controls]="'tabpanel-' + (tab.id || i)"
       [attr.aria-disabled]="tab.disabled ? 'true' : null"
