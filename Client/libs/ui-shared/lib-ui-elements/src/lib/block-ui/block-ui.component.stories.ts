@@ -14,6 +14,22 @@ import {
   standalone: true,
   imports: [CommonModule, CremBlockUIComponent],
   template: `
+    <button
+      (click)="toggleBlocking()"
+      style="
+        margin-bottom: 16px;
+        padding: 8px 20px;
+        background: #1976d2;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      "
+    >
+      {{ isBlocking ? 'Stop Blocking' : 'Start Blocking' }}
+    </button>
+
     <crem-block-ui
       [isBlocking]="isBlocking"
       [message]="message"
@@ -34,22 +50,8 @@ import {
           UI Blocker Demo
         </h3>
         <p style="margin: 0 0 16px; color: #616161; line-height: 1.5;">
-          Click the button to toggle the blocker on and off.
+          Click the button above to toggle the blocker on and off.
         </p>
-        <button
-          (click)="toggleBlocking()"
-          style="
-            padding: 8px 20px;
-            background: #1976d2;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-          "
-        >
-          {{ isBlocking ? 'Stop Blocking' : 'Start Blocking' }}
-        </button>
       </div>
     </crem-block-ui>
   `,
@@ -74,7 +76,7 @@ interface CremBlockUIStory {
 }
 
 export default {
-  title: 'Components/CremBlockUI *',
+  title: 'Components/Block UI',
   component: CremBlockUIDemoComponent,
   decorators: [
     moduleMetadata({
@@ -116,7 +118,7 @@ const Template: Story<CremBlockUIStory> = (args: CremBlockUIStory) => ({
 export const Interactive = Template.bind({});
 Interactive.storyName = 'Interactive Demo';
 Interactive.args = {
-  message: 'Please wait...',
+  message: 'Loading...',
   variant: 'dark',
   size: 'md',
 };
@@ -124,29 +126,37 @@ Interactive.args = {
 export const LightVariant = Template.bind({});
 LightVariant.storyName = 'Light Variant';
 LightVariant.args = {
-  message: 'Loading...',
+  message: 'Fetching data...',
   variant: 'light',
   size: 'md',
 };
 
 export const TransparentVariant = Template.bind({});
-TransparentVariant.storyName = 'Transparent (Spinner Only)';
+TransparentVariant.storyName = 'Transparent';
 TransparentVariant.args = {
-  message: 'Processing...',
+  message: 'Saving changes...',
   variant: 'transparent',
   size: 'md',
 };
 
 export const SmallSize = Template.bind({});
-SmallSize.storyName = 'Small Size';
+SmallSize.storyName = 'Small';
 SmallSize.args = {
-  message: 'Please wait...',
+  message: 'Hang tight...',
   variant: 'dark',
   size: 'sm',
 };
 
+export const Medium = Template.bind({});
+Medium.storyName = 'Medium';
+Medium.args = {
+  message: 'Just a moment...',
+  variant: 'dark',
+  size: 'md',
+};
+
 export const LargeSize = Template.bind({});
-LargeSize.storyName = 'Large Size';
+LargeSize.storyName = 'Large';
 LargeSize.args = {
   message: 'Recalculating...',
   variant: 'dark',
