@@ -443,17 +443,15 @@ export class DynamicFormSectionComponent
           next: ([fields, renderFormData]) => {
             if (this.isRenderForm) {
               this.selectRenderFormData = renderFormData;
-              fields.forEach((element) => {
-                element.formObjectId = renderFormData.filter(
-                  (s) => s.formObjectId
-                )
-                  ? Number(
-                      renderFormData.filter((s) => s.formObjectId)[0]
-                        ?.formObjectId
-                    )
-                  : 0;
-              });
-              this.processFormFields(fields);
+              const formObjectId = renderFormData.filter(
+                (s) => s.formObjectId
+              )?.[0]?.formObjectId;
+
+              const clonedFields = fields.map((element) => ({
+                ...element,
+                formObjectId: formObjectId ? Number(formObjectId) : 0,
+              }));
+              this.processFormFields(clonedFields);
               this.setupRenderFormDropdownsSubscription();
               this.filterRenderFormData();
               this.updateChildFormAddRenderFormData();
