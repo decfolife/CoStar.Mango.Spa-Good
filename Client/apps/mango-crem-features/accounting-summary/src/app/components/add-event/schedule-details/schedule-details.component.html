@@ -39,6 +39,7 @@
             [showClearButton]="false"
             [initialSelectedValue]="selectedClassificationID"
             (selectedItems)="onClassificationValueChanged($event)"
+            (selectionClosed)="onClassificationSelectionClosed()"
             formControlName="classificationId"
             [containerized]="true"
             (blur)="classificationBlur = true"

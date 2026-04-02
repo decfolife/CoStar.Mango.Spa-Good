@@ -72,6 +72,7 @@ export class DropdownComponent
   @Output() moreMenuItemClicked = new EventEmitter<any>();
   @Output() gridDropdownValueChanged = new EventEmitter<boolean>();
   @Output() blur = new EventEmitter<any>();
+  @Output() selectionClosed = new EventEmitter<void>();
   @ViewChild('dropdownTemplate', { static: false })
   dropdownTemplate: DxDataGridComponent;
   @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent;
@@ -598,6 +599,7 @@ export class DropdownComponent
         this.focusDropdown();
         setTimeout(() => {
           this.isDropDownBoxOpened = false;
+          this.selectionClosed.emit();
         }, 400);
       }
 

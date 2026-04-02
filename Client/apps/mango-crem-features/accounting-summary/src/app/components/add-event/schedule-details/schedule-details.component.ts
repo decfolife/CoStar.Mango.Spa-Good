@@ -1074,4 +1074,8 @@ export class ScheduleDetailsComponent
       .setValue(this.reportingExceptionsList[1].id);
     this.reportExceptionValidationPopup = !this.reportExceptionValidationPopup;
   }
+
+  onClassificationSelectionClosed() {
+    this.classificationDD.focusDropdown();
+  }
 }
