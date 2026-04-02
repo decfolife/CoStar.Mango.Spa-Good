@@ -4,12 +4,8 @@
   [ngStyle]="getWrapperCSS()"
   (click)="closeOnClick && close()"
   *ngIf="visible"
-  [attr.role]="state === 'error' ? 'alert' : 'status'"
-  [attr.aria-live]="state === 'error' ? 'assertive' : 'polite'"
+  role="alert"
   aria-atomic="true"
-  [attr.aria-labelledby]="
-    messageHeader ? 'toast-header-' + createdAt : undefined
-  "
 >
   <div class="icon-container">
     <div class="icon-wrapper" [ngClass]="getIconBgColorClasses()">

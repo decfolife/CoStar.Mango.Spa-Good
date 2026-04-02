@@ -37,11 +37,11 @@
               objTypeList.includes(widget.objectTypeID)) ||
             (editMode && widget.allowCreation)
           "
-          (click)="onAddWidget(widget)"
+          (buttonClick)="onAddWidget(widget)"
           [attr.title]="
             'Add new ' + (widget.widgetDisplayName ?? widget.widgetName)
           "
-          [attr.aria-label]="
+          [ariaLabel]="
             'Add new ' + (widget.widgetDisplayName ?? widget.widgetName)
           "
           >Add</crem-button
@@ -78,7 +78,7 @@
             (widget.widgetDisplayName ?? widget.widgetName) +
             (isCreatingExport ? ' to Excel' : ' as an Excel file')
           "
-          [attr.aria-label]="
+          [ariaLabel]="
             (isCreatingExport ? 'Sending for ' : 'Download for ') +
             (widget.widgetDisplayName ?? widget.widgetName) +
             (isCreatingExport ? ' to Excel' : ' as an Excel file')
