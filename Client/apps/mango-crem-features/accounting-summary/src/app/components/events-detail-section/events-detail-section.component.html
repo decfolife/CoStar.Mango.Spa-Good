@@ -167,6 +167,7 @@
             [matMenuTriggerFor]="moreMenu"
             (click)="openMoreMenu($event)"
             (keydown)="openMoreMenu($event)"
+            aria-label="Accounting events More Options"
           >
             More
             <mat-icon
@@ -320,6 +321,7 @@
         (onRowExpanding)="showMaxRows()"
         (onRowExpanded)="setExpandedRowCount()"
         (onRowCollapsed)="setExpandedRowCount()"
+        (onCellPrepared)="onEventsCellPrepared($event)"
         (onContextMenuPreparing)="onContextMenuPreparing($event)"
         (onContentReady)="onGridContentReady($event)"
       >

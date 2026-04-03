@@ -199,7 +199,9 @@ export class EventsDetailSectionComponent
 
     const gridBoxValue =
       this.storageService.getData('accounting_summary')?.gridBoxValue; // Check if session exists
-    !gridBoxValue ?? this.onValueChanged({ value: gridBoxValue }); // fix: Calling it artificially to compensate for the lifecycle issue
+    if (gridBoxValue) {
+      this.onValueChanged({ value: gridBoxValue }); // fix: Calling it artificially to compensate for the lifecycle issue
+    }
   }
 
   ngOnDestroy() {
@@ -299,6 +301,19 @@ export class EventsDetailSectionComponent
         }
       })
     );
+  }
+
+  onEventsCellPrepared(e) {
+    if (e.rowType === 'data' && e.column.command === 'expand') {
+      setTimeout(() => {
+        const isExpanded = e.row.isExpanded;
+        const ariaLabel = isExpanded
+          ? 'Expand row button expanded'
+          : 'Expand row button collapsed';
+        e.cellElement.setAttribute('aria-label', ariaLabel);
+        e.cellElement.setAttribute('title', ariaLabel);
+      });
+    }
   }
 
   onGridContentReady(grid) {
