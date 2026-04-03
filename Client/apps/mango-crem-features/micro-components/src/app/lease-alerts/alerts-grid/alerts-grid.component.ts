@@ -678,6 +678,24 @@ export class AlertsGridComponent implements OnInit {
     this.saveSessionState();
     this.checkGrouping(contentReadyEvent);
     this.sortFilterFields();
+
+    if (this.pendingFocusLeaseAlertID != null) {
+      const targetKey = this.pendingFocusLeaseAlertID;
+      this.pendingFocusLeaseAlertID = null;
+      const grid = contentReadyEvent?.component;
+      if (grid) {
+        grid.navigateToRow(targetKey).then(() => {
+          grid.option('focusedRowKey', targetKey);
+          const rowIndex = grid.getRowIndexByKey(targetKey);
+          if (rowIndex >= 0) {
+            const cellEl = grid.getCellElement(rowIndex, 0) as Element;
+            if (cellEl) {
+              grid.focus(cellEl);
+            }
+          }
+        });
+      }
+    }
   }
 
   checkGrouping(contentReadyEvent) {
@@ -877,25 +895,6 @@ export class AlertsGridComponent implements OnInit {
     this.isInitialLoading = true;
     setTimeout(() => {
       this.isInitialLoading = false;
-
-      if (this.pendingFocusLeaseAlertID != null) {
-        const targetKey = this.pendingFocusLeaseAlertID;
-        this.pendingFocusLeaseAlertID = null;
-        setTimeout(() => {
-          const grid = this.leaseAlertsGrid?.instance;
-          if (!grid) return;
-          grid.navigateToRow(targetKey).then(() => {
-            grid.option('focusedRowKey', targetKey);
-            const rowIndex = grid.getRowIndexByKey(targetKey);
-            if (rowIndex >= 0) {
-              const cellEl = grid.getCellElement(rowIndex, 0) as Element;
-              if (cellEl) {
-                grid.focus(cellEl);
-              }
-            }
-          });
-        });
-      }
     }, 10);
 
     this.selectedColumnsCopy = JSON.parse(JSON.stringify(this.selectedColumns));
@@ -1024,7 +1023,12 @@ export class AlertsGridComponent implements OnInit {
     const rowIndex = grid.getRowIndexByKey(leaseAlertID);
     const visibleRows = grid.getVisibleRows();
     if (rowIndex >= 0 && visibleRows?.length) {
-      const nextRow = visibleRows[rowIndex + 1] ?? visibleRows[rowIndex - 1];
+      const nextRow =
+        visibleRows.slice(rowIndex + 1).find((r) => r.rowType === 'data') ??
+        visibleRows
+          .slice(0, rowIndex)
+          .reverse()
+          .find((r) => r.rowType === 'data');
       this.pendingFocusLeaseAlertID = nextRow?.data?.leaseAlertID ?? null;
     }
   }
