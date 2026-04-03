@@ -900,11 +900,7 @@
                                     <span
                                       class="df-dropdown-readonly-wrapper"
                                       [attr.tabindex]="
-                                        (!editMode ||
-                                          data?.name?.formItemViewOnly) &&
-                                        isExpanded
-                                          ? 0
-                                          : null
+                                        !editMode && isExpanded ? 0 : null
                                       "
                                     >
                                       <span
@@ -1044,9 +1040,10 @@
                                     (data?.name?.formItemSectionDetail
                                       ?.formItemLabel || '') +
                                       ', ' +
-                                      (data?.name?.formItemAnswerViewMode ||
-                                        data?.name?.formItemAnswer ||
-                                        '')
+                                      getAccessibleFieldValue(
+                                        data?.name?.formItemAnswerViewMode ||
+                                          data?.name?.formItemAnswer
+                                      )
                                   }}</span>
                                   <crem-input-label
                                     aria-hidden="true"
@@ -1866,7 +1863,9 @@
       id="df-accountingWorkFlow-{{
         data?.name.formItemSectionDetail.formItemID
       }}"
-      *ngIf="data?.name?.formItemSectionDetail?.triggerWorkflowChange"
+      *ngIf="
+        editMode && data?.name?.formItemSectionDetail?.triggerWorkflowChange
+      "
     >
       <ng-container
         *ngTemplateOutlet="accountingWorkflow; context: { $implicit: data }"
@@ -1883,7 +1882,7 @@
       id="df-leaseVerification-{{
         data?.name.formItemSectionDetail.formItemID
       }}"
-      *ngIf="data?.name?.formItemSectionDetail?.isAuditable"
+      *ngIf="editMode && data?.name?.formItemSectionDetail?.isAuditable"
     >
       <ng-container
         *ngTemplateOutlet="leaseVerification; context: { $implicit: data }"
