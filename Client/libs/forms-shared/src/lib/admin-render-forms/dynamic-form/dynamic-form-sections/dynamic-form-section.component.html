@@ -1917,7 +1917,9 @@
       [helpTextID]="
         'df-helpTextId-' + data?.name.formItemSectionDetail.formItemID
       "
-      [triggerTabIndex]="editMode || !isExpanded ? -1 : 0"
+      [triggerTabIndex]="
+        !isExpanded || (editMode && data?.name?.formItemViewOnly) ? -1 : 0
+      "
       [visible]="false"
       [dateFormat]="(dateFormatPreference$ | async) + ' h:mm:ss a'"
       [dataSource]="controlInfoHistData"
