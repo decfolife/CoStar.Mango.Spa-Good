@@ -6,6 +6,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatDialog } from '@angular/material/dialog';
 import { faChartBar } from '@fortawesome/free-solid-svg-icons';
 import { environment } from '../../../../../../../mango/src/environments/environment.local';
@@ -74,7 +75,8 @@ export class DashboardCardComponent implements OnInit {
     private dataService: DataService,
     private dialog: MatDialog,
     private dashboardService: DashboardService,
-    private toastService: CremToastService
+    private toastService: CremToastService,
+    private liveAnnouncer: LiveAnnouncer
   ) {
     this.summationTypeConfig = {
       showSummationTypeConfig: false,
@@ -285,27 +287,22 @@ export class DashboardCardComponent implements OnInit {
   exportNotification(type: 'success' | 'error') {
     switch (type) {
       case 'success': {
-        this.toastService.show(
-          'Report exported successfully.',
-          '',
-          ToastState.SUCCESS,
-          {
-            position: 'bottom right',
-            maxWidth: '350px',
-          }
-        );
+        const successMessage = 'Report Exported successfully';
+        this.toastService.show(successMessage, '', ToastState.SUCCESS, {
+          position: 'bottom right',
+          maxWidth: '350px',
+        });
+        this.liveAnnouncer.announce(successMessage, 'assertive');
         break;
       }
       case 'error': {
-        this.toastService.show(
-          'Error encountered during export. Please try again.',
-          '',
-          ToastState.ERROR,
-          {
-            position: 'bottom right',
-            maxWidth: '350px',
-          }
-        );
+        const errorMessage =
+          'Error encountered during export. Please try again.';
+        this.toastService.show(errorMessage, '', ToastState.ERROR, {
+          position: 'bottom right',
+          maxWidth: '350px',
+        });
+        this.liveAnnouncer.announce(errorMessage, 'assertive');
         break;
       }
     }
