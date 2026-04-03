@@ -187,6 +187,10 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   rouMethodTouched = false;
   rouAmountTouched = false;
   currencyRateTouched = false;
+  readonly discountRateMaxDecimalPlaces = 14;
+  readonly discountRateMaxIntegerDigits = 4;
+  readonly functionalCurrencyRateMaxDecimalPlaces = 20;
+  readonly functionalCurrencyRateMaxIntegerDigits = 10;
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
@@ -1108,7 +1112,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       this.measureEvent === 'Initial'
         ? this.datePipe.transform(this.termBegin, this.dateFormat)
         : this.datePipe.transform(this.minROUActionDate, this.dateFormat)
-    } 
+    }
       and ${this.datePipe.transform(this.termEnd, this.dateFormat)}.`;
 
     if (
@@ -1619,7 +1623,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   formatEffectiveRate() {
-    return this.effectiveRate?.toFixed(4);
+    return this.effectiveRate?.toFixed(14);
   }
 
   getFunctionalCurrencyRateLookup() {

@@ -523,7 +523,7 @@ export class EventsDetailSectionComponent
             ': ' +
             (
               Math.round(gridDataRow.functionalCurrencyRate * 10000) / 10000
-            ).toFixed(4);
+            ).toFixed(14);
     } else {
       return gridDataRow.localCurrency;
     }
@@ -533,7 +533,7 @@ export class EventsDetailSectionComponent
     return (
       (!gridDataRow.discountRate
         ? '0.0000'
-        : (Math.round(gridDataRow.discountRate * 10000) / 10000).toFixed(4)) +
+        : (Math.round(gridDataRow.discountRate * 10000) / 10000).toFixed(14)) +
       '% ' +
       (gridDataRow.annualRateTypeID == 1 ? 'APR' : 'APY')
     );
