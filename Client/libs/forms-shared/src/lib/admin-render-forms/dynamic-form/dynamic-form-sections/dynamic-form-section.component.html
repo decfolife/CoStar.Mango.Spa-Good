@@ -368,8 +368,9 @@
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
                                             ', ' +
-                                            (data?.name
-                                              ?.formItemAnswerViewMode || '')
+                                            getAccessibleFieldValue(
+                                              data?.name?.formItemAnswerViewMode
+                                            )
                                         }}</span>
                                         <crem-input-label
                                           *ngIf="
@@ -676,10 +677,11 @@
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
                                             ', ' +
-                                            (data?.name
-                                              ?.formItemAnswerViewMode ||
-                                              data?.name?.formItemAnswer ||
-                                              '')
+                                            getAccessibleFieldValue(
+                                              data?.name
+                                                ?.formItemAnswerViewMode ||
+                                                data?.name?.formItemAnswer
+                                            )
                                         }}</span>
                                         <crem-input-label
                                           aria-hidden="true"
@@ -889,76 +891,108 @@
                                     [formControlName]="data?.dataField"
                                   ></crem-input>
                                   <ng-container *ngIf="isRenderForm">
-                                    <crem-dropdown
-                                      *ngIf="
-                                        dropdownValues$
-                                          | async as dropdownValues
-                                      "
-                                      [dataSource]="
-                                        dropdownValues[data?.dataField]
-                                      "
-                                      [displayExpr]="
-                                        !this.editMode &&
-                                        dropdownValues[data?.dataField][1] &&
-                                        dropdownValues[data?.dataField][1][
-                                          'redirector'
-                                        ]
-                                          ? 'redirector'
-                                          : 'display'
-                                      "
-                                      [allowSearch]="true"
-                                      [valueExpr]="'value'"
-                                      [readOnly]="
-                                        !editMode ||
-                                        data?.name?.formItemViewOnly
-                                      "
-                                      [containerized]="false"
-                                      [formControlName]="data?.dataField"
-                                      [readOnlyStyle]="'text-only'"
-                                      [labelledby]="
-                                        data?.name?.formItemName + '_label'
-                                      "
+                                    <!--
+                                      ADA: In read-only mode, the wrapper span is focusable with sr-only
+                                      text so screen readers announce "Label, Value" and the focus outline
+                                      is visible. The dropdown itself is aria-hidden and unfocusable.
+                                      In edit mode, the wrapper is inert and the dropdown is interactive.
+                                    -->
+                                    <span
+                                      class="df-dropdown-readonly-wrapper"
                                       [attr.tabindex]="
-                                        !editMode && isExpanded ? 0 : null
+                                        (!editMode ||
+                                          data?.name?.formItemViewOnly) &&
+                                        isExpanded
+                                          ? 0
+                                          : null
                                       "
-                                      [attr.aria-label]="
-                                        !editMode
-                                          ? (data?.name?.formItemSectionDetail
-                                              ?.formItemLabel || '') +
+                                    >
+                                      <span
+                                        class="sr-only"
+                                        *ngIf="
+                                          !editMode ||
+                                          data?.name?.formItemViewOnly
+                                        "
+                                        >{{
+                                          (data?.name?.formItemSectionDetail
+                                            ?.formItemLabel || '') +
                                             ', ' +
                                             (data?.name
                                               ?.formItemAnswerViewMode ||
                                               data?.name?.formItemAnswer ||
                                               '')
-                                          : null
-                                      "
-                                      [inputId]="
-                                        'df-input-' +
-                                        data?.name.formItemSectionDetail
-                                          .formItemID
-                                      "
-                                      [id]="
-                                        'df-dropdown-' +
-                                        data?.name.formItemSectionDetail
-                                          .formItemID
-                                      "
-                                      (selectedItems)="
-                                        data?.name?.formItemInput1ID ===
-                                        data?.dataField
-                                          ? handleBehavior(
-                                              data?.name?.requestTypeID,
-                                              data?.name?.formItemInput1ID,
-                                              data?.name?.formItemInput2ID,
-                                              data?.name?.formItemOutputID,
-                                              data?.name?.behaviorTypeID,
-                                              $event,
-                                              data?.name?.dropdownBlankOption
-                                            )
-                                          : ''
-                                      "
-                                      (keydown.space)="$event.preventDefault()"
-                                    >
-                                    </crem-dropdown>
+                                        }}</span
+                                      >
+                                      <crem-dropdown
+                                        *ngIf="
+                                          dropdownValues$
+                                            | async as dropdownValues
+                                        "
+                                        [dataSource]="
+                                          dropdownValues[data?.dataField]
+                                        "
+                                        [displayExpr]="
+                                          !this.editMode &&
+                                          dropdownValues[data?.dataField][1] &&
+                                          dropdownValues[data?.dataField][1][
+                                            'redirector'
+                                          ]
+                                            ? 'redirector'
+                                            : 'display'
+                                        "
+                                        [allowSearch]="true"
+                                        [valueExpr]="'value'"
+                                        [readOnly]="
+                                          !editMode ||
+                                          data?.name?.formItemViewOnly
+                                        "
+                                        [containerized]="false"
+                                        [formControlName]="data?.dataField"
+                                        [readOnlyStyle]="'text-only'"
+                                        [labelledby]="
+                                          data?.name?.formItemName + '_label'
+                                        "
+                                        [attr.tabindex]="
+                                          !editMode ||
+                                          data?.name?.formItemViewOnly
+                                            ? -1
+                                            : null
+                                        "
+                                        [attr.aria-hidden]="
+                                          !editMode ||
+                                          data?.name?.formItemViewOnly ||
+                                          null
+                                        "
+                                        [inputId]="
+                                          'df-input-' +
+                                          data?.name.formItemSectionDetail
+                                            .formItemID
+                                        "
+                                        [id]="
+                                          'df-dropdown-' +
+                                          data?.name.formItemSectionDetail
+                                            .formItemID
+                                        "
+                                        (selectedItems)="
+                                          data?.name?.formItemInput1ID ===
+                                          data?.dataField
+                                            ? handleBehavior(
+                                                data?.name?.requestTypeID,
+                                                data?.name?.formItemInput1ID,
+                                                data?.name?.formItemInput2ID,
+                                                data?.name?.formItemOutputID,
+                                                data?.name?.behaviorTypeID,
+                                                $event,
+                                                data?.name?.dropdownBlankOption
+                                              )
+                                            : ''
+                                        "
+                                        (keydown.space)="
+                                          $event.preventDefault()
+                                        "
+                                      >
+                                      </crem-dropdown>
+                                    </span>
                                   </ng-container>
                                 </ng-container>
                                 <ngx-skeleton-loader
@@ -1489,8 +1523,9 @@
                                           (data?.name?.formItemSectionDetail
                                             ?.formItemLabel || '') +
                                             ', ' +
-                                            (data?.name
-                                              ?.formItemAnswerViewMode || '')
+                                            getAccessibleFieldValue(
+                                              data?.name?.formItemAnswerViewMode
+                                            )
                                         }}</span>
                                         <crem-input-label
                                           aria-hidden="true"
@@ -1551,25 +1586,37 @@
                                             ) as sanitizedValue
                                           "
                                         >
-                                          <span
-                                            [attr.tabindex]="
-                                              editMode || !isExpanded ? -1 : 0
+                                          <ng-container
+                                            *ngIf="
+                                              isHtmlContent(
+                                                data?.name?.formItemAnswer
+                                              );
+                                              else calcPlainTextTemplate
                                             "
                                           >
-                                            <span class="sr-only">{{
-                                              (data?.name?.formItemSectionDetail
-                                                ?.formItemLabel || '') +
-                                                ', ' +
-                                                (data?.name
-                                                  ?.formItemAnswerViewMode ||
-                                                  data?.name?.formItemAnswer ||
-                                                  '')
-                                            }}</span>
                                             <div
-                                              aria-hidden="true"
                                               [innerHTML]="sanitizedValue"
                                             ></div>
-                                          </span>
+                                          </ng-container>
+                                          <ng-template #calcPlainTextTemplate>
+                                            <span
+                                              [attr.tabindex]="
+                                                editMode || !isExpanded ? -1 : 0
+                                              "
+                                            >
+                                              <span class="sr-only">{{
+                                                (data?.name
+                                                  ?.formItemSectionDetail
+                                                  ?.formItemLabel || '') +
+                                                  ', ' +
+                                                  (data?.name?.formItemAnswer ||
+                                                    '')
+                                              }}</span>
+                                              <span aria-hidden="true">{{
+                                                data?.name?.formItemAnswer
+                                              }}</span>
+                                            </span>
+                                          </ng-template>
                                         </ng-container>
                                       </ng-template>
 

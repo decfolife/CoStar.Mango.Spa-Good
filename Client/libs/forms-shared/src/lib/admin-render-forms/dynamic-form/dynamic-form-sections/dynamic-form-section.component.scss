@@ -38,6 +38,11 @@
   flex-shrink: 0;
 }
 
+.df-dropdown-readonly-wrapper {
+  display: block;
+  width: 100%;
+}
+
 .df-superuser-menu-trigger {
   // Visually hidden but still focusable for superuser menu
   width: 0;

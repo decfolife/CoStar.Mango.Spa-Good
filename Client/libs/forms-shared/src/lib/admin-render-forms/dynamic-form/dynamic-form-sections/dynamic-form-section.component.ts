@@ -1321,6 +1321,35 @@ export class DynamicFormSectionComponent
     return sanitizedValue;
   }
 
+  getAccessibleReadOnlyText(value: any): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    const html = String(value);
+    const textContainer = document.createElement('div');
+    textContainer.innerHTML = html;
+
+    return (textContainer.textContent || textContainer.innerText || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  getAccessibleFieldValue(value: any): string {
+    const text = this.getAccessibleReadOnlyText(value);
+    return text.length ? text : 'No value';
+  }
+
+  isHtmlContent(value: any): boolean {
+    if (!value) return false;
+    const str = value.toString().toLowerCase();
+    return (
+      str.includes('a href') ||
+      str.includes('a target') ||
+      str.includes('img src')
+    );
+  }
+
   // leaving this here till we know more about section groups
   getFormSectionGroupId(sectionGroup) {
     // this format is driven by the API
