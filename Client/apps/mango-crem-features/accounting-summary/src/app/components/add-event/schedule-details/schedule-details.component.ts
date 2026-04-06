@@ -31,6 +31,7 @@ import {
   LookupOption,
 } from '@accounting-summary/models/common-dropdowns.model';
 import { DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
+import { DxCheckBoxComponent } from 'devextreme-angular';
 import {
   AccountingTerms,
   ScheduleDetailsTermsInformation,
@@ -976,6 +977,11 @@ export class ScheduleDetailsComponent
       (this.pageMode === 'Add Event' ||
         (this.pageMode === 'Edit Event' && remeasureEvent === 'Initial')) &&
       new Date(this.termBeginDate).getDate() > 1;
+  }
+
+  onNotFirstDayCheckboxInit(checkBox: DxCheckBoxComponent): void {
+    checkBox.instance.option('focusStateEnabled', true);
+    checkBox.instance.option('tabIndex', 0);
   }
 
   resetAccountingTerms() {
