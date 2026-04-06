@@ -613,8 +613,8 @@ export class AddEventComponent implements OnDestroy, OnInit {
             false
           );
           this.isApplyClicked = false;
-          this.isSaveAllowed = false;
-          this.isApplyAllowed = false;
+          this.isSaveAllowed = true;
+          this.isApplyAllowed = true;
         } else if (response.success) {
           this.createdScheduleID = response.data;
           if (this.createdScheduleID && this.pageMode !== 'Edit Event') {
@@ -648,8 +648,8 @@ export class AddEventComponent implements OnDestroy, OnInit {
             false
           );
           this.isApplyClicked = false;
-          this.isSaveAllowed = false;
-          this.isApplyAllowed = false;
+          this.isSaveAllowed = true;
+          this.isApplyAllowed = true;
         }
       });
     }

@@ -48,7 +48,7 @@
           accountingSummaryService.getId(componentName, 'save-close', 'button')
         "
         type="primary"
-        [disabled]="!isSaveAllowed"
+        [disabled]="!isSaveAllowed || isApplyClicked"
         [icon]="isSaveAndCloseClicked ? 'faSpinner' : ''"
         [iconPack]="isSaveAndCloseClicked ? 'solid' : ''"
         [iconAnimation]="isSaveAndCloseClicked ? 'spin' : ''"
@@ -62,7 +62,7 @@
       <crem-button
         [id]="accountingSummaryService.getId(componentName, 'apply', 'button')"
         type="secondary"
-        [disabled]="!isApplyAllowed"
+        [disabled]="!isApplyAllowed || isApplyClicked"
         [icon]="isApplyClicked ? 'faSpinner' : ''"
         [iconPack]="isApplyClicked ? 'solid' : ''"
         [iconAnimation]="isApplyClicked ? 'spin' : ''"
