@@ -630,9 +630,6 @@ export class DynamicFormWidgetComponent
         ) {
           const twoDecimalsFmt = '#,##0.00';
           acc.set(columnField.columnHeader, twoDecimalsFmt);
-          // Set so we can read this property in the template instead of calling a function
-          // and creating more work in each re-render.
-          columnField.dataTypeFormatString = twoDecimalsFmt;
         }
 
         return acc;

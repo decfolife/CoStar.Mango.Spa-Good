@@ -224,7 +224,10 @@
           [alignment]="'left'"
           [caption]="columnField.columnHeader"
           [dataField]="columnField.dataFieldTableField | lowercase"
-          [format]="columnField.dataTypeFormatString"
+          [format]="
+            columnFormatMap?.get(columnField.columnHeader) ??
+            columnField.dataTypeFormatString
+          "
           [visible]="columnField.visible"
           [cellTemplate]="'textWithNewlines'"
         >

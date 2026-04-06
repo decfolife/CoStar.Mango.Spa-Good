@@ -110,6 +110,7 @@ export class FieldHistoryComponent
   // stopPropagation() on keydown inside widgets, blocking bubble-phase document listeners.
   // Revisit when upgrading to a DevExtreme version with native ESC-close support on dxPopover.
   private _escapeHandler: (e: KeyboardEvent) => void;
+  private _escapeListenerAttached = false;
 
   static uniqueNum = 0 as number;
 
@@ -118,7 +119,7 @@ export class FieldHistoryComponent
   }
 
   ngOnDestroy(): void {
-    document.removeEventListener('keydown', this._escapeHandler, true);
+    this.detachEscapeHandler();
   }
 
   ngOnInit(): void {
@@ -189,13 +190,13 @@ export class FieldHistoryComponent
       if ((e.key === 'Escape' || e.key === 'Esc') && this.visible) {
         this.ngZone.run(() => {
           this.visible = false;
+          this.detachEscapeHandler();
           // Move focus immediately so Narrator stops reading the popover
           // before the DevExtreme hide animation completes.
           this.TriggerIcon?.nativeElement?.focus();
         });
       }
     };
-    document.addEventListener('keydown', this._escapeHandler, true);
   }
 
   /**
@@ -215,6 +216,12 @@ export class FieldHistoryComponent
 
   toggleVisible() {
     this.visible = !this.visible;
+    if (this.visible) {
+      this.attachEscapeHandler();
+    } else {
+      this.detachEscapeHandler();
+    }
+
     if (this.visible) {
       this.getInitialData.emit();
       if (this.activeTabIndex == this._historyTabIndex) {
@@ -244,7 +251,23 @@ export class FieldHistoryComponent
 
   onPopoverHidden() {
     this.getDataFlag = false;
+    this.visible = false;
+    this.detachEscapeHandler();
     this.TriggerIcon.nativeElement.focus();
+  }
+
+  private attachEscapeHandler(): void {
+    if (!this._escapeListenerAttached) {
+      document.addEventListener('keydown', this._escapeHandler, true);
+      this._escapeListenerAttached = true;
+    }
+  }
+
+  private detachEscapeHandler(): void {
+    if (this._escapeListenerAttached) {
+      document.removeEventListener('keydown', this._escapeHandler, true);
+      this._escapeListenerAttached = false;
+    }
   }
 
   /**
