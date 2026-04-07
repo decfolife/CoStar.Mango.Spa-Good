@@ -35,7 +35,16 @@
                 (click)="openMoreMenu($event)"
                 (keydown)="openMoreMenu($event)"
                 [disabled]="isAccountingEventEmpty"
-                aria-label="Amortization Detail More Options"
+                [attr.aria-label]="
+                  'Amortization Table' +
+                  (!isAccountingEventEmpty
+                    ? ' | ' +
+                      classificationType +
+                      ' | ' +
+                      amortizationProfileName
+                    : '') +
+                  ' More Options'
+                "
               >
                 More
                 <mat-icon

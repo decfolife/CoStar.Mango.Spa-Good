@@ -27,7 +27,18 @@
             (click)="openMoreMenu($event)"
             (keydown)="openMoreMenu($event)"
             [disabled]="isAccountingEventEmpty"
-            aria-label="Payments More Options"
+            [attr.aria-label]="
+              'Payments' +
+              (!isAccountingEventEmpty
+                ? ' | ' +
+                  classificationType +
+                  ' | ' +
+                  amortizationProfileName +
+                  ' ' +
+                  overrideAmortizationProfile
+                : '') +
+              ' More Options'
+            "
           >
             More
             <mat-icon
