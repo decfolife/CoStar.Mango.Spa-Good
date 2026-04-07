@@ -108,6 +108,7 @@ export class ScheduleDetailsComponent
   isRetro: boolean;
   classificationName: string;
   classificationBlur = false;
+  private hasInitialFocusBeenSet = false;
   jeProfileBlur = false;
   jeProfileStatus = 'default';
   jeProfileStatusMessage = '';
@@ -153,15 +154,7 @@ export class ScheduleDetailsComponent
     );
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      if (!this.classificationDD.isDisabled) {
-        this.classificationDD.focusDropdown();
-      } else {
-        this.jeProfileDD.focusDropdown();
-      }
-    }, 300);
-  }
+  ngAfterViewInit(): void {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (
@@ -227,6 +220,19 @@ export class ScheduleDetailsComponent
         this.loadScheduleDataforEdit();
       } else if (this.router.url.includes('remeasureEvent')) {
         this.loadScheduleDataforRemeasure();
+      }
+
+      if (!this.hasInitialFocusBeenSet) {
+        this.hasInitialFocusBeenSet = true;
+        // Delay to allow DevExtreme to complete its initialSelectedValue selection event
+        // before re-applying focus to the correct dropdown.
+        setTimeout(() => {
+          if (this.classificationDD && !this.classificationDD.isDisabled) {
+            this.classificationDD.focusDropdown();
+          } else if (this.jeProfileDD) {
+            this.jeProfileDD.focusDropdown();
+          }
+        }, 100);
       }
     }
   }
