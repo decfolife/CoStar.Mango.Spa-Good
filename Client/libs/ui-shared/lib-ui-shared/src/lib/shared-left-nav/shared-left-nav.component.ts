@@ -7,6 +7,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { NavigationEnd, Router } from '@angular/router';
 import { NavLinksByCategory } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { SharedLeftNavLink } from 'libs/data-models/lib-data-models/src/lib/models/link.interface';
@@ -34,12 +35,26 @@ export class SharedLeftNavComponent implements OnChanges {
   flyOutMenuEntered: boolean = false;
   flyOutMenuOpened: boolean = false;
   flyOutEntered: boolean = false;
+  elementToSetFocusId: string = null;
   currentFlyOutMenuTrigger: MatMenuTrigger = null;
   currentFlyOutMenuCategory: string = null;
   currentSubChildLevelMenuList: NodeListOf<Element> = null;
   currentSubChildIndex: number = 0;
 
-  constructor(private facade: MangoAppFacade) {}
+  constructor(private facade: MangoAppFacade, private router: Router) {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        if (!!this.elementToSetFocusId) {
+          const idToFocus = this.elementToSetFocusId;
+          this.elementToSetFocusId = null;
+          const element = document.getElementById(idToFocus);
+          if (element) {
+            element.focus();
+          }
+        }
+      }
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
@@ -62,21 +77,25 @@ export class SharedLeftNavComponent implements OnChanges {
           this.setActiveLinkFromIsCurrentlyActiveLink(navLink);
         }
 
-        if (navLink && navLink.moduleID && navLink.dynamicName) {
+        if (
+          !!navLink &&
+          navLink.moduleID >= 0 &&
+          navLink.dynamicName.trim() !== ''
+        ) {
+          let idName: string = null;
+
+          idName = !!navLink.category ? navLink.category : navLink.dynamicName;
+
+          const idPrefix = !!navLink.category
+            ? 'left-nav__listItem__'
+            : 'left-nav__';
           const id =
-            'left-nav__' +
+            idPrefix +
             navLink.moduleID +
             '-' +
-            navLink.dynamicName
-              .toLowerCase()
-              .replace(' ', '-')
-              .replace('.', '_');
+            idName.toLowerCase().replace(' ', '-').replace('.', '_');
 
-          const element = document.getElementById(id);
-
-          if (element) {
-            element.focus();
-          }
+          this.elementToSetFocusId = id;
         }
       }
     }
@@ -160,6 +179,7 @@ export class SharedLeftNavComponent implements OnChanges {
           categoryLinkUrl: currentNavLink.categoryLinkUrl,
           categorySpaUrl: currentNavLink.categorySpaUrl,
           categorySpaQueryParameters: currentNavLink.categorySpaQueryParameters,
+          categoryModuleID: currentNavLink.moduleID,
           children: [currentNavLink],
         });
       } else {
@@ -177,6 +197,7 @@ export class SharedLeftNavComponent implements OnChanges {
               categorySpaUrl: currentNavLink.categorySpaUrl,
               categorySpaQueryParameters:
                 currentNavLink.categorySpaQueryParameters,
+              categoryModuleID: currentNavLink.moduleID,
               children: [currentNavLink],
             });
       }
@@ -213,13 +234,16 @@ export class SharedLeftNavComponent implements OnChanges {
   }
 
   onNavLinkClick(navLink: SharedLeftNavLink) {
+    let navigateSpaLink = navLink;
+
     const skipSetActiveLink: boolean =
-      (navLink.hasOwnProperty('subChildLevel') &&
-        !!navLink.subChildLevel &&
-        navLink.subChildLevel > 0) ||
-      navLink.linkUrl.startsWith('#');
+      navLink.category === this.activeLink || navLink?.linkUrl?.startsWith('#');
 
     if (!skipSetActiveLink) {
+      if (navLink.subChildLevel > 0) {
+        navLink = this.getTopParentNavLink(navLink) ?? navLink;
+      }
+
       if (
         !navLink.hasOwnProperty('dynamicName') &&
         navLink.hasOwnProperty('categoryHasFlyOutMenu') &&
@@ -238,7 +262,7 @@ export class SharedLeftNavComponent implements OnChanges {
     }
 
     this.toActiveLink.emit(this.activeLink);
-    this.navigateSpa.emit(navLink);
+    this.navigateSpa.emit(navigateSpaLink);
   }
 
   leftNavOpened(e) {

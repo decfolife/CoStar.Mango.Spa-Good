@@ -60,6 +60,7 @@
 
           <ng-container *ngIf="linkObj.category !== null">
             <li
+              class="listItem"
               [ngClass]="
                 activeLink === linkObj.category
                   ? linkObj.category + ' active'
@@ -131,6 +132,15 @@
               "
             >
               <button
+                [id]="
+                  'left-nav__listItem__' +
+                  linkObj?.categoryModuleID +
+                  '-' +
+                  linkObj?.category
+                    ?.toLowerCase()
+                    ?.replace(' ', '-')
+                    .replace('.', '_')
+                "
                 class="flyout_anchor"
                 [ngClass]="
                   linkObj.categoryLinkUrl === null
@@ -141,14 +151,17 @@
                   $event.preventDefault();
                   onCategoryNavLinkClick($event, linkObj)
                 "
-                mat-menu-item
+                [tabindex]="0"
               >
-                <div
-                  [ngClass]="activeLink === linkObj.category ? 'selected' : ''"
-                >
-                  {{ linkObj.category }}
-                </div>
-                <div class="div-arrow-right-icon">
+                <div class="flyout_anchor_button_content_div">
+                  <div
+                    [ngClass]="
+                      activeLink === linkObj.category ? 'selected' : ''
+                    "
+                  >
+                    {{ linkObj.category }}
+                  </div>
+
                   <mat-icon>keyboard_arrow_right</mat-icon>
                 </div>
               </button>
