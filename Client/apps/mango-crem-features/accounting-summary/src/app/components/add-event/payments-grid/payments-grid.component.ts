@@ -1,10 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {
-  ButtonModule,
-  CardModule,
-  CremToastService,
-} from '@mango/ui-shared/lib-ui-elements';
+import { ButtonModule, CardModule } from '@mango/ui-shared/lib-ui-elements';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
 import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
 import { AddEventFormService } from '@accounting-summary/services/add-event-form.service';
@@ -21,6 +17,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddEditOtherChargeModalComponent } from './add-edit-other-charge-modal/add-edit-other-charge-modal.component';
 import { SelectedPayments } from '@accounting-summary/models/interfaces/selected-payments.interfaces';
 import { CommonDropdowns } from '@accounting-summary/models/common-dropdowns.model';
+import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
 
 @Component({
   selector: 'mango-payments-grid',
@@ -96,7 +93,7 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
     private schedulePaymentsGridColumnsService: SchedulePaymentsGridColumnsService,
     private dialog: MatDialog,
     private formattingService: FormattingService,
-    private toastService: CremToastService
+    private toastService: AccountingToastService
   ) {}
 
   ngOnInit(): void {
@@ -160,7 +157,24 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
       (key) => currentState[key] !== this.previousState[key]
     );
 
-    if (hasChanged) {
+    const portfolioSettings = this.addEventFormService.portfolioSettings;
+
+    let validDates = true;
+    if (currentState.fromDate && currentState.toDate) {
+      const from = new Date(currentState.fromDate);
+      const to = new Date(currentState.toDate);
+      if (
+        from < new Date(portfolioSettings.calendarMinDate) ||
+        from > new Date(portfolioSettings.calendarMaxDate) ||
+        to < new Date(portfolioSettings.calendarMinDate) ||
+        to > new Date(portfolioSettings.calendarMaxDate) ||
+        from > to
+      ) {
+        validDates = false;
+      }
+    }
+
+    if (hasChanged && validDates) {
       this.previousState = { ...currentState };
       this.getSchedulePayments();
     }
@@ -346,7 +360,7 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
         if (saveRes?.chargeSaved) {
           this.glEventIDs = [...saveRes.glEventIDs];
           if (saveRes.showSaveMsg) {
-            this.toastService.show(
+            this.toastService.showToast(
               'The other charge was saved successfully.',
               'Other Charge Saved',
               ToastState.SUCCESS
@@ -384,14 +398,14 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
           editDialogRef.afterClosed().subscribe((saveRes) => {
             if (saveRes?.chargeSaved || saveRes?.chargeDeleted) {
               if (saveRes.showSaveMsg) {
-                this.toastService.show(
+                this.toastService.showToast(
                   'The other charge was saved successfully.',
                   'Other Charge Saved',
                   ToastState.SUCCESS
                 );
               }
               if (saveRes.showDeleteMsg) {
-                this.toastService.show(
+                this.toastService.showToast(
                   'Delete charge successful.',
                   'Other Charge Deleted',
                   ToastState.SUCCESS
@@ -587,11 +601,13 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
             this.setupPaymentsGrid();
             this.findMinAndMaxDateOptionFromPaymentCharges();
           } else {
-            this.toastService.show(
-              response.clientErrorMessage,
-              'Error',
-              ToastState.ERROR
-            );
+            if (!response.success && response?.clientErrorMessage) {
+              this.toastService.showToast(
+                'Error',
+                response.clientErrorMessage,
+                ToastState.ERROR
+              );
+            }
           }
         });
     }

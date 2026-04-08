@@ -3,10 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountingHistoryService } from '@accounting-history/services/accounting-history.service';
 import { AccountingHistoryColumnsService } from '../../services/accounting-history-columns.service';
-import {
-  CremToastService,
-  DropdownModule,
-} from '@mango/ui-shared/lib-ui-elements';
+import { DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 import { ToastState } from '@mango/data-models/lib-data-models';
 import {
   DevExtremeModule,
@@ -20,7 +17,7 @@ import { saveAs } from 'file-saver-es';
 import { UserPreferences } from '../../models/interfaces/user-preferences.interface';
 import { UserPortfolios } from '../../models/interfaces/user-portfolios.interface';
 import { AccountingHistory } from '../../models/interfaces/accounting-history.interface';
-
+import { AccountingToastService } from 'apps/mango-crem-features/accounting-summary/src/app/services/accounting-toast.service';
 @Component({
   selector: 'mango-accounting-history',
   standalone: true,
@@ -53,7 +50,7 @@ export class AccountingHistoryComponent implements OnInit {
   constructor(
     public accountingHistoryService: AccountingHistoryService,
     public accountingHistoryColumnsService: AccountingHistoryColumnsService,
-    private toastService: CremToastService
+    private toastService: AccountingToastService
   ) {}
 
   ngOnInit(): void {
@@ -119,26 +116,18 @@ export class AccountingHistoryComponent implements OnInit {
               ? 'dd.MM.yyyy hh:mm:ss a'
               : 'MM/dd/yyyy hh:mm:ss a';
           } else if (response === null) {
-            this.toastService.show(
+            this.toastService.showToast(
+              'Error',
               'An error has occurred. Please try again.',
-              '',
-              ToastState.ERROR,
-              {
-                position: 'bottom right',
-                maxWidth: '350px',
-              }
+              ToastState.ERROR
             );
           }
         },
         (error) => {
-          this.toastService.show(
+          this.toastService.showToast(
             'An error has occurred retrieving user preferences',
             '',
-            ToastState.ERROR,
-            {
-              position: 'bottom right',
-              maxWidth: '350px',
-            }
+            ToastState.ERROR
           );
         }
       )
@@ -153,7 +142,7 @@ export class AccountingHistoryComponent implements OnInit {
           if (response.success) {
             this.userPortfolios = response.data;
           } else if (response === null) {
-            this.toastService.show(
+            this.toastService.showToast(
               response.clientErrorMessage,
               'Error',
               ToastState.ERROR
@@ -176,7 +165,7 @@ export class AccountingHistoryComponent implements OnInit {
               );
             this.showLoading = false;
           } else if (response === null) {
-            this.toastService.show(
+            this.toastService.showToast(
               response.clientErrorMessage,
               'Error',
               ToastState.ERROR

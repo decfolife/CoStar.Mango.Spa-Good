@@ -67,6 +67,7 @@ import {
   DxValidatorModule,
 } from 'devextreme-angular';
 import { BalanceCardsContainerComponent } from './balance-cards-container/balance-cards-container/balance-cards-container.component';
+import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
 
 @Component({
   selector: 'mango-financial-card',
@@ -200,7 +201,8 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     private formatService: FormattingService,
     public datePipe: DatePipe,
     private facade: MangoAppFacade,
-    private el: ElementRef
+    private el: ElementRef,
+    private accountingToastService: AccountingToastService
   ) {
     this.initialFinancialForm();
     this.getUserInfo();
@@ -581,7 +583,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
             this.classificationId === 3 ||
             this.classificationId === 4)
         ) {
-          this.addEditScheduleService.showToast(
+          this.accountingToastService.showToast(
             'Functional Currency Rate is Required',
             'Functional Currency Rate is required and cannot be zero.'
           );
@@ -589,7 +591,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           this.updateFinancialCardValidity(false, false);
           return;
         } else {
-          this.addEditScheduleService.clearToastBySummary(
+          this.accountingToastService.clearToastBySummary(
             'Functional Currency Rate is Required'
           );
           this.updateFinancialCardValidity(true, true);
@@ -1134,7 +1136,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         this.measureEvent === 'Initial' &&
         (rouActionDate > this.termEnd || rouActionDate < this.termBegin)
       ) {
-        this.addEditScheduleService.showToast(
+        this.accountingToastService.showToast(
           'ROU Asset Obtained Action Date',
           rouDateValidationMessage
         );
@@ -1149,7 +1151,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         (rouActionDate < new Date(this.minROUActionDate) ||
           rouActionDate > this.termEnd)
       ) {
-        this.addEditScheduleService.showToast(
+        this.accountingToastService.showToast(
           'ROU Asset Obtained Action Date',
           rouDateValidationMessage
         );
@@ -1160,7 +1162,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         this.updateFinancialCardValidity(true, false);
         return;
       } else {
-        this.addEditScheduleService.clearToastBySummary(
+        this.accountingToastService.clearToastBySummary(
           'ROU Asset Obtained Action Date'
         );
         this.rouDateStatus = 'default';
@@ -1554,7 +1556,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         )
         .subscribe((response: any) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.discountRateOptions = response.data.filter(
               (profile) => profile.isActive
@@ -1600,9 +1602,11 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
               }
             }
           } else {
-            this.accountingSummaryService.errorNotify(
-              response.clientErrorMessage
-            );
+            if (!response.success && response.clientErrorMessage) {
+              this.accountingToastService.errorNotify(
+                response.clientErrorMessage
+              );
+            }
           }
         })
     );
@@ -1618,15 +1622,17 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         )
         .subscribe((response: any) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.effectiveRate = response.data;
             this.setDiscountRateSubTitle();
             this.addEventFormService.effectiveRate$.next(this.effectiveRate);
           } else {
-            this.accountingSummaryService.errorNotify(
-              response.clientErrorMessage
-            );
+            if (!response.success && response.clientErrorMessage) {
+              this.accountingToastService.errorNotify(
+                response.clientErrorMessage
+              );
+            }
           }
         })
     );
@@ -1682,9 +1688,11 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
               this.financialForm.get('currencyRate').disable();
             }
           } else {
-            this.accountingSummaryService.errorNotify(
-              response.clientErrorMessage
-            );
+            if (!response.success && response.clientErrorMessage) {
+              this.accountingToastService.errorNotify(
+                response.clientErrorMessage
+              );
+            }
           }
         })
     );
@@ -1711,10 +1719,10 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   onAmortizationValueChanged(event: any) {
-    this.addEditScheduleService.clearToastBySummary(
+    this.accountingToastService.clearToastBySummary(
       'Amortization Profile and Classification'
     );
-    this.addEditScheduleService.clearToastBySummary('Amortization Profile');
+    this.accountingToastService.clearToastBySummary('Amortization Profile');
     const profile = event.value;
     if (!profile) {
       return;
@@ -1844,7 +1852,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           .setValue(lastElement.profileID);
       }, 100);
     } else {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Manual Amortization Profile',
         'Amortization Profile Name is required.',
         'error',

@@ -29,6 +29,7 @@ import {
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { checkSaveValidity } from '@accounting-summary/utils/validation.util';
+import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
 
 @Component({
   selector: 'mango-add-event',
@@ -99,6 +100,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
+    private accountingToastService: AccountingToastService,
     public location: Location,
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -371,7 +373,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
           .calculateValues(addEditSchedulePayload)
           .subscribe((response) => {
             if (response === null) {
-              this.addEditScheduleService.showToast(
+              this.accountingToastService.showToast(
                 'Error',
                 'An error occurred while calculating. If the problem persists, please contact support.',
                 'error',
@@ -415,7 +417,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.apiValidationErrorMessage ===
       'MissingHistoricalChargeForMidPeriodRemeasurementError'
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Historical Charge Missing',
         'Remeasuring from this date is not allowed because historical charge data is not available. Please try picking a start date that coincides with the start of a period.',
         'error',
@@ -427,7 +429,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
     ) {
       this.openDay1DayxRemeasurePopup = true;
     } else if (this.apiValidationErrorMessage === 'Day1FullTerminationError') {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Day 1 Full Termination',
         'Full termination is not supported on Day 1 of the initial schedule.',
         'error',
@@ -438,7 +440,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
         'Day1DayXRemeasureOnUnsupportedClassificationsError' &&
       this.lastApprovedOrExportedDate
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Unsupported Action',
         `In order to proceed with the ${
           this.measureEvent
@@ -453,7 +455,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
         'Day1DayXRemeasureOnUnsupportedClassificationsError' &&
       !this.lastApprovedOrExportedDate
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Unsupported Action',
         `In order to proceed with the ${
           this.measureEvent
@@ -467,7 +469,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.apiValidationErrorMessage ===
       'MidPeriodWithPriorAdjustmentRemeasureError'
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Remeasuring Mid-Period',
         'Remeasuring mid-period is not allowed when the period has an existing adjustment.',
         'error',
@@ -477,7 +479,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.apiValidationErrorMessage ===
       'MissingPreviousPeriodForRemeasureError'
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Missing Previous Period',
         'Previous Period was not found.',
         'error',
@@ -488,7 +490,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
         'Opening Asset Balance cannot be negative.'
       )
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Negative Opening Balance',
         'Amortization schedules cannot be created with a negative opening balance. If you are creating a Tenant Improvement Allowance scenario, then input the adjustment as a positive value and change the charge type from expense to income.',
         'error',
@@ -497,14 +499,14 @@ export class AddEventComponent implements OnDestroy, OnInit {
     } else if (
       this.apiValidationErrorMessage?.includes('Attempted to divide by zero.')
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Error occurred while calculating',
         'Either Total Amount, Total Adjustment Amount, Beginning Asset Balance, or Liability Adjustment, must have a value before processing a schedule.',
         'error',
         false
       );
     } else {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Error occurred while calculating',
         'An error occurred while calculating. If the problem persists, please contact support.',
         'error',
@@ -536,7 +538,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.calculateValuesResponseData.openingAssetBalance === 0 &&
       this.calculateValuesResponseData.liabilityAdjustmentAmount === 0
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Error occurred while saving',
         'Either Total Amount, Total Adjustment Amount, Beginning Asset Balance, or Liability Adjustment must have a value before saving a schedule.',
         'error',
@@ -550,7 +552,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
 
       this.saveSchedule().subscribe((response) => {
         if (response === null) {
-          this.addEditScheduleService.showToast(
+          this.accountingToastService.showToast(
             'Error occurred while saving',
             'An error occurred while saving. If the problem persists, please contact support.',
             'error',
@@ -575,14 +577,14 @@ export class AddEventComponent implements OnDestroy, OnInit {
             response.clientErrorMessage ===
             'ClassificationAmortizationComboExists'
           ) {
-            this.addEditScheduleService.showToast(
+            this.accountingToastService.showToast(
               'Amortization Profile and Classification',
               'A schedule with this classification and amortization profile already exists.',
               'error',
               false
             );
           } else {
-            this.addEditScheduleService.showToast(
+            this.accountingToastService.showToast(
               'Error occurred while saving',
               response.clientErrorMessage,
               'error',
@@ -606,7 +608,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
       this.isApplyAllowed = true;
       this.saveSchedule().subscribe((response) => {
         if (response === null) {
-          this.addEditScheduleService.showToast(
+          this.accountingToastService.showToast(
             'Error occurred while saving',
             'An error occurred while saving. If the problem persists, please contact support.',
             'error',
@@ -630,7 +632,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
               queryParams: queryParams,
             });
           } else {
-            this.addEditScheduleService.showToast(
+            this.accountingToastService.showToast(
               'Record Saved',
               'Accounting event saved successfully',
               'success',
@@ -641,7 +643,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
             this.isApplyAllowed = true;
           }
         } else {
-          this.addEditScheduleService.showToast(
+          this.accountingToastService.showToast(
             'Error occurred while saving',
             response.clientErrorMessage,
             'error',
@@ -690,13 +692,13 @@ export class AddEventComponent implements OnDestroy, OnInit {
     }
 
     if (!amortizationProfileID && amortizationProfileID !== 0) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Amortization Profile',
         'Amortization Profile is required'
       );
       return false;
     } else {
-      this.addEditScheduleService.clearToastBySummary('Amortization Profile');
+      this.accountingToastService.clearToastBySummary('Amortization Profile');
     }
 
     if (
@@ -704,23 +706,23 @@ export class AddEventComponent implements OnDestroy, OnInit {
       journalEntryProfile !== 0 &&
       this.portfolioSettings.journalEntryProfileRequired
     ) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Journal Entry Profile',
         'Journal Entry Profile is required'
       );
       return false;
     } else {
-      this.addEditScheduleService.clearToastBySummary('Journal Entry Profile');
+      this.accountingToastService.clearToastBySummary('Journal Entry Profile');
     }
 
     if (isScheduleDuplicate && this.pageMode === 'Add Event') {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Amortization Profile and Classification',
         'A schedule with this classification and amortization profile already exists.'
       );
       return false;
     } else {
-      this.addEditScheduleService.clearToastBySummary(
+      this.accountingToastService.clearToastBySummary(
         'Amortization Profile and Classification'
       );
     }
@@ -730,7 +732,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
   calculateValidations() {
     const discountRate = +this.financialData.financialFormData.discountRate;
     if (discountRate === 0 && this.measureEvent !== 'Full Termination') {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Zero Discount Rate',
         'Calculating the present value using a zero discount rate results in the present value equal to the total undiscounted amount with no interest component.',
         'warn',
@@ -766,13 +768,13 @@ export class AddEventComponent implements OnDestroy, OnInit {
     }
 
     if (functionalCurrencyRate === 0) {
-      this.addEditScheduleService.showToast(
+      this.accountingToastService.showToast(
         'Functional Currency Rate is Required',
         'Functional Currency Rate is required and cannot be zero.'
       );
       return;
     } else {
-      this.addEditScheduleService.clearToastBySummary(
+      this.accountingToastService.clearToastBySummary(
         'Functional Currency Rate is Required'
       );
     }
@@ -1198,7 +1200,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
         .getCommonDropdowns()
         .subscribe((response: any) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.commonDropdowns = response.data;
             this.addEventFormService.setCommonDropdownsData(response.data);
@@ -1206,7 +1208,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
             this.currencyList = response.data.currencies;
             this.rouAssetMethodsList = response.data.rouAssetMethods;
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -1220,7 +1222,7 @@ export class AddEventComponent implements OnDestroy, OnInit {
    * @memberof AddEventComponent
    */
   navigateToAccountingSummaryPage(): void {
-    this.addEditScheduleService.clearAllToastMessages();
+    this.accountingToastService.clearAllToastMessages();
     const queryParams: { [key: string]: any } = {};
     queryParams['otid'] = this.queryParams.otid || '';
     queryParams['oid'] = this.queryParams.oid || '';
@@ -1239,11 +1241,11 @@ export class AddEventComponent implements OnDestroy, OnInit {
         .getClassificationSettings()
         .subscribe((response: any) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.classificationSettings = response.data;
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -1257,14 +1259,14 @@ export class AddEventComponent implements OnDestroy, OnInit {
         .getAccountingEventData(this.scheduleId)
         .subscribe((response: any) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.accountingEventsData = response.data;
             this.accountingEventsData.priorROUAssetObtainedAmount =
               this.eventsGridData.priorROUAssetObtainedAmount ?? 0;
             this.addEventFormService.accountingEventData$.next(response.data);
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -1278,11 +1280,11 @@ export class AddEventComponent implements OnDestroy, OnInit {
         .getDateOptions()
         .subscribe((response: any) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.eventDateOptions = response.data;
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -1329,6 +1331,6 @@ export class AddEventComponent implements OnDestroy, OnInit {
     this.router.navigate(['/crem/accounting/summary/editEvent'], {
       queryParams: queryParams,
     });
-    this.addEditScheduleService.clearAllToastMessages();
+    this.accountingToastService.clearAllToastMessages();
   }
 }

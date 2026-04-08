@@ -3,7 +3,6 @@ import { Injectable, Optional } from '@angular/core';
 import { environment } from '@mangoSpa/src/environments/environment.local';
 import { EndpointService, UtilitiesService } from '@mango/core-shared';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
-import notify from 'devextreme/ui/notify';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver-es';
@@ -349,31 +348,6 @@ export class AccountingSummaryService extends EndpointService {
     const env = environment.name === 'PROD' ? '' : '_' + environment.name;
     const timeStamp = this.getTimeStamp();
     return `${componentName}_${timeStamp}${env}.xlsx`;
-  }
-
-  displayContactSystemAdminMessage() {
-    this.errorNotify(
-      'An error occurred please contact the system administrator.'
-    );
-  }
-
-  errorNotify(message: string) {
-    this.notifyPopup(message, 'error');
-  }
-
-  successNotify(message: string) {
-    this.notifyPopup(message, 'success');
-  }
-
-  private notifyPopup(message: string, messageType: string) {
-    notify({
-      message: message,
-      type: messageType,
-      displayTime: 5000,
-      position: { at: 'right bottom', my: 'right bottom', offset: '-16 -16' },
-      maxWidth: '400px',
-      closeOnClick: true,
-    });
   }
 
   setIsLocked(isLocked: boolean) {

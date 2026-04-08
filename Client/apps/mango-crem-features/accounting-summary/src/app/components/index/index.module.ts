@@ -66,6 +66,7 @@ import { EditRouAssetComponent } from '../events-detail-section/edit-rou-asset/e
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
+import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
 import { AccountingAdaDirective } from '@accounting-summary/shared/directives/accounting-ada.directive';
 import { SplitButtonComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/split-button/split-button.component';
 
@@ -141,6 +142,7 @@ import { SplitButtonComponent } from 'libs/ui-shared/lib-ui-elements/src/lib/spl
     FormattingService,
     DatePipe,
     AddEditScheduleService,
+    AccountingToastService,
     MessageService,
   ],
 })

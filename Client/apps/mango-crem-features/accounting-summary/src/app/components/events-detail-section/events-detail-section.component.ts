@@ -26,7 +26,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EditRouAssetComponent } from './edit-rou-asset/edit-rou-asset.component';
 import { filter } from 'rxjs/operators';
 import { DeleteHistoricScheduleComponent } from './deleteHistoricSchedule/delete-historic-schedule.component';
-import { AddEditScheduleService } from '@accounting-summary/services/add-edit-schedule.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AccountingEventSelector } from '@accounting-summary/models/interfaces/accounting-events-selector.interfaces';
 import { formatDate } from '@angular/common';
@@ -35,6 +34,7 @@ import {
   openContextMenu,
   setupMenuFocusRestoration,
 } from '../../utils/accessibility.util';
+import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
 @Component({
   selector: 'mango-events-detail-section',
   templateUrl: './events-detail-section.component.html',
@@ -112,6 +112,7 @@ export class EventsDetailSectionComponent
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
+    private accountingToastService: AccountingToastService,
     private columnService: EventsGridColumnsService,
     private formatService: FormattingService,
     private ref: ChangeDetectorRef,
@@ -119,7 +120,6 @@ export class EventsDetailSectionComponent
     private activatedRoute: ActivatedRoute,
     private storageService: StorageService,
     private dialog: MatDialog,
-    private addEditScheduleService: AddEditScheduleService,
     private clipboard: Clipboard
   ) {
     this.preferenceSavePendingMessage =
@@ -237,7 +237,7 @@ export class EventsDetailSectionComponent
           eventDetailsResponse.data.length === 0
         ) {
           this.eventsDataGrid.instance.state(null);
-          this.accountingSummaryService.displayContactSystemAdminMessage();
+          this.accountingToastService.displayContactSystemAdminMessage();
         } else if (
           eventDetailsResponse.data.length != 0 &&
           eventDetailsResponse.success
@@ -295,7 +295,7 @@ export class EventsDetailSectionComponent
 
           this.getGridPreferences();
         } else if (!eventDetailsResponse.success) {
-          this.accountingSummaryService.errorNotify(
+          this.accountingToastService.errorNotify(
             eventDetailsResponse.clientErrorMessage
           );
         }
@@ -360,7 +360,7 @@ export class EventsDetailSectionComponent
         .getGridPreferences()
         .subscribe((response) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.gridsState = response.data;
             let state = JSON.parse(
@@ -411,7 +411,7 @@ export class EventsDetailSectionComponent
             // Unlock the Add button now that the events grid/state is ready
             this.accountingSummaryService.setLockAddButton(false);
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -425,15 +425,15 @@ export class EventsDetailSectionComponent
         .resetGridPreferences(this.classificationId, this.gridName)
         .subscribe((response) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.eventsDataGrid.instance.state({});
             this.gridPreferencesUpdated = false;
-            this.accountingSummaryService.successNotify(
+            this.accountingToastService.successNotify(
               'Value Reset Successfully'
             );
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -473,15 +473,15 @@ export class EventsDetailSectionComponent
         .saveGridPreferences(this.classificationId, this.gridName, columns)
         .subscribe((response) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.initialState = newState;
             this.gridPreferencesUpdated = true;
-            this.accountingSummaryService.successNotify(
+            this.accountingToastService.successNotify(
               response.clientErrorMessage
             );
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -667,7 +667,7 @@ export class EventsDetailSectionComponent
         .exportPresentValueFile(data.leaseRecognitionScheduleID)
         .subscribe((presentValueResponse: any) => {
           if (presentValueResponse === null || !presentValueResponse) {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               'Downloading the present value table failed.'
             );
           } else {
@@ -791,7 +791,7 @@ export class EventsDetailSectionComponent
             .pipe(filter((res) => !!res))
             .subscribe((saveROUAssetObtained) => {
               if (saveROUAssetObtained.success) {
-                this.addEditScheduleService.showToast(
+                this.accountingToastService.showToast(
                   'Save ROU Asset Obtained',
                   'ROU Asset Obtained saved successfully.',
                   'success',
@@ -1088,7 +1088,7 @@ export class EventsDetailSectionComponent
         .getAccountingEvents()
         .subscribe((response) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success && response.data.length != 0) {
             //  If an accounting event for the current lease ID has been selected before try refetching selection
             const sessionLease: { [key: string]: any } =
@@ -1149,7 +1149,7 @@ export class EventsDetailSectionComponent
             this.eventsGridSetup(this.masterScheduleID);
             this.emitDataChanged();
           } else if (!response.success) {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           } else if (response.data.length === 0) {
@@ -1325,7 +1325,7 @@ export class EventsDetailSectionComponent
                 this.emitDataChanged();
               }
             }
-            this.addEditScheduleService.showToast(
+            this.accountingToastService.showToast(
               'Delete Accounting Event',
               'Accounting event deleted successfully.',
               'success',
@@ -1333,7 +1333,7 @@ export class EventsDetailSectionComponent
             );
             this.getEventsDropDownData();
           } else {
-            this.addEditScheduleService.showToast(
+            this.accountingToastService.showToast(
               'Delete Accounting Event',
               'An error occurred while deleting the accounting event.',
               'error',

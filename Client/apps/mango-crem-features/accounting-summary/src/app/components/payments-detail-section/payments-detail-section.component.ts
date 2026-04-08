@@ -1,6 +1,7 @@
 import { HistoricalPayment } from '@accounting-summary/models/interfaces/historical-payments.interfaces';
 import { UserInfoResponse } from '@accounting-summary/models/user-info-response.modal';
 import { AccountingSummaryService } from '@accounting-summary/services/accounting-summary.service';
+import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
 import { PaymentsGridColumnsService } from '@accounting-summary/services/payments-grid-columns.service';
 import {
   Component,
@@ -57,6 +58,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
   constructor(
     public accountingSummaryService: AccountingSummaryService,
+    private accountingToastService: AccountingToastService,
     private paymentsGridColumnService: PaymentsGridColumnsService
   ) {
     this.preferenceSavePendingMessage =
@@ -111,7 +113,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
 
         if (paymentDetailsResponse === null) {
           this.paymentsDataGrid.instance.state(null);
-          this.accountingSummaryService.displayContactSystemAdminMessage();
+          this.accountingToastService.displayContactSystemAdminMessage();
         } else if (paymentDetailsResponse.success) {
           this.paymentsGridData = paymentDetailsResponse.data;
           this.isEuroDateFormat = this.userInfo?.useDateEU;
@@ -150,7 +152,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
             this.paymentsGridHeight = '65px';
           }
         } else if (!paymentDetailsResponse.success) {
-          this.accountingSummaryService.errorNotify(
+          this.accountingToastService.errorNotify(
             paymentDetailsResponse.clientErrorMessage
           );
         }
@@ -164,7 +166,7 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
         .getGridPreferences()
         .subscribe((response) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.gridState = response.data;
             let state = JSON.parse(
@@ -310,15 +312,15 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
         .resetGridPreferences(this.classificationID, this.gridName)
         .subscribe((response) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.paymentsDataGrid.instance.state({});
             this.gridPreferencesUpdated = false;
-            this.accountingSummaryService.successNotify(
+            this.accountingToastService.successNotify(
               'Value Reset Successfully'
             );
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
@@ -358,15 +360,15 @@ export class PaymentsDetailSectionComponent implements OnChanges, OnDestroy {
         .saveGridPreferences(this.classificationID, this.gridName, columns)
         .subscribe((response) => {
           if (response === null) {
-            this.accountingSummaryService.displayContactSystemAdminMessage();
+            this.accountingToastService.displayContactSystemAdminMessage();
           } else if (response.success) {
             this.initialState = newState;
             this.gridPreferencesUpdated = true;
-            this.accountingSummaryService.successNotify(
+            this.accountingToastService.successNotify(
               response.clientErrorMessage
             );
           } else {
-            this.accountingSummaryService.errorNotify(
+            this.accountingToastService.errorNotify(
               response.clientErrorMessage
             );
           }
