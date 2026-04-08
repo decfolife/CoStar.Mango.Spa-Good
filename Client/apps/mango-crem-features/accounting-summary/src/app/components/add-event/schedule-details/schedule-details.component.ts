@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -30,7 +31,10 @@ import {
   JournalEntryProfile,
   LookupOption,
 } from '@accounting-summary/models/common-dropdowns.model';
-import { DropdownComponent } from '@mango/ui-shared/lib-ui-elements';
+import {
+  DatePickerComponent,
+  DropdownComponent,
+} from '@mango/ui-shared/lib-ui-elements';
 import { DxCheckBoxComponent } from 'devextreme-angular';
 import {
   AccountingTerms,
@@ -58,7 +62,18 @@ export class ScheduleDetailsComponent
     new EventEmitter();
   @ViewChild('jeProfileDD') jeProfileDD: DropdownComponent;
   @ViewChild('ClassificationDD') classificationDD: DropdownComponent;
-
+  @ViewChild('termBeginDropdownDD') termBeginDropdownDD: DropdownComponent;
+  @ViewChild('termEndDropdownDD') termEndDropdownDD: DropdownComponent;
+  @ViewChild('termBeginDatePicker') termBeginDatePicker: DatePickerComponent;
+  @ViewChild('termEndDatePicker') termEndDatePicker: DatePickerComponent;
+  @ViewChild('termBeginDropdownDD', { read: ElementRef })
+  termBeginDropdownDDEl: ElementRef;
+  @ViewChild('termEndDropdownDD', { read: ElementRef })
+  termEndDropdownDDEl: ElementRef;
+  @ViewChild('termBeginDatePicker', { read: ElementRef })
+  termBeginDatePickerEl: ElementRef;
+  @ViewChild('termEndDatePicker', { read: ElementRef })
+  termEndDatePickerEl: ElementRef;
   title = 'Accounting Event Details ';
   subtitle = '';
   componentName = 'details';
@@ -101,6 +116,13 @@ export class ScheduleDetailsComponent
   private subscription = new Subscription();
   private formSubscription$ = new Subject<void>();
   reportExceptionValidationPopup = false;
+  private lastActiveTermControl:
+    | 'beginDropdown'
+    | 'endDropdown'
+    | 'beginDate'
+    | 'endDate'
+    | null = null;
+  private focusScheduled = false;
   compoundFrequency: number;
   selectedExceptionReason = 'string';
   dayOneDate: Date;
@@ -894,6 +916,7 @@ export class ScheduleDetailsComponent
   }
 
   setTermBeginDate(event: any) {
+    this.lastActiveTermControl = 'beginDropdown';
     if (event.length === 0) {
       this.termBeginDate = null;
       this.resetAccountingTerms();
@@ -931,6 +954,7 @@ export class ScheduleDetailsComponent
   }
 
   setTermEndDate(event: any) {
+    this.lastActiveTermControl = 'endDropdown';
     if (event.length === 0) {
       this.termEndDate = null;
       this.resetAccountingTerms();
@@ -960,11 +984,13 @@ export class ScheduleDetailsComponent
   }
 
   onTermBeginDateChange(event: any) {
+    this.lastActiveTermControl = 'beginDate';
     this.termBeginDate = event.value ? new Date(event.value) : null;
     this.validateDates();
   }
 
   onTermEndDateChange(event: any) {
+    this.lastActiveTermControl = 'endDate';
     this.termEndDate = event.value ? new Date(event.value) : null;
     if (this.measureEvent === 'Full Termination') {
       this.termBeginDate = this.termEndDate;
@@ -1077,14 +1103,44 @@ export class ScheduleDetailsComponent
   }
 
   closeReportExceptionPopup() {
-    this.reportExceptionValidationPopup = !this.reportExceptionValidationPopup;
+    this.reportExceptionValidationPopup = false;
+    this.focusLastActiveTermControl();
   }
 
   setScheduleAsException() {
     this.scheduleDetailsForm
       .get('reportingExceptions')
       .setValue(this.reportingExceptionsList[1].id);
-    this.reportExceptionValidationPopup = !this.reportExceptionValidationPopup;
+    this.reportExceptionValidationPopup = false;
+    this.focusLastActiveTermControl();
+  }
+
+  focusLastActiveTermControl(): void {
+    if (this.focusScheduled) return;
+    this.focusScheduled = true;
+    setTimeout(() => {
+      this.focusScheduled = false;
+      let elRef: ElementRef;
+      switch (this.lastActiveTermControl) {
+        case 'beginDropdown':
+          elRef = this.termBeginDropdownDDEl;
+          break;
+        case 'endDropdown':
+          elRef = this.termEndDropdownDDEl;
+          break;
+        case 'beginDate':
+          elRef = this.termBeginDropdownDDEl;
+          break;
+        case 'endDate':
+          elRef = this.termEndDropdownDDEl;
+          break;
+        default:
+          elRef = this.termBeginDropdownDDEl;
+          break;
+      }
+      // Use direct DOM focus to set focus without opening the dropdown.
+      elRef?.nativeElement?.querySelector('.dx-texteditor-input')?.focus();
+    }, 400);
   }
 
   onClassificationSelectionClosed() {

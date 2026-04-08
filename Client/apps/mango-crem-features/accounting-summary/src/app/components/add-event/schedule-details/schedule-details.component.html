@@ -121,6 +121,7 @@
               </div>
               <div class="controls-container">
                 <crem-dropdown
+                  #termBeginDropdownDD
                   [id]="
                     accountingSummaryService.getId(
                       componentName,
@@ -147,6 +148,7 @@
                   [statusMessage]="termBeginStatusMessage"
                 ></crem-dropdown>
                 <crem-date-picker
+                  #termBeginDatePicker
                   [id]="
                     accountingSummaryService.getId(
                       componentName,
@@ -219,6 +221,7 @@
               </div>
               <div class="controls-container">
                 <crem-dropdown
+                  #termEndDropdownDD
                   [id]="
                     accountingSummaryService.getId(
                       componentName,
@@ -244,6 +247,7 @@
                 ></crem-dropdown>
 
                 <crem-date-picker
+                  #termEndDatePicker
                   [id]="
                     accountingSummaryService.getId(
                       componentName,
