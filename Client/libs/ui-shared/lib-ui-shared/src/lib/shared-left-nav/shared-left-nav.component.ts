@@ -278,7 +278,11 @@ export class SharedLeftNavComponent implements OnChanges {
     e._element.nativeElement.children[3].removeAttribute('tabindex');
   }
 
-  openFlyOutMenu(menuTrigger: MatMenuTrigger, categoryName: string) {
+  openFlyOutMenu(
+    menuTrigger: MatMenuTrigger,
+    categoryName: string,
+    viaKeyboard: boolean = false
+  ) {
     if (
       this.currentFlyOutMenuCategory !== null &&
       this.currentFlyOutMenuCategory !== categoryName
@@ -294,6 +298,13 @@ export class SharedLeftNavComponent implements OnChanges {
     this.flyOutMenuOpened = true;
     this.flyOutMenuEntered = false;
     menuTrigger.openMenu();
+
+    if (viaKeyboard) {
+      // Deferred to next macrotask because MatMenu renders its overlay asynchronously after openMenu()
+      setTimeout(() => {
+        menuTrigger.menu.focusFirstItem('program');
+      });
+    }
   }
 
   closeFlyOutMenu(menuTrigger: MatMenuTrigger) {

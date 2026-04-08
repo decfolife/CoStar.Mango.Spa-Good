@@ -118,20 +118,12 @@
 
           <ng-template #flyoutMenuTemplate>
             <div
-              [matMenuTriggerFor]="appMenu"
-              #trigger="matMenuTrigger"
               (mouseenter)="openFlyOutMenu(trigger, linkObj.category)"
               (mouseleave)="closeFlyOutMenu(trigger)"
-              (keyup.enter)="
-                openFlyOutMenu(trigger, linkObj.category);
-                flyOutMenuEntered = true
-              "
-              (keyup.space)="
-                openFlyOutMenu(trigger, linkObj.category);
-                flyOutMenuEntered = true
-              "
             >
               <button
+                [matMenuTriggerFor]="appMenu"
+                #trigger="matMenuTrigger"
                 [id]="
                   'left-nav__listItem__' +
                   linkObj?.categoryModuleID +
@@ -151,7 +143,14 @@
                   $event.preventDefault();
                   onCategoryNavLinkClick($event, linkObj)
                 "
+                (keydown.space)="$event.preventDefault()"
+                (keyup.space)="
+                  openFlyOutMenu(trigger, linkObj.category, true);
+                  flyOutMenuEntered = true
+                "
                 [tabindex]="0"
+                [attr.aria-haspopup]="'menu'"
+                [attr.aria-expanded]="trigger.menuOpen"
               >
                 <div class="flyout_anchor_button_content_div">
                   <div
