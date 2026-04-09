@@ -27,6 +27,7 @@ import { UserSettingsComponent } from './modal/user-settings/user-settings.compo
 import { ToastComponent } from '@mango/ui-shared/lib-ui-elements';
 import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
 import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { MessageService } from 'primeng/api';
     DragDropModule,
     ModalModule,
     ToastComponent,
+    ToastModule,
   ],
   providers: [
     DataService,

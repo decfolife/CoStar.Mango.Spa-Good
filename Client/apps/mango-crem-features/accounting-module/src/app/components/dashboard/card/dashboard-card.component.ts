@@ -287,7 +287,9 @@ export class DashboardCardComponent implements OnInit {
         this.toastService.showToast(
           'Success',
           'Report exported successfully.',
-          ToastState.SUCCESS
+          ToastState.SUCCESS,
+          false,
+          6000
         );
         break;
       }

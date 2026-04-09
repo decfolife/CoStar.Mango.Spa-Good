@@ -18,6 +18,8 @@ import { UserPreferences } from '../../models/interfaces/user-preferences.interf
 import { UserPortfolios } from '../../models/interfaces/user-portfolios.interface';
 import { AccountingHistory } from '../../models/interfaces/accounting-history.interface';
 import { AccountingToastService } from 'apps/mango-crem-features/accounting-summary/src/app/services/accounting-toast.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'mango-accounting-history',
   standalone: true,
@@ -27,7 +29,9 @@ import { AccountingToastService } from 'apps/mango-crem-features/accounting-summ
     DevExtremeModule,
     ButtonModule,
     DxLoadPanelModule,
+    ToastModule,
   ],
+  providers: [AccountingToastService, MessageService],
   templateUrl: './accounting-history.component.html',
   styleUrls: ['./accounting-history.component.scss'],
 })
@@ -125,8 +129,8 @@ export class AccountingHistoryComponent implements OnInit {
         },
         (error) => {
           this.toastService.showToast(
+            'Error',
             'An error has occurred retrieving user preferences',
-            '',
             ToastState.ERROR
           );
         }
@@ -143,8 +147,9 @@ export class AccountingHistoryComponent implements OnInit {
             this.userPortfolios = response.data;
           } else if (response === null) {
             this.toastService.showToast(
-              response.clientErrorMessage,
               'Error',
+              response.clientErrorMessage ||
+                'An error has occurred. Please try again.',
               ToastState.ERROR
             );
           }
@@ -166,8 +171,9 @@ export class AccountingHistoryComponent implements OnInit {
             this.showLoading = false;
           } else if (response === null) {
             this.toastService.showToast(
-              response.clientErrorMessage,
               'Error',
+              response.clientErrorMessage ||
+                'An error has occurred. Please try again.',
               ToastState.ERROR
             );
           }
