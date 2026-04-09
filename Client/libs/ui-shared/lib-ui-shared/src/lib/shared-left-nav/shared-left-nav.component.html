@@ -12,6 +12,10 @@
     [autoFocus]="false"
     (opened)="leftNavOpened(sideNavContainer)"
   >
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+      {{ flyOutKeyboardInstruction }}
+    </div>
+
     <div
       class="sidenavTop scroll-container vertical"
       id="sidebar-nav"
@@ -124,6 +128,8 @@
               <button
                 [matMenuTriggerFor]="appMenu"
                 #trigger="matMenuTrigger"
+                (menuOpened)="onFlyOutMenuOpened(trigger, linkObj.category)"
+                (menuClosed)="onFlyOutMenuClosed(linkObj.category)"
                 [id]="
                   'left-nav__listItem__' +
                   linkObj?.categoryModuleID +

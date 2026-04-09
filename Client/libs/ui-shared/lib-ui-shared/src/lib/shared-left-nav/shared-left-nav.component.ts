@@ -35,6 +35,8 @@ export class SharedLeftNavComponent implements OnChanges {
   flyOutMenuEntered: boolean = false;
   flyOutMenuOpened: boolean = false;
   flyOutEntered: boolean = false;
+  flyOutOpenedViaKeyboard: boolean = false;
+  flyOutKeyboardInstruction: string = '';
   elementToSetFocusId: string = null;
   currentFlyOutMenuTrigger: MatMenuTrigger = null;
   currentFlyOutMenuCategory: string = null;
@@ -297,23 +299,38 @@ export class SharedLeftNavComponent implements OnChanges {
     this.flyOutEntered = true;
     this.flyOutMenuOpened = true;
     this.flyOutMenuEntered = false;
+    this.flyOutOpenedViaKeyboard = viaKeyboard;
     menuTrigger.openMenu();
+  }
 
-    if (viaKeyboard) {
-      // Deferred to next macrotask because MatMenu renders its overlay asynchronously after openMenu()
-      setTimeout(() => {
-        menuTrigger.menu.focusFirstItem('program');
-      });
+  onFlyOutMenuOpened(menuTrigger: MatMenuTrigger, categoryName: string) {
+    if (
+      this.flyOutOpenedViaKeyboard &&
+      this.currentFlyOutMenuCategory === categoryName
+    ) {
+      menuTrigger.menu?.focusFirstItem('keyboard');
+      this.announceFlyOutKeyboardInstruction(categoryName);
+    }
+  }
+
+  onFlyOutMenuClosed(categoryName: string) {
+    this.flyOutKeyboardInstruction = '';
+    this.flyOutOpenedViaKeyboard = false;
+
+    if (this.currentFlyOutMenuCategory === categoryName) {
+      this.flyOutMenuOpened = false;
+      this.currentFlyOutMenuTrigger = null;
+      this.currentFlyOutMenuCategory = null;
     }
   }
 
   closeFlyOutMenu(menuTrigger: MatMenuTrigger) {
     this.flyOutEntered = false;
+    this.flyOutKeyboardInstruction = '';
+    this.flyOutOpenedViaKeyboard = false;
     setTimeout(() => {
       if (!this.flyOutMenuEntered && !this.flyOutEntered) {
         menuTrigger.closeMenu();
-        this.currentFlyOutMenuTrigger = null;
-        this.currentFlyOutMenuCategory = null;
       }
     }, 200);
   }
@@ -431,6 +448,10 @@ export class SharedLeftNavComponent implements OnChanges {
   getParentLinkDynamicName(navLink: SharedLeftNavLink): string {
     const topParentNavLink = this.getTopParentNavLink(navLink);
     return topParentNavLink ? topParentNavLink.dynamicName : '';
+  }
+
+  private announceFlyOutKeyboardInstruction(categoryName: string) {
+    this.flyOutKeyboardInstruction = `${categoryName} menu opened. Press Escape to return to the side navigation.`;
   }
 
   private getTopParentNavLink(
