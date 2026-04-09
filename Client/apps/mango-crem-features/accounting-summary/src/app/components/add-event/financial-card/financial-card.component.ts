@@ -211,7 +211,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
         if (dayOne) {
           this.financialForm.get('ROUMethod')?.setValue(2);
         } else {
-          if (this.rouMethodIDSelected && this.rouMethodTouched) {
+          if (this.rouMethodIDSelected) {
             this.financialForm
               .get('ROUMethod')
               ?.setValue(this.rouMethodIDSelected);
@@ -1194,17 +1194,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       this.pageMode === 'Remeasure Event' ||
       !this.accountingEventsData?.rouAssetMethodID
     ) {
-      if (this.accountingEventsData?.rouAssetMethodID) {
-        this.financialForm
-          .get('ROUMethod')
-          .setValue(this.accountingEventsData.rouAssetMethodID);
-        const rouMethodName = this.rouAssetMethodsList.find(
-          (ram) => ram.id === this.accountingEventsData.rouAssetMethodID
-        )?.name;
-        this.setROUAmountForROUMethod(rouMethodName);
-      } else {
-        this.updateRouAssetMethodAndAmountForClassificationConfiguration();
-      }
+      this.updateRouAssetMethodAndAmountForClassificationConfiguration();
       this.financialForm.get('ROUActionDate').setValue(this.termBegin);
     }
     if (this.pageMode === 'Edit Event') {
