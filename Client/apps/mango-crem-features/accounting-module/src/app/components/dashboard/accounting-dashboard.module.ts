@@ -25,6 +25,8 @@ import { ColumnLimitComponent } from './modal/column-limit/column-limit.componen
 import { GenericErrorComponent } from './modal/genericError/genericError.component';
 import { UserSettingsComponent } from './modal/user-settings/user-settings.component';
 import { ToastComponent } from '@mango/ui-shared/lib-ui-elements';
+import { AccountingToastService } from '@accounting-summary/services/accounting-toast.service';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,12 @@ import { ToastComponent } from '@mango/ui-shared/lib-ui-elements';
     ModalModule,
     ToastComponent,
   ],
-  providers: [DataService, DashboardService],
+  providers: [
+    DataService,
+    DashboardService,
+    AccountingToastService,
+    MessageService,
+  ],
   exports: [DashboardCardComponent],
 })
 export class DashboardModule {}
