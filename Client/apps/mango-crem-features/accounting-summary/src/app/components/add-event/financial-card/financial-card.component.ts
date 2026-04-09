@@ -739,7 +739,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
     );
 
     this.financialForm.valueChanges
-      .pipe(debounceTime(100), takeUntil(this.formSubscription$))
+      .pipe(debounceTime(300), takeUntil(this.formSubscription$))
       .subscribe(() => {
         setTimeout(() => {
           this.executeFinancialFormValueChanges();
@@ -1544,6 +1544,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           termBeginShortDate,
           this.termInMonths
         )
+        .pipe(this.addEventFormService.trackPendingCall())
         .subscribe((response: any) => {
           if (response === null) {
             this.accountingToastService.displayContactSystemAdminMessage();
@@ -1610,6 +1611,7 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
           +this.discountRate,
           this.compoundFrequencyType
         )
+        .pipe(this.addEventFormService.trackPendingCall())
         .subscribe((response: any) => {
           if (response === null) {
             this.accountingToastService.displayContactSystemAdminMessage();
@@ -1751,6 +1753,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
 
         this.financialForm.get('ROUAmount').setValue(openingAssetBalValue);
         this.addEventFormService.ignoreButtonReset.next(true);
+        if (this.addEventFormService.isSaveAllowed$.value) {
+          this.addEventFormService.calculateValuesClicked.next(true);
+        }
         this.financialForm.get('ROUAmount').disable();
         break;
       }
@@ -1764,6 +1769,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
 
         this.financialForm.get('ROUAmount').setValue(systemAssetAdjValue);
         this.addEventFormService.ignoreButtonReset.next(true);
+        if (this.addEventFormService.isSaveAllowed$.value) {
+          this.addEventFormService.calculateValuesClicked.next(true);
+        }
         this.financialForm.get('ROUAmount').disable();
         break;
       }
@@ -1782,6 +1790,9 @@ export class FinancialCardComponent implements OnChanges, OnInit, OnDestroy {
       case 'Total Asset Adjustment': {
         this.financialForm.get('ROUAmount').setValue(this.totalAdjustment);
         this.addEventFormService.ignoreButtonReset.next(true);
+        if (this.addEventFormService.isSaveAllowed$.value) {
+          this.addEventFormService.calculateValuesClicked.next(true);
+        }
         this.financialForm.get('ROUAmount').disable();
         break;
       }

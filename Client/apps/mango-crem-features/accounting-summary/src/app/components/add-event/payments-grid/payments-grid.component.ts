@@ -7,9 +7,15 @@ import { AddEventFormService } from '@accounting-summary/services/add-event-form
 import { SchedulePaymentsGridColumnsService } from '@accounting-summary/services/schedule-payments-grid-columns.service';
 import { FormattingService } from '@accounting-summary/services/formatting.service';
 import { DevExtremeModule, DxDataGridComponent } from 'devextreme-angular';
-import { combineLatest, Subject, Subscription } from 'rxjs';
+import { combineLatest, Subject, Subscription, timer } from 'rxjs';
 import { SchedulePayment } from '@accounting-summary/models/schedule-payment-model';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import {
+  debounceTime,
+  finalize,
+  map,
+  switchMap,
+  takeUntil,
+} from 'rxjs/operators';
 import { RemeasureType } from '@accounting-summary/shared/enums/remeasure-type.enum';
 import { ToastState } from '@mango/data-models/lib-data-models';
 import { ScheduleTransactionsPopupComponent } from './schedule-transactions-popup/schedule-transactions-popup.component';
@@ -102,7 +108,22 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
       this.addEventFormService.financialFormData$,
       this.addEventFormService.commonDropdownsData$,
     ])
-      .pipe(takeUntil(this.subscription$), debounceTime(600))
+      .pipe(
+        takeUntil(this.subscription$),
+        switchMap(([scheduleDetails, financialData, commonDropdownsData]) => {
+          this.addEventFormService.pendingApiCalls$.next(
+            this.addEventFormService.pendingApiCalls$.value + 1
+          );
+          return timer(600).pipe(
+            finalize(() =>
+              this.addEventFormService.pendingApiCalls$.next(
+                Math.max(0, this.addEventFormService.pendingApiCalls$.value - 1)
+              )
+            ),
+            map(() => [scheduleDetails, financialData, commonDropdownsData])
+          );
+        })
+      )
       .subscribe(([scheduleDetails, financialData, commonDropdownsData]) => {
         if (scheduleDetails && financialData) {
           this.processScheduleDetails(scheduleDetails);
@@ -594,7 +615,10 @@ export class PaymentsGridComponent implements OnInit, OnDestroy {
           this.fromDate,
           this.toDate
         )
-        .pipe(takeUntil(this.subscription$))
+        .pipe(
+          this.addEventFormService.trackPendingCall(),
+          takeUntil(this.subscription$)
+        )
         .subscribe((response: any) => {
           if (response && response.success) {
             this.schedulePaymentsData = response.data;

@@ -7,7 +7,7 @@ import { DatePipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subscription } from 'rxjs';
 import { PreviousAccountingEvent } from '@accounting-summary/models/previous-accounting-event.model';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, filter } from 'rxjs/operators';
 import { AddEventFormService } from '@accounting-summary/services/add-event-form.service';
 import {
   AmortizationProfile,
@@ -309,7 +309,9 @@ export class AddEventComponent implements OnDestroy, OnInit {
               this.addEventFormService.ignoreButtonReset.next(false);
               this.addEventFormService.calculateValuesClicked.next(false);
             } else {
-              this.isCalculateValuesAllowed = isCalculateValuesAllowed;
+              this.isCalculateValuesAllowed =
+                isCalculateValuesAllowed &&
+                this.addEventFormService.pendingApiCalls$.value === 0;
               this.isSaveAllowed = false;
               this.isApplyAllowed = false;
               this.isCalculateClicked = SaveInvalid;
@@ -322,6 +324,20 @@ export class AddEventComponent implements OnDestroy, OnInit {
             }
           }
         )
+    );
+
+    this.subscription.add(
+      this.addEventFormService.pendingApiCalls$
+        .pipe(
+          filter((count) => count === 0),
+          debounceTime(50)
+        )
+        .subscribe(() => {
+          if (!this.isSaveAllowed) {
+            this.isCalculateValuesAllowed =
+              this.addEventFormService.isCalculateValuesAllowed$.value;
+          }
+        })
     );
   }
 

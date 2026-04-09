@@ -133,7 +133,10 @@ export class BalanceCardsContainerComponent implements OnInit, OnDestroy {
 
     this.balanceCardForm
       .get('manualAssetAdjustment')
-      .valueChanges.pipe(takeUntil(this.subscription$))
+      .valueChanges.pipe(
+        takeUntil(this.subscription$),
+        debounceTime(this.debounce)
+      )
       .subscribe((manualAssetAdjustment) => {
         this.addEventFormService.manualAssetAdjustment$.next(
           manualAssetAdjustment

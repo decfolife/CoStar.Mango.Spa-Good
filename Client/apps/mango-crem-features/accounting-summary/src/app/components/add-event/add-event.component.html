@@ -32,7 +32,7 @@
           )
         "
         type="primary"
-        [disabled]="!isCalculateValuesAllowed"
+        [disabled]="!isCalculateValuesAllowed || calculateValuesLoading"
         [icon]="calculateValuesLoading ? 'faSpinner' : ''"
         [iconPack]="calculateValuesLoading ? 'solid' : ''"
         [iconAnimation]="calculateValuesLoading ? 'spin' : ''"

@@ -292,7 +292,7 @@ export class ScheduleDetailsComponent
   loadScheduleDataforRemeasure() {
     this.title =
       'Accounting Event Details |' +
-      ` ${'Measure Event: '}  ${this.measureEvent} 
+      ` ${'Measure Event: '}  ${this.measureEvent}
     ${
       this.isRetro && this.measureEvent !== 'Initial'
         ? ' | Retrospective Adjustment'
@@ -1078,6 +1078,7 @@ export class ScheduleDetailsComponent
     this.subscription.add(
       this.addEditScheduleService
         .getTermCalculations(termBeginDate, termEndDate)
+        .pipe(this.addEventFormService.trackPendingCall())
         .subscribe((response: any) => {
           if (response === null) {
             this.accountingToastService.displayContactSystemAdminMessage();
