@@ -69,8 +69,13 @@
           <button
             type="button"
             class="df-accordion-trigger"
-            [attr.aria-expanded]="isExpanded ? 'true' : 'false'"
             [attr.aria-controls]="'df-sectionPanel-' + section.formSectionID"
+            [attr.aria-label]="
+              (section?.formSectionName || 'Section') +
+              (isExpanded
+                ? ', press enter to collapse'
+                : ', press enter to expand')
+            "
             id="df-sectionId-{{ section.formSectionID }}"
             (click)="toggleExpand()"
             (keydown.enter)="onAccordionEnterKey($event)"
