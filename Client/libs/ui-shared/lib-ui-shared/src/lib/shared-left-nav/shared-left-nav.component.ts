@@ -36,7 +36,6 @@ export class SharedLeftNavComponent implements OnChanges {
   flyOutMenuOpened: boolean = false;
   flyOutEntered: boolean = false;
   flyOutOpenedViaKeyboard: boolean = false;
-  flyOutKeyboardInstruction: string = '';
   elementToSetFocusId: string = null;
   currentFlyOutMenuTrigger: MatMenuTrigger = null;
   currentFlyOutMenuCategory: string = null;
@@ -300,6 +299,7 @@ export class SharedLeftNavComponent implements OnChanges {
     this.flyOutMenuOpened = true;
     this.flyOutMenuEntered = false;
     this.flyOutOpenedViaKeyboard = viaKeyboard;
+
     menuTrigger.openMenu();
   }
 
@@ -309,12 +309,10 @@ export class SharedLeftNavComponent implements OnChanges {
       this.currentFlyOutMenuCategory === categoryName
     ) {
       menuTrigger.menu?.focusFirstItem('keyboard');
-      this.announceFlyOutKeyboardInstruction(categoryName);
     }
   }
 
   onFlyOutMenuClosed(categoryName: string) {
-    this.flyOutKeyboardInstruction = '';
     this.flyOutOpenedViaKeyboard = false;
 
     if (this.currentFlyOutMenuCategory === categoryName) {
@@ -326,7 +324,6 @@ export class SharedLeftNavComponent implements OnChanges {
 
   closeFlyOutMenu(menuTrigger: MatMenuTrigger) {
     this.flyOutEntered = false;
-    this.flyOutKeyboardInstruction = '';
     this.flyOutOpenedViaKeyboard = false;
     setTimeout(() => {
       if (!this.flyOutMenuEntered && !this.flyOutEntered) {
@@ -448,10 +445,6 @@ export class SharedLeftNavComponent implements OnChanges {
   getParentLinkDynamicName(navLink: SharedLeftNavLink): string {
     const topParentNavLink = this.getTopParentNavLink(navLink);
     return topParentNavLink ? topParentNavLink.dynamicName : '';
-  }
-
-  private announceFlyOutKeyboardInstruction(categoryName: string) {
-    this.flyOutKeyboardInstruction = `${categoryName} menu opened. Press Escape to return to the side navigation.`;
   }
 
   private getTopParentNavLink(

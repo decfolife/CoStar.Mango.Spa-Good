@@ -12,10 +12,6 @@
     [autoFocus]="false"
     (opened)="leftNavOpened(sideNavContainer)"
   >
-    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
-      {{ flyOutKeyboardInstruction }}
-    </div>
-
     <div
       class="sidenavTop scroll-container vertical"
       id="sidebar-nav"
@@ -176,6 +172,10 @@
               hasBackdrop="false"
               #appMenu="matMenu"
               xPosition="after"
+              [aria-label]="
+                linkObj.category +
+                ' submenu. Press Escape to return to side navigation.'
+              "
             >
               <div
                 class="flyout-scroll"
