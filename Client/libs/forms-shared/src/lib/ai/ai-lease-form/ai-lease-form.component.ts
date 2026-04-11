@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, Subject, timer } from 'rxjs';
@@ -57,6 +57,9 @@ const PAYOR_OPTIONS: AiDropdownItem[] = [
   styleUrls: ['./ai-lease-form.component.scss'],
 })
 export class AiLeaseFormComponent implements OnInit, OnDestroy {
+  @ViewChild('mainScrollContainer')
+  private mainScrollContainer?: ElementRef<HTMLDivElement>;
+
   form: FormGroup = new FormGroup({});
   sections: AiFormSection[] = [];
   sectionsExpanded: boolean[] = [];
@@ -293,7 +296,10 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   }
 
   scrollToTop(): void {
-    document.getElementById('df-formContainer-formContainer')?.scrollIntoView({ behavior: 'smooth' });
+    this.mainScrollContainer?.nativeElement.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   }
 
   toggleEditMode(): void {

@@ -16,7 +16,6 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
   createdAiAbstractionId: number | null = null;
 
-  private buildingId = 0;
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
 
@@ -31,7 +30,6 @@ export class AiListPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (params) => {
-          this.buildingId = Number(params.get('buildingId') ?? 0);
           this.createdAiAbstractionId =
             Number(params.get('createdAiAbstractionId') ?? 0) || null;
           this.stopPolling$.next();
@@ -73,7 +71,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
 
     this.aiLeaseService
-      .getLeaseList(this.buildingId)
+      .getLeaseList()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (leases) => {
@@ -96,7 +94,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     this.stopPolling$.next();
     timer(5000, 5000)
       .pipe(
-        switchMap(() => this.aiLeaseService.getLeaseList(this.buildingId)),
+        switchMap(() => this.aiLeaseService.getLeaseList()),
         takeUntil(this.stopPolling$),
         takeUntil(this.destroy$)
       )

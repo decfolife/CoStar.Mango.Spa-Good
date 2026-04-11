@@ -61,7 +61,7 @@ export class AiLeaseService {
       .pipe(map((res) => (res.data as AiAbstractionDetail) ?? null));
   }
 
-  getAbstractionList(buildingId: number): Observable<AiAbstractionDetail[]> {
+  getAbstractionListByBuilding(buildingId: number): Observable<AiAbstractionDetail[]> {
     return this.http
       .get<ApiResponse>(
         `${this.apiUrl}AiAbstractions/GetAiAbstractionsByBuilding`,
@@ -69,6 +69,12 @@ export class AiLeaseService {
           params: { buildingId },
         }
       )
+      .pipe(map((res) => res.data as AiAbstractionDetail[]));
+  }
+
+  getAbstractionList(): Observable<AiAbstractionDetail[]> {
+    return this.http
+      .get<ApiResponse>(`${this.apiUrl}AiAbstractions/GetAiAbstractionsList`)
       .pipe(map((res) => res.data as AiAbstractionDetail[]));
   }
 
@@ -124,8 +130,8 @@ export class AiLeaseService {
   /**
    * Returns the list of abstractions for a building, mapped to the grid model.
    */
-  getLeaseList(buildingId: number): Observable<AiLeaseListItem[]> {
-    return this.getAbstractionList(buildingId).pipe(
+  getLeaseList(): Observable<AiLeaseListItem[]> {
+    return this.getAbstractionList().pipe(
       map((items) =>
         items.map((item) => ({
           id: item.aiAbstractionId,

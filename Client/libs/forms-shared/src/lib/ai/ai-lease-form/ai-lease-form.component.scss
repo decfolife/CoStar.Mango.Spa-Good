@@ -15,6 +15,34 @@
     gap: 8px;
   }
 
+  .dfActions {
+    display: flex;
+    align-items: center;
+  }
+
+  .df-actionsButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .df-actionsBtn-text {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .df-actionsBtn-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
   .dynamic-form-content {
     padding: 16px;
   }
