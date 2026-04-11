@@ -68,6 +68,9 @@
     border: 1px solid #90caf9;
     border-radius: 4px;
     color: #0d47a1;
+    position: sticky;
+    top: 0;
+    z-index: 2;
 
     &-icon {
       flex-shrink: 0;
