@@ -116,6 +116,7 @@ mat-card.mat-mdc-card {
         .df-formSection-fieldLabel {
           margin-left: 4px;
           word-break: break-word;
+          color: #000;
         }
       }
 
@@ -132,10 +133,13 @@ mat-card.mat-mdc-card {
       }
 
       crem-input-label {
+        color: #000;
+
         label span {
           white-space: normal;
           text-wrap: wrap;
           line-height: normal;
+          color: #000;
         }
       }
     }
