@@ -36,113 +36,117 @@
         [style.grid-template-columns]="getColumnTemplate()"
       >
         <div
-          class="field-container df-formSection-field"
-          *ngFor="let field of section.fields"
+          class="df-formSection-column"
+          *ngFor="let column of section.columnGroups || []"
         >
-          <!-- Label container: history icon + label text -->
-          <div class="df-formSection-labelContainer">
-            <div class="df-infoHistoryData">
-              <crem-field-history
-                [helpTextID]="'ai-helpText-' + field.key"
-                [visible]="false"
-                dateFormat="MM/dd/yyyy"
-                [dataSource]="null"
-                [displayIcon]="'infoHistoryIcon'"
-                [showFieldName]="false"
-              ></crem-field-history>
+          <ng-container *ngFor="let field of column.fields">
+            <div class="field-container df-formSection-field">
+              <!-- Label container: history icon + label text -->
+              <div class="df-formSection-labelContainer">
+                <div class="df-infoHistoryData">
+                  <crem-field-history
+                    [helpTextID]="'ai-helpText-' + field.key"
+                    [visible]="false"
+                    dateFormat="MM/dd/yyyy"
+                    [dataSource]="null"
+                    [displayIcon]="'infoHistoryIcon'"
+                    [showFieldName]="false"
+                  ></crem-field-history>
+                </div>
+                <crem-input-label
+                  class="df-formSection-fieldLabel"
+                  [label]="field.label"
+                ></crem-input-label>
+              </div>
+
+              <!-- Field content -->
+              <div class="field-content df-formSection-fieldContent">
+                <!-- View mode: dropdown -->
+                <span
+                  class="df-dropdown-readonly-wrapper"
+                  *ngIf="!editMode && field.type === 'dropdown'"
+                  tabindex="0"
+                >
+                  <span class="sr-only"
+                    >{{ field.label }}, {{ formatDisplayValue(field) }}</span
+                  >
+                  <crem-dropdown
+                    aria-hidden="true"
+                    [dataSource]="field.dropdownItems || []"
+                    [displayExpr]="getDropdownDisplayExpr(field)"
+                    [valueExpr]="getDropdownValueExpr(field)"
+                    [readOnly]="true"
+                    [containerized]="false"
+                    [readOnlyStyle]="'text-only'"
+                    [formControlName]="field.key"
+                    [tabindex]="-1"
+                  ></crem-dropdown>
+                </span>
+
+                <!-- View mode -->
+                <crem-input-label
+                  *ngIf="!editMode && field.type !== 'dropdown'"
+                  [label]="formatDisplayValue(field)"
+                ></crem-input-label>
+
+                <!-- Edit mode: dropdown -->
+                <crem-dropdown
+                  *ngIf="editMode && field.type === 'dropdown'"
+                  [id]="'ai-form-dropdown-' + field.key"
+                  [dataSource]="field.dropdownItems || []"
+                  [showClearButton]="true"
+                  [showColumnHeader]="false"
+                  [displayExpr]="getDropdownDisplayExpr(field)"
+                  [valueExpr]="getDropdownValueExpr(field)"
+                  [allowSearch]="true"
+                  [useSelectBox]="true"
+                  [containerized]="true"
+                  [searchMode]="'contains'"
+                  [formControlName]="field.key"
+                  [initialSelectedValue]="getFieldControl(field.key)?.value"
+                  (selectedItems)="onDropdownSelected(field, $event)"
+                ></crem-dropdown>
+
+                <!-- Edit mode: text / number / currency / percent -->
+                <crem-input
+                  *ngIf="
+                    editMode &&
+                    field.type !== 'boolean' &&
+                    field.type !== 'date' &&
+                    field.type !== 'dropdown'
+                  "
+                  [inputType]="
+                    field.type === 'number' ||
+                    field.type === 'currency' ||
+                    field.type === 'percent'
+                      ? 'number'
+                      : 'text'
+                  "
+                  [formControlName]="field.key"
+                ></crem-input>
+
+                <!-- Edit mode: date -->
+                <crem-date-picker
+                  *ngIf="editMode && field.type === 'date'"
+                  [formControlName]="field.key"
+                  dateFormat="MM/dd/yyyy"
+                  [useMaskBehavior]="false"
+                ></crem-date-picker>
+
+                <!-- Edit mode: boolean -->
+                <mat-checkbox
+                  *ngIf="editMode && field.type === 'boolean'"
+                  [formControlName]="field.key"
+                ></mat-checkbox>
+
+                <!-- Citation -->
+                <div *ngIf="field.citation" class="ai-citation">
+                  <crem-icon icon="faQuoteLeft" size="xs"></crem-icon>
+                  <span>{{ field.citation }}</span>
+                </div>
+              </div>
             </div>
-            <crem-input-label
-              class="df-formSection-fieldLabel"
-              [label]="field.label"
-            ></crem-input-label>
-          </div>
-
-          <!-- Field content -->
-          <div class="field-content df-formSection-fieldContent">
-            <!-- View mode: dropdown -->
-            <span
-              class="df-dropdown-readonly-wrapper"
-              *ngIf="!editMode && field.type === 'dropdown'"
-              tabindex="0"
-            >
-              <span class="sr-only"
-                >{{ field.label }}, {{ formatDisplayValue(field) }}</span
-              >
-              <crem-dropdown
-                aria-hidden="true"
-                [dataSource]="field.dropdownItems || []"
-                [displayExpr]="getDropdownDisplayExpr(field)"
-                [valueExpr]="getDropdownValueExpr(field)"
-                [readOnly]="true"
-                [containerized]="false"
-                [readOnlyStyle]="'text-only'"
-                [formControlName]="field.key"
-                [tabindex]="-1"
-              ></crem-dropdown>
-            </span>
-
-            <!-- View mode -->
-            <crem-input-label
-              *ngIf="!editMode && field.type !== 'dropdown'"
-              [label]="formatDisplayValue(field)"
-            ></crem-input-label>
-
-            <!-- Edit mode: dropdown -->
-            <crem-dropdown
-              *ngIf="editMode && field.type === 'dropdown'"
-              [id]="'ai-form-dropdown-' + field.key"
-              [dataSource]="field.dropdownItems || []"
-              [showClearButton]="true"
-              [showColumnHeader]="false"
-              [displayExpr]="getDropdownDisplayExpr(field)"
-              [valueExpr]="getDropdownValueExpr(field)"
-              [allowSearch]="true"
-              [useSelectBox]="true"
-              [containerized]="true"
-              [searchMode]="'contains'"
-              [formControlName]="field.key"
-              [initialSelectedValue]="getFieldControl(field.key)?.value"
-              (selectedItems)="onDropdownSelected(field, $event)"
-            ></crem-dropdown>
-
-            <!-- Edit mode: text / number / currency / percent -->
-            <crem-input
-              *ngIf="
-                editMode &&
-                field.type !== 'boolean' &&
-                field.type !== 'date' &&
-                field.type !== 'dropdown'
-              "
-              [inputType]="
-                field.type === 'number' ||
-                field.type === 'currency' ||
-                field.type === 'percent'
-                  ? 'number'
-                  : 'text'
-              "
-              [formControlName]="field.key"
-            ></crem-input>
-
-            <!-- Edit mode: date -->
-            <crem-date-picker
-              *ngIf="editMode && field.type === 'date'"
-              [formControlName]="field.key"
-              dateFormat="MM/dd/yyyy"
-              [useMaskBehavior]="false"
-            ></crem-date-picker>
-
-            <!-- Edit mode: boolean -->
-            <mat-checkbox
-              *ngIf="editMode && field.type === 'boolean'"
-              [formControlName]="field.key"
-            ></mat-checkbox>
-
-            <!-- Citation -->
-            <div *ngIf="field.citation" class="ai-citation">
-              <crem-icon icon="faQuoteLeft" size="xs"></crem-icon>
-              <span>{{ field.citation }}</span>
-            </div>
-          </div>
+          </ng-container>
         </div>
       </div>
 

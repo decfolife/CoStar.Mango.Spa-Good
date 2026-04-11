@@ -31,6 +31,14 @@ export interface AiFormField {
   displayExpr?: string;
   /** Property name to store as the form value (default: 'id') */
   valueExpr?: string;
+  column?: number;
+  sortOrder?: number;
+  sourceIndex?: number;
+}
+
+export interface AiFormSectionColumn {
+  columnNum: number;
+  fields: AiFormField[];
 }
 
 export interface AiRentScheduleSection {
@@ -45,6 +53,7 @@ export interface AiFormSection {
   title: string;
   columns?: number;
   fields: AiFormField[];
+  columnGroups?: AiFormSectionColumn[];
   rentSchedule?: AiRentScheduleSection;
 }
 

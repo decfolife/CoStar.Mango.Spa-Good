@@ -99,7 +99,10 @@ export class AiFormSectionComponent implements OnInit {
   }
 
   getColumnTemplate(): string {
-    const columns = Math.max(1, Math.min(this.section?.columns ?? 1, 4));
+    const columns = Math.max(
+      1,
+      Math.min(this.section?.columnGroups?.length || this.section?.columns || 1, 4)
+    );
     return `repeat(${columns}, minmax(0, 1fr))`;
   }
 
@@ -154,7 +157,7 @@ export class AiFormSectionComponent implements OnInit {
   }
 
   private loadDropdownOptions(): void {
-    this.section?.fields
+    (this.section?.columnGroups?.flatMap((group) => group.fields) ?? this.section?.fields ?? [])
       ?.filter(
         (field) =>
           field.type === 'dropdown' &&

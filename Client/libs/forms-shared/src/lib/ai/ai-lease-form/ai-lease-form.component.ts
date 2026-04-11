@@ -401,22 +401,50 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     return sections
       .slice()
       .sort((a, b) => a.formSectionSortOrder - b.formSectionSortOrder)
-      .map((section) => ({
-        key: String(section.formSectionID),
-        title: section.formSectionName,
-        columns: this.normalizeSectionColumns(section.formSectionColumns),
-        fields: fields
+      .map((section) => {
+        const normalizedColumns = this.normalizeSectionColumns(section.formSectionColumns);
+        const sectionFields = fields
           .filter((f) => !this.isParentLinkField(f))
           .filter((f) => this.getFieldSectionId(f) === section.formSectionID)
-          .sort((a, b) => this.getFieldSortOrder(a) - this.getFieldSortOrder(b))
-          .map((f) => this.toAiFormField(f, dropdownValuesByFormItemId)),
-      }))
+          .map((f, index) => this.toAiFormField(f, dropdownValuesByFormItemId, index));
+        const outlierFields = sectionFields.filter(
+          (field) => (field.column ?? 1) > normalizedColumns
+        );
+        const columnGroups = Array.from({ length: normalizedColumns }, (_, index) => {
+          const columnNum = index + 1;
+          let columnFields = sectionFields
+            .filter((field) => (field.column ?? 1) === columnNum)
+            .sort((a, b) => (a.sourceIndex ?? Number.MAX_SAFE_INTEGER) - (b.sourceIndex ?? Number.MAX_SAFE_INTEGER));
+
+          if (columnNum === 1 && outlierFields.length) {
+            columnFields = columnFields.concat(
+              outlierFields.sort(
+                (a, b) => (a.sourceIndex ?? Number.MAX_SAFE_INTEGER) - (b.sourceIndex ?? Number.MAX_SAFE_INTEGER)
+              )
+            );
+          }
+
+          return {
+            columnNum,
+            fields: columnFields,
+          };
+        }).filter((group) => group.fields.length > 0);
+
+        return {
+          key: String(section.formSectionID),
+          title: section.formSectionName,
+          columns: normalizedColumns,
+          fields: sectionFields,
+          columnGroups,
+        };
+      })
       .filter((s) => s.fields.length > 0);
   }
 
   private toAiFormField(
     field: any,
-    dropdownValuesByFormItemId: Record<string, any[]> = {}
+    dropdownValuesByFormItemId: Record<string, any[]> = {},
+    sourceIndex = 0
   ): AiFormField {
     const sectionDetail = field.formItemSectionDetail ?? {};
     const dropdownItems = this.normalizeDropdownItems(
@@ -435,6 +463,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       dropdownId: field.dropdownID || undefined,
       requestTypeId: field.requestTypeID || undefined,
       dropdownItems: dropdownItems.length ? dropdownItems : undefined,
+      column: this.getFieldColumn(field),
+      sortOrder: this.getFieldSortOrder(field),
+      sourceIndex,
     };
   }
 
@@ -460,6 +491,16 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
   private getFieldSortOrder(field: any): number {
     return field.formItemSortOrder ?? field.formItemSectionDetail?.formItemSortOrder ?? Number.MAX_SAFE_INTEGER;
+  }
+
+  private getFieldColumn(field: any): number {
+    const column = Number(field.formItemSectionDetail?.columnNum ?? field.columnNum ?? 1);
+
+    if (!Number.isFinite(column) || column <= 0) {
+      return 1;
+    }
+
+    return Math.floor(column);
   }
 
   private normalizeSectionColumns(columns: any): number {
