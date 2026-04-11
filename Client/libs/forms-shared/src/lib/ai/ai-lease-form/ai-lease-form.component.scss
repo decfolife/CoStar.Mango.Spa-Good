@@ -61,9 +61,9 @@
   &__notice {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 14px;
     margin: 16px 16px 0;
-    padding: 12px 16px;
+    padding: 18px 22px;
     background-color: #e3f2fd;
     border: 1px solid #90caf9;
     border-radius: 4px;
@@ -72,16 +72,19 @@
     &-icon {
       flex-shrink: 0;
       margin-top: 2px;
+      font-size: 18px;
     }
 
     &-content {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      font-size: 13px;
+      gap: 6px;
+      font-size: 15px;
+      line-height: 1.5;
 
       strong {
-        font-size: 14px;
+        font-size: 18px;
+        line-height: 1.35;
       }
     }
   }
