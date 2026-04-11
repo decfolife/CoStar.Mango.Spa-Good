@@ -48,7 +48,9 @@ export interface AiFormSection {
 export interface AiLeaseListItem {
   id: number; // abstractionId
   buildingId: number;
+  buildingName?: string;
   portfolioId?: number;
+  portfolioName?: string;
   premiseId?: number;
   status: string;
   aiTenant?: string;

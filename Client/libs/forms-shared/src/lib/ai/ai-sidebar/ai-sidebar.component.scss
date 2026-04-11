@@ -1,6 +1,7 @@
 :host {
   display: block;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .ai-sidebar {
@@ -12,8 +13,31 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
+  will-change: width;
+
+  &__header,
+  &__loading,
+  &__error,
+  &__content {
+    opacity: 0;
+    transform: translateX(14px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &--open {
+    .ai-sidebar__header,
+    .ai-sidebar__loading,
+    .ai-sidebar__error,
+    .ai-sidebar__content {
+      opacity: 1;
+      transform: translateX(0);
+      transition-delay: 0.08s;
+    }
+  }
 
   // ── Resize handle ─────────────────────────────────────────────────────────
 
