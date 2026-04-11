@@ -2,14 +2,12 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, Subject, timer } from 'rxjs';
-import { catchError, switchMap, take, takeUntil } from 'rxjs/operators';
+import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { AiDropdownItem, AiFieldType, AiFormField, AiFormSection, AiRentScheduleSection } from '../models/ai-form.model';
 import { IAIOutput } from '../models/ai-output.model';
 import { AiLeaseService } from '../services/ai-lease.service';
 import { AiSidebarService } from '../ai-sidebar/ai-sidebar.service';
-import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { FormWizardDataTypeID, FormWizardTypeID } from '@forms/model/dynamic-forms.interface';
-import { RequestType } from '@forms/model/enums/render-selects.enums';
 
 // ── Static dropdown option lists ─────────────────────────────────────────────
 
@@ -72,7 +70,6 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
   private leaseId: number;
   private cachedFormId = 0;
-  private cachedLeaseTypes: any = { data: [] };
   private hasStartedRendering = false;
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
@@ -84,8 +81,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly aiLeaseService: AiLeaseService,
-    private readonly aiSidebarService: AiSidebarService,
-    private readonly formWizardService: FormWizardService
+    private readonly aiSidebarService: AiSidebarService
   ) { }
 
   ngOnInit(): void {
@@ -103,18 +99,27 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           this.sectionsExpanded = [];
           this.form = new FormGroup({});
           this.stopPolling$.next(); // cancel any poll running from a previous route
+
+          if (!this.cachedFormId) {
+            this.errorMessage =
+              'Missing required formId. AI abstraction detail cannot be rendered without a mapped form definition.';
+            this.isLoading = false;
+            return of(null);
+          }
+
           return forkJoin({
             detail: this.aiLeaseService.getAbstractionById(this.leaseId),
-            leaseTypes: this.formWizardService
-              .getRenderSelect('', RequestType.cnstDD_GetLeaseTypes)
-              .pipe(catchError(() => of({ data: [] }))),
           });
         }),
         takeUntil(this.destroy$)
       )
       .subscribe({
-        next: ({ detail, leaseTypes }) => {
-          this.cachedLeaseTypes = leaseTypes;
+        next: (result) => {
+          if (!result) {
+            return;
+          }
+
+          const { detail } = result;
           this.handleAbstractionDetail(detail);
         },
         error: () => {
@@ -273,15 +278,17 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
             this.isLoading = false;
           },
           error: () => {
-            // Fall back to hardcoded sections if mapping fails
-            this.buildHardcodedSections(aiOutput, this.cachedLeaseTypes);
+            this.errorMessage =
+              'Failed to load mapped form fields for this AI abstraction.';
+            this.isLoading = false;
           },
         });
       return;
     }
 
-    // ── Fallback: hardcoded sections ────────────────────────────────────
-    this.buildHardcodedSections(aiOutput, this.cachedLeaseTypes);
+    this.errorMessage =
+      'Missing required formId. AI abstraction detail cannot be rendered without a mapped form definition.';
+    this.isLoading = false;
   }
 
   toggleSidebar(): void {
