@@ -11,6 +11,8 @@ import { FormWizardDataTypeID, FormWizardTypeID } from '@forms/model/dynamic-for
 import { DynamicFormsService } from '../../services/dynamic-forms.service';
 import { ObjectType } from '@mango/data-models/lib-data-models';
 import { ObjectTypeType } from '@mango/data-models/lib-data-models';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
+import { BreadCrumb } from '@mango/data-models/lib-data-models';
 
 // ── Static dropdown option lists ─────────────────────────────────────────────
 
@@ -87,7 +89,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly aiLeaseService: AiLeaseService,
     private readonly aiSidebarService: AiSidebarService,
-    private readonly dynamicFormsService: DynamicFormsService
+    private readonly dynamicFormsService: DynamicFormsService,
+    private readonly mangoAppFacade: MangoAppFacade
   ) { }
 
   ngOnInit(): void {
@@ -269,6 +272,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       String(this.leaseId);
     this.pageTitle = 'Lease:';
     this.pageSubtitle = titleName;
+    this.updateBreadcrumbTitle(titleName);
 
     this.hasStartedRendering = true;
     this.hasRenderableContent = true;
@@ -508,6 +512,24 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     this.router.navigate(['/crem/forms/render-form'], {
       queryParams: this.parentBuildingLink.queryParams,
     });
+  }
+
+  private updateBreadcrumbTitle(titleName: string): void {
+    this.mangoAppFacade.breadcrumbs$
+      .pipe(take(1))
+      .subscribe((breadcrumbs: BreadCrumb[] | null | undefined) => {
+        if (!breadcrumbs?.length) {
+          return;
+        }
+
+        const updated = [...breadcrumbs];
+        updated[updated.length - 1] = {
+          ...updated[updated.length - 1],
+          label: titleName,
+        };
+
+        this.mangoAppFacade.setBreadcrumbs(updated);
+      });
   }
 
   private normalizeDropdownItems(items: any[]): AiDropdownItem[] {
