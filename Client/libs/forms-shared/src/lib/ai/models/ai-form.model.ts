@@ -41,6 +41,7 @@ export interface AiRentScheduleSection {
 export interface AiFormSection {
   key: string;
   title: string;
+  columns?: number;
   fields: AiFormField[];
   rentSchedule?: AiRentScheduleSection;
 }

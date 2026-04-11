@@ -130,6 +130,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.aiSidebarService.close();
     this.stopPolling$.next();
     this.stopPolling$.complete();
     this.destroy$.next();
@@ -354,6 +355,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       .map((section) => ({
         key: String(section.formSectionID),
         title: section.formSectionName,
+        columns: this.normalizeSectionColumns(section.formSectionColumns),
         fields: fields
           .filter((f) => this.getFieldSectionId(f) === section.formSectionID)
           .sort((a, b) => this.getFieldSortOrder(a) - this.getFieldSortOrder(b))
@@ -400,6 +402,15 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
   private getFieldSortOrder(field: any): number {
     return field.formItemSortOrder ?? field.formItemSectionDetail?.formItemSortOrder ?? Number.MAX_SAFE_INTEGER;
+  }
+
+  private normalizeSectionColumns(columns: any): number {
+    const parsedColumns = Number(columns);
+    if (!Number.isFinite(parsedColumns) || parsedColumns <= 0) {
+      return 1;
+    }
+
+    return Math.min(Math.floor(parsedColumns), 4);
   }
 
   // ─── Section Builders ────────────────────────────────────────────────────────

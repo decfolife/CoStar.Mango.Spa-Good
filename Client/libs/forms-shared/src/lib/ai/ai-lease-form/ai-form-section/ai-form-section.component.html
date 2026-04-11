@@ -40,7 +40,10 @@
     [formGroup]="formGroup"
   >
     <!-- Fields List -->
-    <div class="df-formSection-columnList">
+    <div
+      class="df-formSection-columnList"
+      [style.grid-template-columns]="getColumnTemplate()"
+    >
       <div
         class="field-container df-formSection-field"
         *ngFor="let field of section.fields"
@@ -71,10 +74,31 @@
             [label]="formatDisplayValue(field)"
           ></crem-input-label>
 
+          <!-- Edit mode: dropdown -->
+          <crem-dropdown
+            *ngIf="editMode && field.type === 'dropdown'"
+            [id]="'ai-form-dropdown-' + field.key"
+            [dataSource]="field.dropdownItems || []"
+            [showClearButton]="true"
+            [showColumnHeader]="false"
+            [displayExpr]="getDropdownDisplayExpr(field)"
+            [valueExpr]="getDropdownValueExpr(field)"
+            [allowSearch]="true"
+            [useSelectBox]="true"
+            [containerized]="true"
+            [searchMode]="'contains'"
+            [formControlName]="field.key"
+            [initialSelectedValue]="getFieldControl(field.key)?.value"
+            (selectedItems)="onDropdownSelected(field, $event)"
+          ></crem-dropdown>
+
           <!-- Edit mode: text / number / currency / percent -->
           <crem-input
             *ngIf="
-              editMode && field.type !== 'boolean' && field.type !== 'date'
+              editMode &&
+              field.type !== 'boolean' &&
+              field.type !== 'date' &&
+              field.type !== 'dropdown'
             "
             [inputType]="
               field.type === 'number' ||
