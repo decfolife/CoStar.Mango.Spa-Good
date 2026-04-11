@@ -21,6 +21,8 @@ export interface AiFormField {
   value: any;
   citation?: string;
   // ── Dropdown config (type === 'dropdown') ────────────────────────────────
+  /** Form-defined dropdown source id. Used with RenderForms/GetFormItemDropdownValues. */
+  dropdownId?: number;
   /** Backend renderSelect requestTypeId. When set, options are loaded via FormWizardService.getRenderSelect. */
   requestTypeId?: number;
   /** Static option list. Used when requestTypeId is not set. */

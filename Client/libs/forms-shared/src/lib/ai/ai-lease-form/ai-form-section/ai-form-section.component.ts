@@ -180,7 +180,7 @@ export class AiFormSectionComponent implements OnInit {
       ?.filter(
         (field) =>
           field.type === 'dropdown' &&
-          (!field.dropdownItems?.length || field.requestTypeId) &&
+          !field.dropdownItems?.length &&
           !!field.requestTypeId
       )
       .forEach((field) => {

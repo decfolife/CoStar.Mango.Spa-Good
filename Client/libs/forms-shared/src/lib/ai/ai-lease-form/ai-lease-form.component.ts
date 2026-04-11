@@ -2,12 +2,13 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, Subject, timer } from 'rxjs';
-import { switchMap, take, takeUntil } from 'rxjs/operators';
+import { catchError, switchMap, take, takeUntil } from 'rxjs/operators';
 import { AiDropdownItem, AiFieldType, AiFormField, AiFormSection, AiRentScheduleSection } from '../models/ai-form.model';
 import { IAIOutput } from '../models/ai-output.model';
 import { AiLeaseService } from '../services/ai-lease.service';
 import { AiSidebarService } from '../ai-sidebar/ai-sidebar.service';
 import { FormWizardDataTypeID, FormWizardTypeID } from '@forms/model/dynamic-forms.interface';
+import { DynamicFormsService } from '../../services/dynamic-forms.service';
 
 // ── Static dropdown option lists ─────────────────────────────────────────────
 
@@ -81,7 +82,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly aiLeaseService: AiLeaseService,
-    private readonly aiSidebarService: AiSidebarService
+    private readonly aiSidebarService: AiSidebarService,
+    private readonly dynamicFormsService: DynamicFormsService
   ) { }
 
   ngOnInit(): void {
@@ -268,12 +270,28 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     // fetches form fields, applies AI output mapping, and returns fields
     // with formItemAnswer populated. Angular groups them into sections.
     if (this.cachedFormId) {
-      this.aiLeaseService
-        .getMappedFormFields(this.leaseId, this.cachedFormId, AiLeaseFormComponent.LEASE_OBJECT_TYPE_ID)
+      forkJoin({
+        mappedForm: this.aiLeaseService.getMappedFormFields(
+          this.leaseId,
+          this.cachedFormId,
+          AiLeaseFormComponent.LEASE_OBJECT_TYPE_ID
+        ),
+        dropdownValues: this.dynamicFormsService.getRenderFormFormItemDropdowns(
+          this.cachedFormId,
+          0,
+          AiLeaseFormComponent.LEASE_OBJECT_TYPE_ID,
+          0,
+          0
+        ).pipe(catchError(() => of({ data: {} }))),
+      })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: ({ fields, sections }) => {
-            this.sections = this.groupIntoSections(fields, sections);
+          next: ({ mappedForm, dropdownValues }) => {
+            this.sections = this.groupIntoSections(
+              mappedForm.fields,
+              mappedForm.sections,
+              dropdownValues?.data ?? {}
+            );
             this.sectionsExpanded = this.sections.map(() => true);
             this.form = this.buildFormGroup(this.sections);
             this.isLoading = false;
@@ -348,7 +366,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
   // ─── Dynamic section helpers ─────────────────────────────────────────────────
 
-  private groupIntoSections(fields: any[], sections: any[]): AiFormSection[] {
+  private groupIntoSections(
+    fields: any[],
+    sections: any[],
+    dropdownValuesByFormItemId: Record<string, any[]> = {}
+  ): AiFormSection[] {
     return sections
       .slice()
       .sort((a, b) => a.formSectionSortOrder - b.formSectionSortOrder)
@@ -359,13 +381,19 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         fields: fields
           .filter((f) => this.getFieldSectionId(f) === section.formSectionID)
           .sort((a, b) => this.getFieldSortOrder(a) - this.getFieldSortOrder(b))
-          .map((f) => this.toAiFormField(f)),
+          .map((f) => this.toAiFormField(f, dropdownValuesByFormItemId)),
       }))
       .filter((s) => s.fields.length > 0);
   }
 
-  private toAiFormField(field: any): AiFormField {
+  private toAiFormField(
+    field: any,
+    dropdownValuesByFormItemId: Record<string, any[]> = {}
+  ): AiFormField {
     const sectionDetail = field.formItemSectionDetail ?? {};
+    const dropdownItems = this.normalizeDropdownItems(
+      dropdownValuesByFormItemId[String(field.formItemID)] ?? []
+    );
 
     return {
       key: String(field.formItemID),
@@ -376,7 +404,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         field.formItemName,
       type: this.resolveAiFieldType(field),
       value: field.formItemAnswer ?? null,
+      dropdownId: field.dropdownID || undefined,
       requestTypeId: field.requestTypeID || undefined,
+      dropdownItems: dropdownItems.length ? dropdownItems : undefined,
     };
   }
 
@@ -411,6 +441,31 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     }
 
     return Math.min(Math.floor(parsedColumns), 4);
+  }
+
+  private normalizeDropdownItems(items: any[]): AiDropdownItem[] {
+    if (!Array.isArray(items)) {
+      return [];
+    }
+
+    return items
+      .map((item) => ({
+        id:
+          item?.id ??
+          item?.value ??
+          item?.Value ??
+          item?.lookupID ??
+          item?.formItemID,
+        name:
+          item?.name ??
+          item?.display ??
+          item?.Display ??
+          item?.text ??
+          item?.label ??
+          item?.value ??
+          item?.Value,
+      }))
+      .filter((item) => item.id !== undefined && item.id !== null);
   }
 
   // ─── Section Builders ────────────────────────────────────────────────────────
