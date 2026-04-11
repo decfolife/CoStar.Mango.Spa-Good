@@ -10,7 +10,9 @@ import { AiLeaseListItem } from '../models/ai-form.model';
 export interface AiAbstractionDetail {
   aiAbstractionId: number;
   buildingId: number;
+  buildingName?: string;
   portfolioId?: number;
+  portfolioName?: string;
   premiseId?: number;
   status: 'Pending' | 'Processing' | 'Complete' | 'Error' | 'Cancelled';
   completedDate?: string;
@@ -128,7 +130,9 @@ export class AiLeaseService {
         items.map((item) => ({
           id: item.aiAbstractionId,
           buildingId: item.buildingId,
+          buildingName: item.buildingName ?? undefined,
           portfolioId: item.portfolioId ?? undefined,
+          portfolioName: item.portfolioName ?? undefined,
           premiseId: item.premiseId ?? undefined,
           status: item.status,
           aiTenant: item.aiTenant ?? undefined,
