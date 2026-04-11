@@ -346,7 +346,7 @@
           "browserTarget": "mango:build:dev"
         },
         "test": {
-          "browserTarget": "mango:build:test"
+          "browserTarget": "mango:build:testLocal"
         },
         "testLocal": {
           "browserTarget": "mango:build:testLocal"
