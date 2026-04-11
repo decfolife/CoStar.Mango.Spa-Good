@@ -5,6 +5,7 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 import { AiLeaseListItem } from '../models/ai-form.model';
 import { AiLeaseService } from '../services/ai-lease.service';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 
 @Component({
   selector: 'mango-ai-list-page',
@@ -26,6 +27,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly aiLeaseService: AiLeaseService,
+    private readonly exportToExcelService: ExportDevexDatagridService,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute
   ) {}
@@ -88,7 +90,14 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   }
 
   exportToExcel(): void {
-    this.grid?.instance?.exportToExcel(false);
+    if (!this.grid?.instance) {
+      return;
+    }
+
+    this.exportToExcelService.exportToExcel(
+      this.grid.instance,
+      'AI Lease Abstractions'
+    );
   }
 
   private loadLeases(showLoading = false): void {

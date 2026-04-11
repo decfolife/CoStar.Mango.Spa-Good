@@ -7,6 +7,7 @@ import {
   ButtonModule,
   SkeletonModule,
 } from '@mango/ui-shared/lib-ui-elements';
+import { ExportDevexDatagridService } from '@mango/core-shared';
 import { PageHeaderComponent } from '@mango/ui-shared/lib-ui-elements';
 import { AiListPageComponent } from './ai-list-page.component';
 
@@ -21,6 +22,7 @@ import { AiListPageComponent } from './ai-list-page.component';
     SkeletonModule,
     PageHeaderComponent,
   ],
+  providers: [ExportDevexDatagridService],
   exports: [AiListPageComponent],
 })
 export class AiListPageModule {}
