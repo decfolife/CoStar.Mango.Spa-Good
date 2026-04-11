@@ -1,3 +1,34 @@
+.df-accordion-heading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  flex: 1;
+}
+
+.df-accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  color: #000;
+  font-size: inherit;
+  font-weight: bold;
+  text-align: left;
+}
+
+.df-accordion-title {
+  flex: 1;
+}
+
+.df-accordion-icon {
+  flex-shrink: 0;
+}
+
 // Matches mat-card styling from dynamic-form-section + dynamic-form components
 mat-card.mat-mdc-card {
   box-shadow: none !important;
@@ -31,14 +62,10 @@ mat-card.mat-mdc-card {
         line-height: inherit;
         margin: 0;
       }
-
-      &:hover {
-        background-color: #f5f5f5;
-      }
     }
 
     mat-card-content.mat-mdc-card-content {
-      padding: 8px 0 0;
+      padding-top: 16px;
 
       .df-formSection-columnList {
         display: grid;
@@ -48,10 +75,11 @@ mat-card.mat-mdc-card {
       // Field rows — matches df-formSection-field layout
       .df-formSection-field {
         display: flex;
-        align-items: flex-start;
+        align-items: start;
         margin: 2px 0;
-        padding: 4px 18px;
+        padding: 4px 1%;
         min-width: 0;
+        text-wrap: wrap;
       }
 
       // Label container — matches df-formSection-labelContainer
@@ -62,14 +90,21 @@ mat-card.mat-mdc-card {
         flex-shrink: 0;
         margin-right: 2%;
         white-space: normal;
+        text-wrap: wrap;
         word-wrap: break-word;
+        height: auto;
 
         // Fix dx-field layout inside label container
         .df-infoHistoryData {
           flex-shrink: 0;
+          width: 34px;
+          overflow: visible;
+          display: flex;
+          align-items: center;
 
           .dx-field {
             margin: 0;
+            min-height: unset;
           }
 
           .dx-field-value-static {
@@ -77,17 +112,30 @@ mat-card.mat-mdc-card {
             padding: 0;
           }
         }
+
+        .df-formSection-fieldLabel {
+          margin-left: 4px;
+          word-break: break-word;
+        }
       }
 
       // Value side — matches df-formSection-fieldContent
       .field-content.df-formSection-fieldContent {
+        width: 56%;
         flex: 1;
         min-width: 0;
+
+        div.input-container {
+          width: 100%;
+        }
       }
 
-      // View mode: field-level hover highlight
-      &.view-mode .df-formSection-field:hover {
-        cursor: default;
+      crem-input-label {
+        label span {
+          white-space: normal;
+          text-wrap: wrap;
+          line-height: normal;
+        }
       }
     }
   }
