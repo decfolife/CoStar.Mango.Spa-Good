@@ -15,23 +15,6 @@
     }
   }
 
-  &__toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 16px 8px;
-    border-bottom: 1px solid #c5c5c5;
-  }
-
-  &__filters {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-
   &__search {
     min-width: 240px;
   }
@@ -39,11 +22,54 @@
   &__portfolio {
     min-width: 220px;
   }
+}
 
-  &__actions {
+.actions-container {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #c5c5c5;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  line-height: 1;
+
+  .menu-section {
     display: flex;
     align-items: center;
+    height: 32px;
+    margin: 0;
     gap: 8px;
+    min-width: 0;
+  }
+
+  .btns-right {
+    flex: 0 0 auto;
+  }
+}
+
+:host ::ng-deep {
+  .actions-container {
+    .crem-dropdown-list-pages {
+      .dx-fieldset {
+        margin: 0 !important;
+      }
+
+      .dx-field-value {
+        width: 100% !important;
+      }
+
+      .dx-dropdowneditor-input-wrapper {
+        height: 32px !important;
+        box-shadow: unset !important;
+      }
+
+      .dx-texteditor.dx-editor-outlined {
+        border-radius: 0 !important;
+      }
+    }
+
+    crem-search {
+      min-width: 210px;
+    }
   }
 }
 
@@ -133,26 +159,25 @@
 }
 
 @media (max-width: 992px) {
-  .ai-list-page {
-    &__toolbar {
-      flex-direction: column;
-      align-items: stretch;
-    }
+  .actions-container {
+    flex-direction: column;
+    align-items: stretch;
 
-    &__filters {
+    .menu-section {
       flex-wrap: wrap;
-      width: 100%;
+      height: auto;
     }
 
+    .btns-right {
+      justify-content: flex-end;
+    }
+  }
+
+  .ai-list-page {
     &__search,
     &__portfolio {
       min-width: 0;
       width: 100%;
-    }
-
-    &__actions {
-      width: 100%;
-      justify-content: flex-end;
     }
   }
 }

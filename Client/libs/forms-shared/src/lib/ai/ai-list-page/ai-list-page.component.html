@@ -1,9 +1,10 @@
 <crem-skeleton *ngIf="isLoading" type="card" [instances]="4"></crem-skeleton>
 
 <div *ngIf="!isLoading" class="ai-list-page">
-  <div class="ai-list-page__toolbar">
-    <div class="ai-list-page__filters">
+  <div class="actions-container">
+    <div class="menu-section">
       <crem-search
+        class="ai-list-page__search"
         [id]="'page-header-search'"
         [showLabel]="false"
         [label]="'Search AI lease abstractions'"
@@ -16,7 +17,7 @@
         (changed)="onSearchChanged($event)"
       ></crem-search>
       <crem-dropdown
-        class="ai-list-page__portfolio"
+        class="crem-dropdown-list-pages ai-list-page__portfolio"
         [id]="'page-header-portfolio'"
         [dataSource]="portfolioOptions"
         displayExpr="name"
@@ -31,7 +32,7 @@
       >
       </crem-dropdown>
     </div>
-    <div class="ai-list-page__actions">
+    <div class="menu-section btns-right">
       <crem-button
         [id]="'page-header-clear'"
         text="Clear Filters"
