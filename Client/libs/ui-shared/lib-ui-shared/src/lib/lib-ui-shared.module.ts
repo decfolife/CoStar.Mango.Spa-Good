@@ -20,6 +20,7 @@ import { MangoDialogModule } from './mango-dialog';
 import { AddSupplierModalComponent } from './add-supplier-modal/add-supplier-modal.component';
 import { AddCompanyModalComponent } from './add-company-modal/add-company-modal.component';
 import { AddLeaseModalModule } from './add-lease-modal/add-lease-modal.module';
+import { AddAiLeaseModalModule } from './add-ai-lease-modal/add-ai-lease-modal.module';
 import { CremCurrentObjectTextModule } from './crem-current-object-text/crem-current-object-text.module';
 import { AddPremiseModalComponent } from './add-premise-modal/add-premise-modal.component';
 import { ObjectInfoComponent } from './object-info-modal/object-info.component';
@@ -45,6 +46,7 @@ import { ObjectInfoComponent } from './object-info-modal/object-info.component';
     AddEquipmentModalComponent,
     AddCompanyModalComponent,
     AddLeaseModalModule,
+    AddAiLeaseModalModule,
     AddPremiseModalComponent,
     ObjectInfoComponent,
   ],
@@ -66,6 +68,7 @@ import { ObjectInfoComponent } from './object-info-modal/object-info.component';
     ComposeEmailModule,
     AddBuildingModalModule,
     AddLeaseModalModule,
+    AddAiLeaseModalModule,
     AddPremiseModalComponent,
     ObjectInfoComponent,
   ],

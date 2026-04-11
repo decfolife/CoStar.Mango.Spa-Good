@@ -1,0 +1,284 @@
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
+.ai-sidebar {
+  width: 0; // controlled by [style.width] when open
+  height: 100%;
+  background: #ffffff;
+  border-left: 1px solid #e0e0e0;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.3s ease-in-out;
+  position: relative;
+
+  // ── Resize handle ─────────────────────────────────────────────────────────
+
+  &__resize-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1;
+
+    &:hover {
+      background: rgba(26, 35, 126, 0.15);
+    }
+  }
+
+  // ── Header ───────────────────────────────────────────────────────────────
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #1a237e;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  &__title-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+  }
+
+  &__close-btn {
+    color: #ffffff;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  // ── Loading / Error ───────────────────────────────────────────────────────
+
+  &__loading {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px;
+    padding: 12px;
+    background: #fdecea;
+    border-radius: 4px;
+    color: #c62828;
+    font-size: 13px;
+
+    mat-icon {
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+  }
+
+  // ── Content ───────────────────────────────────────────────────────────────
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 24px;
+  }
+
+  // ── Section ───────────────────────────────────────────────────────────────
+
+  &__section {
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #f5f7fa;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      background: #eef1f6;
+    }
+  }
+
+  &__section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #444;
+  }
+
+  &__section-chevron {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    color: #666;
+  }
+
+  &__section-body {
+    padding: 8px 0;
+  }
+
+  // ── Fields ────────────────────────────────────────────────────────────────
+
+  &__field {
+    padding: 6px 16px;
+    border-bottom: 1px solid #f5f5f5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__field-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+  }
+
+  &__field-value {
+    display: block;
+    font-size: 13px;
+    color: #1a1a2e;
+  }
+
+  // ── Citation ─────────────────────────────────────────────────────────────
+
+  &__citation {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 5px 8px;
+    background: #fdf8e1;
+    border-left: 3px solid #f0b429;
+    border-radius: 0 3px 3px 0;
+    font-size: 11px;
+    color: #5a4a00;
+    line-height: 1.4;
+  }
+
+  &__citation-icon {
+    font-size: 12px;
+    height: 12px;
+    width: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #c99700;
+  }
+
+  // ── Expense cards ────────────────────────────────────────────────────────
+
+  &__expense-service-type {
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 8px 16px 4px;
+  }
+
+  &__expense-card {
+    margin: 0 12px 10px;
+    padding: 12px 14px;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+    &__name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 3px;
+    }
+
+    &__payor {
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    &__citation {
+      border-top: 1px solid #eeeeee;
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+
+    &__citation-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    &__citation-text {
+      font-size: 12px;
+      color: #444;
+      line-height: 1.5;
+      margin: 0 0 6px;
+    }
+
+    &__copy-btn {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: #888;
+      float: right;
+      margin-top: -24px;
+
+      &:hover {
+        color: #1a237e;
+      }
+
+      mat-icon {
+        font-size: 15px;
+        height: 15px;
+        width: 15px;
+      }
+    }
+  }
+
+  // ── Subtables ────────────────────────────────────────────────────────────
+
+  &__subtable-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #888;
+    padding: 10px 16px 4px;
+  }
+
+  &__subtable {
+    margin: 0 16px 8px;
+    width: calc(100% - 32px);
+  }
+}

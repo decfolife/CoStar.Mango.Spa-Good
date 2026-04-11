@@ -1,0 +1,110 @@
+<crem-skeleton *ngIf="isLoading" type="card" [instances]="4"></crem-skeleton>
+
+<div *ngIf="!isLoading" class="ai-list-page">
+  <crem-page-header
+    [pageTitle]="'AI Lease Abstractions'"
+    [tabTitle]="'AI Lease Abstractions'"
+    [showListOrMapViewButtons]="false"
+    [showSettingsButton]="false"
+    [customActions]="false"
+  ></crem-page-header>
+
+  <div *ngIf="errorMessage" class="ai-list-page__error">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!errorMessage" class="list-page-data-grid-wrapper">
+    <dx-data-grid
+      id="aiLeaseListGrid"
+      class="list-page-data-grid"
+      [dataSource]="leases"
+      [showBorders]="false"
+      [showColumnLines]="false"
+      [showRowLines]="true"
+      [rowAlternationEnabled]="true"
+      [hoverStateEnabled]="true"
+      [wordWrapEnabled]="false"
+      [allowColumnReordering]="true"
+      [allowColumnResizing]="true"
+      columnResizingMode="widget"
+      [columnAutoWidth]="true"
+      [height]="'100%'"
+      keyExpr="id"
+      (onRowClick)="onRowClick($event)"
+    >
+      <dxo-load-panel [enabled]="false"></dxo-load-panel>
+      <dxo-paging [pageSize]="25"></dxo-paging>
+      <dxo-pager
+        [showPageSizeSelector]="true"
+        [allowedPageSizes]="[10, 25, 50, 100]"
+        [showInfo]="true"
+        [showNavigationButtons]="true"
+      ></dxo-pager>
+      <dxo-header-filter
+        [visible]="true"
+        [allowSearch]="true"
+      ></dxo-header-filter>
+      <dxo-search-panel
+        [visible]="true"
+        [width]="240"
+        placeholder="Search..."
+      ></dxo-search-panel>
+      <dxo-sorting mode="multiple"></dxo-sorting>
+      <dxo-export
+        [enabled]="true"
+        [fileName]="'AI Lease Abstractions'"
+      ></dxo-export>
+
+      <dxi-column
+        dataField="aiTenant"
+        caption="Tenant"
+        [minWidth]="150"
+        cellTemplate="tenantLinkTemplate"
+      ></dxi-column>
+
+      <dxi-column
+        dataField="status"
+        caption="Status"
+        [width]="130"
+        cellTemplate="statusTemplate"
+      ></dxi-column>
+
+      <dxi-column
+        dataField="aiLeaseEndDate"
+        caption="Lease End Date"
+        dataType="date"
+        format="MM/dd/yyyy"
+        [width]="140"
+      ></dxi-column>
+
+      <dxi-column
+        dataField="createdDate"
+        caption="Submitted"
+        dataType="date"
+        format="MM/dd/yyyy"
+        [width]="120"
+        [sortOrder]="'desc'"
+      ></dxi-column>
+
+      <dxi-column
+        dataField="lastModifiedDate"
+        caption="Last Updated"
+        dataType="date"
+        format="MM/dd/yyyy"
+        [width]="130"
+      ></dxi-column>
+
+      <div *dxTemplate="let cell of 'tenantLinkTemplate'">
+        <a class="grid-link">{{ cell.data.aiTenant || '—' }}</a>
+      </div>
+
+      <div *dxTemplate="let cell of 'statusTemplate'">
+        <span
+          class="status-badge status-badge--{{ cell.data.status | lowercase }}"
+        >
+          {{ cell.data.status }}
+        </span>
+      </div>
+    </dx-data-grid>
+  </div>
+</div>
