@@ -68,7 +68,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   editMode = false;
   errorMessage: string | null = null;
   abstractionStatus: string | null = null;
-  pageTitle = 'Lease';
+  pageTitle = 'Lease:';
+  pageSubtitle = '';
   hasRenderableContent = false;
   parentBuildingLink: { label: string; queryParams: Record<string, number> } | null = null;
 
@@ -266,7 +267,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       detail?.aiTenant ||
       detail?.formName ||
       String(this.leaseId);
-    this.pageTitle = `Lease: ${titleName}`;
+    this.pageTitle = 'Lease:';
+    this.pageSubtitle = titleName;
 
     this.hasStartedRendering = true;
     this.hasRenderableContent = true;

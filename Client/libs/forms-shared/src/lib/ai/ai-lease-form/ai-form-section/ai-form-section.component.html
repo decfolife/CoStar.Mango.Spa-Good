@@ -59,9 +59,31 @@
 
           <!-- Field content -->
           <div class="field-content df-formSection-fieldContent">
+            <!-- View mode: dropdown -->
+            <span
+              class="df-dropdown-readonly-wrapper"
+              *ngIf="!editMode && field.type === 'dropdown'"
+              tabindex="0"
+            >
+              <span class="sr-only"
+                >{{ field.label }}, {{ formatDisplayValue(field) }}</span
+              >
+              <crem-dropdown
+                aria-hidden="true"
+                [dataSource]="field.dropdownItems || []"
+                [displayExpr]="getDropdownDisplayExpr(field)"
+                [valueExpr]="getDropdownValueExpr(field)"
+                [readOnly]="true"
+                [containerized]="false"
+                [readOnlyStyle]="'text-only'"
+                [formControlName]="field.key"
+                [tabindex]="-1"
+              ></crem-dropdown>
+            </span>
+
             <!-- View mode -->
             <crem-input-label
-              *ngIf="!editMode"
+              *ngIf="!editMode && field.type !== 'dropdown'"
               [label]="formatDisplayValue(field)"
             ></crem-input-label>
 
