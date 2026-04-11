@@ -6,8 +6,42 @@
     [tabTitle]="'AI Lease Abstractions'"
     [showListOrMapViewButtons]="false"
     [showSettingsButton]="false"
-    [customActions]="false"
-  ></crem-page-header>
+    [customFilters]="true"
+    [customActions]="true"
+  >
+    <div filters class="ai-list-page__search">
+      <crem-search
+        [id]="'page-header-search'"
+        [showLabel]="false"
+        [label]="'Search AI lease abstractions'"
+        [placeholder]="'Search...'"
+        [required]="false"
+        [disabled]="isLoading"
+        [showInfo]="false"
+        [debounceTime]="300"
+        [searchOption]="'typing'"
+        (changed)="onSearchChanged($event)"
+      ></crem-search>
+    </div>
+    <div actions class="ai-list-page__actions">
+      <crem-button
+        [id]="'page-header-clear'"
+        text="Clear Filters"
+        color="secondary"
+        [disabled]="isLoading"
+        (buttonClick)="clearFilters()"
+      >
+      </crem-button>
+      <crem-button
+        [id]="'page-header-export'"
+        text="Export"
+        color="primary"
+        [disabled]="isLoading"
+        (buttonClick)="exportToExcel()"
+      >
+      </crem-button>
+    </div>
+  </crem-page-header>
 
   <div *ngIf="errorMessage" class="ai-list-page__error">
     <p>{{ errorMessage }}</p>
@@ -44,11 +78,6 @@
         [visible]="true"
         [allowSearch]="true"
       ></dxo-header-filter>
-      <dxo-search-panel
-        [visible]="true"
-        [width]="240"
-        placeholder="Search..."
-      ></dxo-search-panel>
       <dxo-sorting mode="multiple"></dxo-sorting>
       <dxo-export
         [enabled]="true"

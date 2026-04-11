@@ -18,6 +18,16 @@
       margin: 0;
     }
   }
+
+  &__search {
+    min-width: 240px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 }
 
 // Grid wrapper — matches .list-page-data-grid-wrapper from list-page.component
