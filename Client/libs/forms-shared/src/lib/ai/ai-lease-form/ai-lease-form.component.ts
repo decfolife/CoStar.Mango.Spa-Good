@@ -255,6 +255,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
     this.hasStartedRendering = true;
     this.hasRenderableContent = true;
+    this.aiSidebarService.setAiOutput(this.leaseId, aiOutput);
 
     // ── Dynamic sections from form definition (backend-mapped) ──────────
     // When a formId is provided (via ?formId=N query param), the backend

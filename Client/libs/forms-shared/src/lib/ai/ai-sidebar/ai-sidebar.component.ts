@@ -126,7 +126,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           state.leaseId ?? (params['oid'] ? Number(params['oid']) : null);
 
         if (state.isOpen && oid) {
-          this.loadData(oid);
+          if (state.aiOutput && state.leaseId === oid) {
+            this.populateFromAiOutput(state.aiOutput);
+          } else {
+            this.loadData(oid);
+          }
         } else if (!state.isOpen) {
           this.sections = [];
           this.rentScheduleItems = [];
@@ -202,9 +206,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           if (!data) {
             this.errorMessage = 'No AI abstraction found for this lease.';
           } else {
-            this.sections = this.buildSections(data);
-            this.rentScheduleItems = data.rent?.baseRentSchedule?.value ?? [];
-            this.abatementItems = data.rent?.rentAbatements?.value ?? [];
+            this.aiSidebarService.setAiOutput(oid, data);
+            this.populateFromAiOutput(data);
           }
           this.isLoading = false;
         },
@@ -213,6 +216,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
       });
+  }
+
+  private populateFromAiOutput(data: IAIOutput): void {
+    this.errorMessage = null;
+    this.sections = this.buildSections(data);
+    this.rentScheduleItems = data.rent?.baseRentSchedule?.value ?? [];
+    this.abatementItems = data.rent?.rentAbatements?.value ?? [];
+    this.isLoading = false;
   }
 
   private buildSections(data: IAIOutput): SidebarSection[] {
