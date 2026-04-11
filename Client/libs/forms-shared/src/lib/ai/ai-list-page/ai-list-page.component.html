@@ -3,19 +3,13 @@
 <div *ngIf="!isLoading" class="ai-list-page">
   <div class="actions-container">
     <div class="menu-section">
-      <crem-search
+      <cs-search
         class="ai-list-page__search"
-        [id]="'page-header-search'"
-        [showLabel]="false"
-        [label]="'Search AI lease abstractions'"
+        [value]="searchText"
         [placeholder]="'Search...'"
-        [required]="false"
         [disabled]="isLoading"
-        [showInfo]="false"
-        [debounceTime]="300"
-        [searchOption]="'typing'"
         (changed)="onSearchChanged($event)"
-      ></crem-search>
+      ></cs-search>
       <crem-dropdown
         class="crem-dropdown-list-pages ai-list-page__portfolio"
         [id]="'page-header-portfolio'"
@@ -88,10 +82,6 @@
         [allowSearch]="true"
       ></dxo-header-filter>
       <dxo-sorting mode="multiple"></dxo-sorting>
-      <dxo-export
-        [enabled]="true"
-        [fileName]="'AI Lease Abstractions'"
-      ></dxo-export>
 
       <dxi-column
         dataField="id"
