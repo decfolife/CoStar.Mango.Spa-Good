@@ -34,16 +34,6 @@ export class AiListPageComponent implements OnInit, OnDestroy {
           this.createdAiAbstractionId =
             Number(params.get('createdAiAbstractionId') ?? 0) || null;
           this.formId = Number(params.get('formId') ?? 0) || null;
-
-          if (!this.formId) {
-            this.leases = [];
-            this.errorMessage =
-              'Missing required formId for AI abstraction detail routing.';
-            this.isLoading = false;
-            this.stopPolling$.next();
-            return;
-          }
-
           this.stopPolling$.next();
           this.loadLeases(true);
         },
@@ -60,7 +50,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   onRowClick(event: { data: AiLeaseListItem }): void {
     if (!this.formId) {
       this.errorMessage =
-        'Missing required formId for AI abstraction detail routing.';
+        'Missing required formId to open AI abstraction details.';
       return;
     }
 
