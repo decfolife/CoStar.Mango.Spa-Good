@@ -5,10 +5,10 @@ import { DxDataGridModule } from 'devextreme-angular';
 import { SearchModule } from '@mango/ui-shared/cosmos';
 import {
   ButtonModule,
+  DropdownModule,
   SkeletonModule,
 } from '@mango/ui-shared/lib-ui-elements';
 import { ExportDevexDatagridService } from '@mango/core-shared';
-import { PageHeaderComponent } from '@mango/ui-shared/lib-ui-elements';
 import { AiListPageComponent } from './ai-list-page.component';
 
 @NgModule({
@@ -19,8 +19,8 @@ import { AiListPageComponent } from './ai-list-page.component';
     DxDataGridModule,
     SearchModule,
     ButtonModule,
+    DropdownModule,
     SkeletonModule,
-    PageHeaderComponent,
   ],
   providers: [ExportDevexDatagridService],
   exports: [AiListPageComponent],

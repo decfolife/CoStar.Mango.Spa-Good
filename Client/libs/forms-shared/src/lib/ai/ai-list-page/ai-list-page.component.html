@@ -1,15 +1,8 @@
 <crem-skeleton *ngIf="isLoading" type="card" [instances]="4"></crem-skeleton>
 
 <div *ngIf="!isLoading" class="ai-list-page">
-  <crem-page-header
-    [pageTitle]="'AI Lease Abstractions'"
-    [tabTitle]="'AI Lease Abstractions'"
-    [showListOrMapViewButtons]="false"
-    [showSettingsButton]="false"
-    [customFilters]="true"
-    [customActions]="true"
-  >
-    <div filters class="ai-list-page__search">
+  <div class="ai-list-page__toolbar">
+    <div class="ai-list-page__filters">
       <crem-search
         [id]="'page-header-search'"
         [showLabel]="false"
@@ -22,8 +15,23 @@
         [searchOption]="'typing'"
         (changed)="onSearchChanged($event)"
       ></crem-search>
+      <crem-dropdown
+        class="ai-list-page__portfolio"
+        [id]="'page-header-portfolio'"
+        [dataSource]="portfolioOptions"
+        displayExpr="name"
+        valueExpr="id"
+        selectMode="single"
+        placeholder="Portfolio"
+        [allowSearch]="true"
+        [showColumnHeader]="false"
+        [showClearButton]="true"
+        [initialSelectedValue]="selectedPortfolioId"
+        (selectedItems)="onPortfolioChanged($event)"
+      >
+      </crem-dropdown>
     </div>
-    <div actions class="ai-list-page__actions">
+    <div class="ai-list-page__actions">
       <crem-button
         [id]="'page-header-clear'"
         text="Clear Filters"
@@ -41,7 +49,7 @@
       >
       </crem-button>
     </div>
-  </crem-page-header>
+  </div>
 
   <div *ngIf="errorMessage" class="ai-list-page__error">
     <p>{{ errorMessage }}</p>
@@ -51,7 +59,7 @@
     <dx-data-grid
       id="aiLeaseListGrid"
       class="list-page-data-grid"
-      [dataSource]="leases"
+      [dataSource]="filteredLeases"
       [showBorders]="false"
       [showColumnLines]="false"
       [showRowLines]="true"

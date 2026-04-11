@@ -62,7 +62,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    background: #0559b3;
+    background: #0d47a1;
     color: #ffffff;
     flex-shrink: 0;
   }
@@ -304,5 +304,38 @@
   &__subtable {
     margin: 0 16px 8px;
     width: calc(100% - 32px);
+  }
+}
+
+:host ::ng-deep .ai-sidebar__subtable {
+  .dx-pager {
+    .dx-page,
+    .dx-page-size {
+      background: transparent;
+      color: #555;
+      box-shadow: none;
+      border-radius: 2px;
+    }
+
+    .dx-page.dx-selection,
+    .dx-page-size.dx-selection {
+      background: transparent;
+      color: #555;
+      box-shadow: none;
+      border: 1px solid #d0d0d0;
+      font-weight: 600;
+    }
+
+    .dx-page:hover,
+    .dx-page-size:hover,
+    .dx-page.dx-selection:hover,
+    .dx-page-size.dx-selection:hover {
+      background: #f5f5f5;
+      color: #555;
+    }
+
+    .dx-info {
+      color: #666;
+    }
   }
 }

@@ -17,10 +17,13 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   private grid?: DxDataGridComponent;
 
   leases: AiLeaseListItem[] = [];
+  filteredLeases: AiLeaseListItem[] = [];
   isLoading = true;
   errorMessage: string | null = null;
   createdAiAbstractionId: number | null = null;
   searchText = '';
+  selectedPortfolioId: number | null = null;
+  portfolioOptions: Array<{ id: number; name: string }> = [];
 
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
@@ -79,14 +82,20 @@ export class AiListPageComponent implements OnInit, OnDestroy {
 
   onSearchChanged(value: string): void {
     this.searchText = value ?? '';
-    this.grid?.instance?.searchByText(this.searchText);
+    this.applyFilters();
+  }
+
+  onPortfolioChanged(selectedItems: Array<{ id: number; name: string }>): void {
+    this.selectedPortfolioId = selectedItems?.[0]?.id ?? null;
+    this.applyFilters();
   }
 
   clearFilters(): void {
     this.searchText = '';
+    this.selectedPortfolioId = null;
     this.grid?.instance?.clearFilter();
     this.grid?.instance?.clearSorting();
-    this.grid?.instance?.searchByText('');
+    this.applyFilters();
   }
 
   exportToExcel(): void {
@@ -112,6 +121,8 @@ export class AiListPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (leases) => {
           this.leases = leases;
+          this.portfolioOptions = this.buildPortfolioOptions(leases);
+          this.applyFilters();
           this.isLoading = false;
 
           if (leases.some((lease) => this.isProcessing(lease.status))) {
@@ -137,6 +148,8 @@ export class AiListPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (leases) => {
           this.leases = leases;
+          this.portfolioOptions = this.buildPortfolioOptions(leases);
+          this.applyFilters();
           if (!leases.some((lease) => this.isProcessing(lease.status))) {
             this.stopPolling$.next();
           }
@@ -145,5 +158,56 @@ export class AiListPageComponent implements OnInit, OnDestroy {
           this.stopPolling$.next();
         },
       });
+  }
+
+  private applyFilters(): void {
+    const normalizedSearch = this.searchText.trim().toLowerCase();
+
+    this.filteredLeases = this.leases.filter((lease) => {
+      const matchesPortfolio =
+        !this.selectedPortfolioId || lease.portfolioId === this.selectedPortfolioId;
+
+      if (!matchesPortfolio) {
+        return false;
+      }
+
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const searchableValues = [
+        lease.id,
+        lease.portfolioName,
+        lease.buildingName,
+        lease.formName,
+        lease.aiTenant,
+        lease.status,
+        lease.aiLeaseEndDate,
+        lease.createdDate,
+        lease.lastModifiedDate,
+      ];
+
+      return searchableValues.some((value) =>
+        String(value ?? '')
+          .toLowerCase()
+          .includes(normalizedSearch)
+      );
+    });
+  }
+
+  private buildPortfolioOptions(
+    leases: AiLeaseListItem[]
+  ): Array<{ id: number; name: string }> {
+    const portfolioMap = new Map<number, string>();
+
+    leases.forEach((lease) => {
+      if (lease.portfolioId && lease.portfolioName) {
+        portfolioMap.set(lease.portfolioId, lease.portfolioName);
+      }
+    });
+
+    return Array.from(portfolioMap.entries())
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 }
