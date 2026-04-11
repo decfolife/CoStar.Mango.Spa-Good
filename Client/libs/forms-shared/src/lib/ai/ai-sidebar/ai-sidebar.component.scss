@@ -58,9 +58,9 @@
   // ── Header ───────────────────────────────────────────────────────────────
 
   &__header {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 12px 16px;
     background: #1a386e;
     color: #ffffff;
@@ -70,25 +70,21 @@
   &__title {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     font-size: 18px;
     font-weight: 600;
     letter-spacing: 0.3px;
-    grid-column: 2;
-    text-align: center;
+    text-align: left;
   }
 
   &__title-icon {
-    font-size: 20px;
-    height: 20px;
-    width: 20px;
+    font-size: 24px;
+    height: 24px;
+    width: 24px;
   }
 
   &__close-btn {
     color: #ffffff;
-    justify-self: end;
-    grid-column: 3;
 
     &:hover {
       background: rgba(255, 255, 255, 0.15);
