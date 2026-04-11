@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, Subject, timer } from 'rxjs';
-import { catchError, filter, switchMap, take, takeUntil } from 'rxjs/operators';
+import { catchError, switchMap, take, takeUntil } from 'rxjs/operators';
 import { AiDropdownItem, AiFieldType, AiFormField, AiFormSection, AiRentScheduleSection } from '../models/ai-form.model';
 import { IAIOutput } from '../models/ai-output.model';
 import { AiLeaseService } from '../services/ai-lease.service';
@@ -65,10 +65,12 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
   abstractionStatus: string | null = null;
   pageTitle = 'AI Lease Abstraction';
+  hasRenderableContent = false;
 
   private leaseId: number;
   private cachedFormId = 0;
   private cachedLeaseTypes: any = { data: [] };
+  private hasStartedRendering = false;
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
 
@@ -92,6 +94,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           this.isLoading = true;
           this.errorMessage = null;
           this.abstractionStatus = null;
+          this.hasRenderableContent = false;
+          this.hasStartedRendering = false;
+          this.sections = [];
+          this.sectionsExpanded = [];
+          this.form = new FormGroup({});
           this.stopPolling$.next(); // cancel any poll running from a previous route
           return forkJoin({
             detail: this.aiLeaseService.getAbstractionById(this.leaseId),
@@ -132,28 +139,47 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
     this.abstractionStatus = detail.status;
 
-    if (detail.status !== 'Complete') {
-      if (detail.status === 'Error') {
-        this.errorMessage = detail.errorMessage ?? 'The AI abstraction encountered an error.';
-      } else {
-        // Pending or Processing — poll until a terminal state is reached
-        this.startPolling();
-      }
+    if (detail.aiOutputJson) {
+      this.renderDetail(detail);
+    }
+
+    if (detail.status !== 'Complete' && detail.status !== 'Error' && detail.status !== 'Cancelled') {
+      this.startPolling();
+    }
+
+    if (detail.status === 'Error' && !this.hasRenderableContent) {
+      this.errorMessage = detail.errorMessage ?? 'The AI abstraction encountered an error.';
       this.isLoading = false;
       return;
     }
 
-    this.renderComplete(detail);
+    if (detail.status === 'Cancelled' && !this.hasRenderableContent) {
+      this.errorMessage = 'The AI abstraction was cancelled before any results were available.';
+      this.isLoading = false;
+      return;
+    }
+
+    if (detail.status === 'Complete' && !this.hasRenderableContent) {
+      this.errorMessage = 'AI output is missing for this abstraction.';
+      this.isLoading = false;
+      return;
+    }
+
+    if (!this.hasRenderableContent && detail.status !== 'Complete') {
+      if (detail.status === 'Error') {
+        this.errorMessage = detail.errorMessage ?? 'The AI abstraction encountered an error.';
+      }
+      this.isLoading = false;
+      return;
+    }
   }
 
-  /** Poll every 5 s until the abstraction reaches a terminal state, then render. */
+  /** Poll every 5 s for status updates and render as soon as AI output exists. */
   private startPolling(): void {
     this.stopPolling$.next(); // cancel any prior poll
     timer(5000, 5000)
       .pipe(
         switchMap(() => this.aiLeaseService.getAbstractionById(this.leaseId)),
-        filter((d) => !d || ['Complete', 'Error', 'Cancelled'].includes(d.status)),
-        take(1),
         takeUntil(this.stopPolling$),
         takeUntil(this.destroy$)
       )
@@ -163,20 +189,48 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
             this.errorMessage = 'Abstraction not found.';
             return;
           }
+
           this.abstractionStatus = detail.status;
-          if (detail.status === 'Error') {
+
+          if (detail.aiOutputJson) {
+            this.renderDetail(detail);
+          }
+
+          if (detail.status === 'Error' && !this.hasRenderableContent) {
             this.errorMessage = detail.errorMessage ?? 'The AI abstraction encountered an error.';
+            this.isLoading = false;
+            this.stopPolling$.next();
             return;
           }
-          if (detail.status === 'Complete') {
-            this.renderComplete(detail);
+
+          if (detail.status === 'Cancelled' && !this.hasRenderableContent) {
+            this.errorMessage = 'The AI abstraction was cancelled before any results were available.';
+            this.isLoading = false;
+            this.stopPolling$.next();
+            return;
           }
-          // Cancelled: status banner updates automatically via abstractionStatus binding
+
+          if (detail.status === 'Complete' && !this.hasRenderableContent) {
+            this.errorMessage = 'AI output is missing for this abstraction.';
+            this.isLoading = false;
+            this.stopPolling$.next();
+            return;
+          }
+
+          if (['Complete', 'Error', 'Cancelled'].includes(detail.status)) {
+            this.stopPolling$.next();
+          }
         },
       });
   }
 
-  private renderComplete(detail: any): void {
+  private renderDetail(detail: any): void {
+    if (this.hasStartedRendering) {
+      this.hasRenderableContent = true;
+      this.isLoading = false;
+      return;
+    }
+
     if (!detail.aiOutputJson) {
       this.errorMessage = 'AI output is missing for this abstraction.';
       this.isLoading = false;
@@ -195,6 +249,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     if (aiOutput.basics?.tenant?.value) {
       this.pageTitle = `AI Lease Abstraction — ${aiOutput.basics.tenant.value}`;
     }
+
+    this.hasStartedRendering = true;
+    this.hasRenderableContent = true;
 
     // ── Dynamic sections from form definition (backend-mapped) ──────────
     // When a formId is provided (via ?formId=N query param), the backend

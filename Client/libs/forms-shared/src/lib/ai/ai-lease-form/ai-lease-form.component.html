@@ -23,7 +23,7 @@
           (click)="navigateBack(); $event.preventDefault()"
         ></crem-button>
 
-        <ng-container *ngIf="!errorMessage && abstractionStatus === 'Complete'">
+        <ng-container *ngIf="!errorMessage && hasRenderableContent">
           <!-- AI Summary sidebar toggle -->
           <crem-button
             id="ai-form-aiSummaryBtn"
@@ -109,7 +109,7 @@
       <!-- Pending / processing state -->
       <div
         *ngIf="
-          !errorMessage && abstractionStatus && abstractionStatus !== 'Complete'
+          !errorMessage && abstractionStatus && abstractionStatus !== 'Complete' && !hasRenderableContent
         "
         class="ai-lease-form__pending"
       >
@@ -128,7 +128,7 @@
 
       <!-- AI verification banner -->
       <div
-        *ngIf="!errorMessage && abstractionStatus === 'Complete'"
+        *ngIf="!errorMessage && hasRenderableContent"
         class="ai-lease-form__notice"
       >
         <crem-icon
@@ -136,17 +136,26 @@
           icon="faCircleInfo"
         ></crem-icon>
         <div class="ai-lease-form__notice-content">
-          <strong>AI Abstracted Record(s) Ready to Verify</strong>
-          <span
-            >This lease was abstracted by AI. Review all fields and confirm
-            accuracy before saving.</span
-          >
+          <strong>
+            {{
+              abstractionStatus === 'Complete'
+                ? 'AI Abstracted Record(s) Ready to Verify'
+                : 'AI Results Available While Processing Continues'
+            }}
+          </strong>
+          <span>
+            {{
+              abstractionStatus === 'Complete'
+                ? 'This lease was abstracted by AI. Review all fields and confirm accuracy before saving.'
+                : 'AI output is available for review now. Final processing is still running in the background.'
+            }}
+          </span>
         </div>
       </div>
 
       <!-- Form sections -->
       <div
-        *ngIf="!errorMessage && abstractionStatus === 'Complete'"
+        *ngIf="!errorMessage && hasRenderableContent"
         class="dynamic-form-content"
         [formGroup]="form"
       >

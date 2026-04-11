@@ -71,14 +71,14 @@ export class AiLeaseService {
   }
 
   /**
-   * Returns the parsed IAIOutput for a completed abstraction.
+   * Returns the parsed IAIOutput for an abstraction whenever aiOutputJson exists.
    * Calls the backend GetAiAbstractionById endpoint and deserialises aiOutputJson.
-   * Returns null if the abstraction is not yet complete or has no output.
+   * Returns null if the abstraction has no output yet.
    */
   getLeaseById(id: number): Observable<IAIOutput | null> {
     return this.getAbstractionById(id).pipe(
       map((detail) => {
-        if (!detail || detail.status !== 'Complete' || !detail.aiOutputJson) {
+        if (!detail || !detail.aiOutputJson) {
           return null;
         }
         try {
