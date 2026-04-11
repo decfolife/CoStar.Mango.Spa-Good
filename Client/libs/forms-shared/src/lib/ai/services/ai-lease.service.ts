@@ -11,6 +11,8 @@ export interface AiAbstractionDetail {
   aiAbstractionId: number;
   buildingId: number;
   buildingName?: string;
+  formId?: number;
+  formName?: string;
   portfolioId?: number;
   portfolioName?: string;
   premiseId?: number;
@@ -137,6 +139,8 @@ export class AiLeaseService {
           id: item.aiAbstractionId,
           buildingId: item.buildingId,
           buildingName: item.buildingName ?? undefined,
+          formId: item.formId ?? undefined,
+          formName: item.formName ?? undefined,
           portfolioId: item.portfolioId ?? undefined,
           portfolioName: item.portfolioName ?? undefined,
           premiseId: item.premiseId ?? undefined,

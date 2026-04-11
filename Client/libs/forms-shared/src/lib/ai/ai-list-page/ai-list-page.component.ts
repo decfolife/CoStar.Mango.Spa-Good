@@ -16,7 +16,6 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
   createdAiAbstractionId: number | null = null;
 
-  private formId: number | null = null;
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
 
@@ -33,7 +32,6 @@ export class AiListPageComponent implements OnInit, OnDestroy {
         next: (params) => {
           this.createdAiAbstractionId =
             Number(params.get('createdAiAbstractionId') ?? 0) || null;
-          this.formId = Number(params.get('formId') ?? 0) || null;
           this.stopPolling$.next();
           this.loadLeases(true);
         },
@@ -48,7 +46,9 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   }
 
   onRowClick(event: { data: AiLeaseListItem }): void {
-    if (!this.formId) {
+    const formId = event?.data?.formId;
+
+    if (!formId) {
       this.errorMessage =
         'Missing required formId to open AI abstraction details.';
       return;
@@ -57,7 +57,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     if (event?.data?.id) {
       this.router.navigate([event.data.id], {
         relativeTo: this.activatedRoute,
-        queryParams: { formId: this.formId },
+        queryParams: { formId },
       });
     }
   }
