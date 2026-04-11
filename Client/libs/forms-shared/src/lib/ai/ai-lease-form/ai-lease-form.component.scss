@@ -12,7 +12,7 @@
   .page-header__actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
   }
 
   .dfActions {
@@ -45,6 +45,10 @@
 
   .dynamic-form-content {
     padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
   }
 
   .scroll-to-top-button {
@@ -94,6 +98,29 @@
 
     p {
       margin: 0;
+    }
+  }
+
+  &__parent-link {
+    margin: 12px 16px 0;
+  }
+
+  &__parent-link-anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0559b3;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: none;
+      text-decoration: underline;
     }
   }
 

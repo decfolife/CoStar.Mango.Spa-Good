@@ -9,6 +9,8 @@ import { AiLeaseService } from '../services/ai-lease.service';
 import { AiSidebarService } from '../ai-sidebar/ai-sidebar.service';
 import { FormWizardDataTypeID, FormWizardTypeID } from '@forms/model/dynamic-forms.interface';
 import { DynamicFormsService } from '../../services/dynamic-forms.service';
+import { ObjectType } from '@mango/data-models/lib-data-models';
+import { ObjectTypeType } from '@mango/data-models/lib-data-models';
 
 // ── Static dropdown option lists ─────────────────────────────────────────────
 
@@ -66,8 +68,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   editMode = false;
   errorMessage: string | null = null;
   abstractionStatus: string | null = null;
-  pageTitle = 'AI Lease Abstraction';
+  pageTitle = 'Lease';
   hasRenderableContent = false;
+  parentBuildingLink: { label: string; queryParams: Record<string, number> } | null = null;
 
   private leaseId: number;
   private cachedFormId = 0;
@@ -100,6 +103,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           this.sections = [];
           this.sectionsExpanded = [];
           this.form = new FormGroup({});
+          this.parentBuildingLink = null;
           this.stopPolling$.next(); // cancel any poll running from a previous route
 
           if (!this.cachedFormId) {
@@ -257,9 +261,12 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (aiOutput.basics?.tenant?.value) {
-      this.pageTitle = `AI Lease Abstraction — ${aiOutput.basics.tenant.value}`;
-    }
+    const titleName =
+      aiOutput.basics?.tenant?.value ||
+      detail?.aiTenant ||
+      detail?.formName ||
+      String(this.leaseId);
+    this.pageTitle = `Lease: ${titleName}`;
 
     this.hasStartedRendering = true;
     this.hasRenderableContent = true;
@@ -283,10 +290,20 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           0,
           0
         ).pipe(catchError(() => of({ data: {} }))),
+        buildingForm:
+          detail?.buildingId
+            ? this.dynamicFormsService
+                .getFormForObjectTypeType(ObjectTypeType.Building)
+                .pipe(catchError(() => of({ data: null })))
+            : of({ data: null }),
       })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: ({ mappedForm, dropdownValues }) => {
+          next: ({ mappedForm, dropdownValues, buildingForm }) => {
+            this.parentBuildingLink = this.buildParentBuildingLink(
+              detail,
+              buildingForm?.data
+            );
             this.sections = this.groupIntoSections(
               mappedForm.fields,
               mappedForm.sections,
@@ -338,6 +355,10 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  printPage(): void {
+    window.print();
+  }
+
   onSave(): void {
     const reviewedFormData = JSON.stringify(this.form.getRawValue());
     this.aiLeaseService
@@ -379,6 +400,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         title: section.formSectionName,
         columns: this.normalizeSectionColumns(section.formSectionColumns),
         fields: fields
+          .filter((f) => !this.isParentLinkField(f))
           .filter((f) => this.getFieldSectionId(f) === section.formSectionID)
           .sort((a, b) => this.getFieldSortOrder(a) - this.getFieldSortOrder(b))
           .map((f) => this.toAiFormField(f, dropdownValuesByFormItemId)),
@@ -441,6 +463,49 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     }
 
     return Math.min(Math.floor(parsedColumns), 4);
+  }
+
+  private isParentLinkField(field: any): boolean {
+    const candidates = [
+      field?.formItemSystemName,
+      field?.formItemName,
+      field?.formItemFriendlyName,
+      field?.formItemLabel,
+      field?.formItemSectionDetail?.formItemLabel,
+    ]
+      .filter(Boolean)
+      .map((value: string) => value.toLowerCase());
+
+    return candidates.includes('lease_parentlink');
+  }
+
+  private buildParentBuildingLink(
+    detail: any,
+    buildingFormId: number | null | undefined
+  ): { label: string; queryParams: Record<string, number> } | null {
+    if (!detail?.buildingId || !detail?.buildingName || !buildingFormId) {
+      return null;
+    }
+
+    return {
+      label: `Building: ${detail.buildingName}`,
+      queryParams: {
+        fid: Number(buildingFormId),
+        oid: Number(detail.buildingId),
+        otid: ObjectType.BUILDING,
+        ottid: ObjectTypeType.Building,
+      },
+    };
+  }
+
+  navigateToParentBuilding(): void {
+    if (!this.parentBuildingLink) {
+      return;
+    }
+
+    this.router.navigate(['/crem/forms/render-form'], {
+      queryParams: this.parentBuildingLink.queryParams,
+    });
   }
 
   private normalizeDropdownItems(items: any[]): AiDropdownItem[] {

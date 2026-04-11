@@ -65,13 +65,21 @@
             </mat-menu>
           </div>
 
+          <crem-button
+            [id]="'ai-form-print-btn'"
+            [text]="'Print Page'"
+            [btnStyle]="'flat'"
+            [color]="'secondary'"
+            (click)="printPage(); $event.preventDefault()"
+          ></crem-button>
+
           <!-- Edit / Cancel + Save -->
           <ng-container *ngIf="!editMode">
             <crem-button
               [id]="'ai-form-edit-btn'"
               [text]="'Edit'"
               [btnStyle]="'flat'"
-              [color]="'primary'"
+              [color]="'secondary'"
               (click)="toggleEditMode(); $event.preventDefault()"
             ></crem-button>
           </ng-container>
@@ -151,6 +159,21 @@
             }}
           </span>
         </div>
+      </div>
+
+      <div
+        *ngIf="!errorMessage && hasRenderableContent && parentBuildingLink"
+        class="ai-lease-form__parent-link"
+      >
+        <a
+          class="ai-lease-form__parent-link-anchor"
+          (click)="navigateToParentBuilding()"
+          (keydown.enter)="navigateToParentBuilding()"
+          tabindex="0"
+        >
+          <img src="/assets/images/lnkback.gif" alt="" />
+          <span>go to {{ parentBuildingLink.label }}</span>
+        </a>
       </div>
 
       <!-- Form sections -->
