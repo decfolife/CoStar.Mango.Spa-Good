@@ -157,7 +157,14 @@ export class AiFormSectionComponent implements OnInit {
   }
 
   private loadDropdownOptions(): void {
-    (this.section?.columnGroups?.flatMap((group) => group.fields) ?? this.section?.fields ?? [])
+    (
+      this.section?.columnGroups?.reduce(
+        (allFields, group) => allFields.concat(group.fields),
+        [] as AiFormField[]
+      ) ??
+      this.section?.fields ??
+      []
+    )
       ?.filter(
         (field) =>
           field.type === 'dropdown' &&
