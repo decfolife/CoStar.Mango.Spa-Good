@@ -355,17 +355,23 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         key: String(section.formSectionID),
         title: section.formSectionName,
         fields: fields
-          .filter((f) => f.formSectionID === section.formSectionID)
-          .sort((a, b) => a.formItemSortOrder - b.formItemSortOrder)
+          .filter((f) => this.getFieldSectionId(f) === section.formSectionID)
+          .sort((a, b) => this.getFieldSortOrder(a) - this.getFieldSortOrder(b))
           .map((f) => this.toAiFormField(f)),
       }))
       .filter((s) => s.fields.length > 0);
   }
 
   private toAiFormField(field: any): AiFormField {
+    const sectionDetail = field.formItemSectionDetail ?? {};
+
     return {
       key: String(field.formItemID),
-      label: field.formItemLabel || field.formItemFriendlyName || field.formItemName,
+      label:
+        sectionDetail.formItemLabel ||
+        field.formItemLabel ||
+        field.formItemFriendlyName ||
+        field.formItemName,
       type: this.resolveAiFieldType(field),
       value: field.formItemAnswer ?? null,
       requestTypeId: field.requestTypeID || undefined,
@@ -373,8 +379,10 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   }
 
   private resolveAiFieldType(field: any): AiFieldType {
+    const sectionDetail = field.formItemSectionDetail ?? {};
+
     if (field.formItemTypeID === FormWizardTypeID.LIST_BOX) return 'dropdown';
-    switch (field.dataTypeID) {
+    switch (field.dataTypeID ?? sectionDetail.dataTypeID) {
       case FormWizardDataTypeID.DATE: return 'date';
       case FormWizardDataTypeID.CURRENCY: return 'currency';
       case FormWizardDataTypeID.PERCENT: return 'percent';
@@ -384,6 +392,14 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       case FormWizardDataTypeID.NUMBER: return 'number';
       default: return 'text';
     }
+  }
+
+  private getFieldSectionId(field: any): number | null {
+    return field.formSectionID ?? field.formItemSectionDetail?.formSectionID ?? null;
+  }
+
+  private getFieldSortOrder(field: any): number {
+    return field.formItemSortOrder ?? field.formItemSectionDetail?.formItemSortOrder ?? Number.MAX_SAFE_INTEGER;
   }
 
   // ─── Section Builders ────────────────────────────────────────────────────────
