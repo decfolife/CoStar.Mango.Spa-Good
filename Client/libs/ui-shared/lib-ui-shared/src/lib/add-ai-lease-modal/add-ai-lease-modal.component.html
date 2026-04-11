@@ -328,12 +328,12 @@
       id="add_ai_lease_modal__launch_btn"
       type="primary"
       (click)="launch($event)"
-      [disabled]="saveClicked"
-      [icon]="saveClicked ? 'faSpinner' : ''"
-      [iconPack]="saveClicked ? 'solid' : ''"
-      [iconAnimation]="saveClicked ? 'spin' : ''"
+      [disabled]="isSubmitting"
+      [icon]="isSubmitting ? 'faSpinner' : ''"
+      [iconPack]="isSubmitting ? 'solid' : ''"
+      [iconAnimation]="isSubmitting ? 'spin' : ''"
     >
-      <span>{{ saveClicked ? 'Saving' : 'Launch' }}</span>
+      <span>{{ isSubmitting ? 'Launching' : 'Launch' }}</span>
     </crem-button>
   </div>
 </crem-modal>

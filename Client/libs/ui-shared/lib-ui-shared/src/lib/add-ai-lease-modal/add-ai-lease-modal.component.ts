@@ -231,13 +231,13 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
       next: (response) => {
         this.isSubmitting = false;
         this.dialogRef.close();
-        const extras = this.data?.formId
-          ? { queryParams: { formId: this.data.formId } }
-          : {};
-        this.router.navigate(
-          ['/ai-abstractions', response.aiAbstractionId],
-          extras
-        );
+        this.router.navigate(['/crem/portfolio/ai-abstractions'], {
+          queryParams: {
+            buildingId: this.selectedBuilding ?? this.data.objectId ?? 0,
+            createdAiAbstractionId: response.aiAbstractionId,
+            ...(this.data?.formId ? { formId: this.data.formId } : {}),
+          },
+        });
       },
       error: () => {
         this.isSubmitting = false;

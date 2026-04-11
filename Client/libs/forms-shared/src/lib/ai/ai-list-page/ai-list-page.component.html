@@ -56,6 +56,24 @@
       ></dxo-export>
 
       <dxi-column
+        dataField="id"
+        caption="AI Abstraction ID"
+        [width]="140"
+      ></dxi-column>
+
+      <dxi-column
+        dataField="portfolioId"
+        caption="Portfolio"
+        [width]="110"
+      ></dxi-column>
+
+      <dxi-column
+        dataField="buildingId"
+        caption="Building"
+        [width]="110"
+      ></dxi-column>
+
+      <dxi-column
         dataField="aiTenant"
         caption="Tenant"
         [minWidth]="150"
@@ -101,7 +119,13 @@
       <div *dxTemplate="let cell of 'statusTemplate'">
         <span
           class="status-badge status-badge--{{ cell.data.status | lowercase }}"
+          [class.status-badge--active]="isCreatedRow(cell.data)"
         >
+          <span
+            *ngIf="isProcessing(cell.data.status)"
+            class="status-spinner"
+            aria-hidden="true"
+          ></span>
           {{ cell.data.status }}
         </span>
       </div>
