@@ -101,6 +101,22 @@
         "aot": true
       },
       "configurations": {
+        "fast": {
+          "optimization": false,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": true,
+          "extractLicenses": false,
+          "vendorChunk": true,
+          "buildOptimizer": false,
+          "aot": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango/src/environments/environment.dev.ts"
+            }
+          ]
+        },
         "local": {
           "outputHashing": "none",
           "fileReplacements": [
@@ -186,6 +202,22 @@
           "extractLicenses": false,
           "vendorChunk": true,
           "buildOptimizer": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/mango/src/environments/environment.local.ts",
+              "with": "apps/mango/src/environments/environment.test.ts"
+            }
+          ]
+        },
+        "testFast": {
+          "optimization": false,
+          "outputHashing": "none",
+          "sourceMap": false,
+          "namedChunks": true,
+          "extractLicenses": false,
+          "vendorChunk": true,
+          "buildOptimizer": false,
+          "aot": false,
           "fileReplacements": [
             {
               "replace": "apps/mango/src/environments/environment.local.ts",
@@ -339,6 +371,9 @@
         "browserTarget": "mango:build:local"
       },
       "configurations": {
+        "fast": {
+          "browserTarget": "mango:build:fast"
+        },
         "local": {
           "browserTarget": "mango:build:local"
         },
@@ -350,6 +385,9 @@
         },
         "testLocal": {
           "browserTarget": "mango:build:testLocal"
+        },
+        "testFast": {
+          "browserTarget": "mango:build:testFast"
         },
         "ops": {
           "browserTarget": "mango:build:ops"
