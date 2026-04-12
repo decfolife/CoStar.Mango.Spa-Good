@@ -35,6 +35,9 @@ export class AiDocumentViewerComponent
   private root: Root | null = null;
   viewerError: string | null = null;
   isLoaded = false;
+  readonly useSdkTestDocument =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).has('aiDocViewerTest');
 
   readonly toolbar: ToolbarConfig = {
     navigation: true,
@@ -66,7 +69,10 @@ export class AiDocumentViewerComponent
   }
 
   private renderReactTree(): void {
-    if (!this.root || !this.src) {
+    const effectiveSource = this.getEffectiveSource();
+    const effectiveFilename = this.getEffectiveFilename();
+
+    if (!this.root || !effectiveSource) {
       this.viewerError = null;
       this.isLoaded = false;
       return;
@@ -78,8 +84,8 @@ export class AiDocumentViewerComponent
 
     this.root.render(
       React.createElement(DocumentViewer, {
-        src: this.src,
-        filename: this.filename,
+        src: effectiveSource,
+        filename: effectiveFilename,
         toolbar: this.toolbar,
         darkMode: false,
         onLoad: () => {
@@ -94,8 +100,8 @@ export class AiDocumentViewerComponent
             'The document viewer failed to load this file.';
           this.isLoaded = false;
           console.error('AI document viewer load error', {
-            filename: this.filename,
-            src: this.src,
+            filename: effectiveFilename,
+            src: effectiveSource,
             error: err,
           });
           this.cdr.markForCheck();
@@ -103,5 +109,27 @@ export class AiDocumentViewerComponent
         style: { height: '100%', width: '100%' },
       })
     );
+  }
+
+  private getEffectiveSource(): DocumentSource | null {
+    if (this.useSdkTestDocument) {
+      return new File(
+        [
+          `AI document viewer test file\n\nIf you can read this, the SDK renders correctly inside the Angular host app.\n\nTimestamp: ${new Date().toISOString()}\n`,
+        ],
+        'ai-document-viewer-test.txt',
+        { type: 'text/plain' }
+      );
+    }
+
+    return this.src;
+  }
+
+  private getEffectiveFilename(): string | undefined {
+    if (this.useSdkTestDocument) {
+      return 'ai-document-viewer-test.txt';
+    }
+
+    return this.filename;
   }
 }
