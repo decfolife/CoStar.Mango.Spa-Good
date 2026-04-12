@@ -1,5 +1,8 @@
 <div *ngIf="src; else emptyState" class="ai-document-viewer">
   <div #host class="ai-document-viewer__host"></div>
+  <div *ngIf="viewerError" class="ai-document-viewer__error">
+    {{ viewerError }}
+  </div>
 </div>
 
 <ng-template #emptyState>

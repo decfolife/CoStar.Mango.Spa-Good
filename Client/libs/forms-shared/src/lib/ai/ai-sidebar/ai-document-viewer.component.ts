@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -32,6 +33,8 @@ export class AiDocumentViewerComponent
   @Input() filename?: string;
 
   private root: Root | null = null;
+  viewerError: string | null = null;
+  isLoaded = false;
 
   readonly toolbar: ToolbarConfig = {
     navigation: true,
@@ -43,6 +46,8 @@ export class AiDocumentViewerComponent
     print: true,
     search: true,
   };
+
+  constructor(private readonly cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     this.root = createRoot(this.hostRef.nativeElement);
@@ -62,8 +67,14 @@ export class AiDocumentViewerComponent
 
   private renderReactTree(): void {
     if (!this.root || !this.src) {
+      this.viewerError = null;
+      this.isLoaded = false;
       return;
     }
+
+    this.viewerError = null;
+    this.isLoaded = false;
+    this.cdr.markForCheck();
 
     this.root.render(
       React.createElement(DocumentViewer, {
@@ -71,6 +82,24 @@ export class AiDocumentViewerComponent
         filename: this.filename,
         toolbar: this.toolbar,
         darkMode: false,
+        onLoad: () => {
+          this.viewerError = null;
+          this.isLoaded = true;
+          this.cdr.markForCheck();
+        },
+        onError: (err: { message?: string; code?: string }) => {
+          this.viewerError =
+            err?.message ??
+            err?.code ??
+            'The document viewer failed to load this file.';
+          this.isLoaded = false;
+          console.error('AI document viewer load error', {
+            filename: this.filename,
+            src: this.src,
+            error: err,
+          });
+          this.cdr.markForCheck();
+        },
         style: { height: '100%', width: '100%' },
       })
     );
