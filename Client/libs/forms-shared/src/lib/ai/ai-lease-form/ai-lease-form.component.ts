@@ -273,7 +273,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
             this.sections = this.groupIntoSections(
               mappedForm.fields,
               mappedForm.sections,
-              dropdownValues?.data ?? {}
+              dropdownValues?.data ?? {},
+              detail
             );
             this.sectionsExpanded = this.sections.map(() => true);
             this.form = this.buildFormGroup(this.sections);
@@ -356,7 +357,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   private groupIntoSections(
     fields: any[],
     sections: any[],
-    dropdownValuesByFormItemId: Record<string, any[]> = {}
+    dropdownValuesByFormItemId: Record<string, any[]> = {},
+    detail?: any
   ): AiFormSection[] {
     return sections
       .slice()
@@ -366,7 +368,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         const sectionFields = fields
           .filter((f) => !this.isParentLinkField(f))
           .filter((f) => this.getFieldSectionId(f) === section.formSectionID)
-          .map((f, index) => this.toAiFormField(f, dropdownValuesByFormItemId, index));
+          .map((f, index) => this.toAiFormField(f, dropdownValuesByFormItemId, index, detail));
         const outlierFields = sectionFields.filter(
           (field) => (field.column ?? 1) > normalizedColumns
         );
@@ -404,7 +406,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   private toAiFormField(
     field: any,
     dropdownValuesByFormItemId: Record<string, any[]> = {},
-    sourceIndex = 0
+    sourceIndex = 0,
+    detail?: any
   ): AiFormField {
     const sectionDetail = field.formItemSectionDetail ?? {};
     const formItemTypeName =
@@ -439,6 +442,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       formItemFieldWidth: field.formItemFieldWidth ?? undefined,
       formItemFieldHeight: field.formItemFieldHeight ?? undefined,
       radioOptions: this.parseFormItemParameters(field.formItemParameters),
+      displayValue: this.resolveFieldDisplayValue(field, detail),
     };
   }
 
@@ -624,6 +628,40 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       .filter(Boolean);
 
     return options.length ? options : undefined;
+  }
+
+  private resolveFieldDisplayValue(field: any, detail?: any): string | undefined {
+    if (!detail) {
+      return undefined;
+    }
+
+    const candidates = [
+      field?.formItemSystemName,
+      field?.formItemName,
+      field?.formItemFriendlyName,
+      field?.formItemLabel,
+      field?.formItemSectionDetail?.formItemLabel,
+    ]
+      .filter(Boolean)
+      .map((value: string) => value.toLowerCase());
+
+    if (
+      candidates.some((value) =>
+        ['portfolio', 'portfolioid', 'mastergroup', 'company', 'companyid'].includes(value)
+      )
+    ) {
+      return detail?.portfolioName ?? undefined;
+    }
+
+    if (
+      candidates.some((value) =>
+        ['building', 'buildingid', 'parentbuildingid', 'buildingname'].includes(value)
+      )
+    ) {
+      return detail?.buildingName ?? undefined;
+    }
+
+    return undefined;
   }
 
   // ─── Form Group Builder ──────────────────────────────────────────────────────

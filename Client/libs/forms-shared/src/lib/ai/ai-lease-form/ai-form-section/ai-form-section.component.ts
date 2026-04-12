@@ -131,6 +131,9 @@ export class AiFormSectionComponent implements OnInit {
       case 'date':
         return val ? new Date(val).toLocaleDateString('en-US') : '—';
       default:
+        if (field.displayValue) {
+          return field.displayValue;
+        }
         return String(val);
     }
   }
@@ -298,6 +301,9 @@ export class AiFormSectionComponent implements OnInit {
     const matchedItem = items.find((item: any) => item?.[valueExpr] === value);
 
     if (!matchedItem) {
+      if (field.displayValue) {
+        return field.displayValue;
+      }
       return String(value);
     }
 
