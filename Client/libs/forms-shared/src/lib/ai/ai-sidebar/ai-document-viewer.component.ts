@@ -27,11 +27,20 @@ import {
 export class AiDocumentViewerComponent
   implements AfterViewInit, OnChanges, OnDestroy
 {
-  @ViewChild('host', { static: true }) hostRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('host')
+  set hostRef(value: ElementRef<HTMLDivElement> | undefined) {
+    this._hostRef = value;
+
+    if (value && !this.root) {
+      this.root = createRoot(value.nativeElement);
+      this.renderReactTree();
+    }
+  }
 
   @Input() src: DocumentSource | null = null;
   @Input() filename?: string;
 
+  private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
   viewerError: string | null = null;
   isLoaded = false;
@@ -53,8 +62,10 @@ export class AiDocumentViewerComponent
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
-    this.root = createRoot(this.hostRef.nativeElement);
-    this.renderReactTree();
+    if (this._hostRef && !this.root) {
+      this.root = createRoot(this._hostRef.nativeElement);
+      this.renderReactTree();
+    }
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
