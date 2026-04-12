@@ -1,12 +1,9 @@
-<div *ngIf="src; else emptyState" class="ai-document-viewer">
+<div class="ai-document-viewer">
   <div #host class="ai-document-viewer__host"></div>
   <div *ngIf="viewerError" class="ai-document-viewer__error">
     {{ viewerError }}
   </div>
-</div>
-
-<ng-template #emptyState>
-  <div class="ai-document-viewer__empty">
+  <div *ngIf="!src" class="ai-document-viewer__empty">
     <mat-icon>description</mat-icon>
     <div class="ai-document-viewer__empty-title">Document unavailable</div>
     <div class="ai-document-viewer__empty-text">
@@ -14,4 +11,4 @@
       viewer yet.
     </div>
   </div>
-</ng-template>
+</div>

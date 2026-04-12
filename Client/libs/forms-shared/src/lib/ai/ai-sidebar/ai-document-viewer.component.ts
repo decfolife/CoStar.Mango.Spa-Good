@@ -29,6 +29,12 @@ export class AiDocumentViewerComponent
 {
   @ViewChild('host')
   set hostRef(value: ElementRef<HTMLDivElement> | undefined) {
+    if (value?.nativeElement === this._hostRef?.nativeElement) {
+      return;
+    }
+
+    this.root?.unmount();
+    this.root = null;
     this._hostRef = value;
 
     if (value && !this.root) {
@@ -80,6 +86,7 @@ export class AiDocumentViewerComponent
     if (!this.root || !this.src) {
       this.viewerError = null;
       this.isLoaded = false;
+      this.cdr.markForCheck();
       return;
     }
 
