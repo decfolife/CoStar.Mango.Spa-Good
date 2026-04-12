@@ -89,9 +89,9 @@ mat-card.mat-mdc-card {
         width: 42%;
         flex-shrink: 0;
         margin-right: 2%;
-        white-space: normal;
-        text-wrap: wrap;
-        word-wrap: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         height: auto;
 
         // Fix dx-field layout inside label container
@@ -115,8 +115,7 @@ mat-card.mat-mdc-card {
 
         .df-formSection-fieldLabel {
           margin-left: 4px;
-          word-break: break-word;
-          color: #000;
+          color: #1d4f91;
 
           &.df-superLabel {
             color: #1d4f91;
@@ -156,8 +155,9 @@ mat-card.mat-mdc-card {
         color: #000;
 
         label span {
-          white-space: normal;
-          text-wrap: wrap;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
           line-height: normal;
           color: #000;
         }
