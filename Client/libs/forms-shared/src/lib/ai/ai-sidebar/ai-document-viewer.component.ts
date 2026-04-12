@@ -35,7 +35,9 @@ export class AiDocumentViewerComponent
 
   readonly toolbar: ToolbarConfig = {
     navigation: true,
-    zoom: true,
+    zoomOut: true,
+    zoomSelect: true,
+    zoomIn: true,
     rotate: true,
     download: true,
     print: true,
