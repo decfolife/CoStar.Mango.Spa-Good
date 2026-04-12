@@ -261,8 +261,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           this.cachedFormId,
           0,
           AiLeaseFormComponent.LEASE_OBJECT_TYPE_ID,
-          0,
-          0
+          detail?.buildingId ?? 0,
+          detail?.buildingId ? ObjectType.BUILDING : 0
         ).pipe(catchError(() => of({ data: {} }))),
         buildingForm:
           detail?.buildingId
