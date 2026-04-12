@@ -150,8 +150,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         if (state.isOpen && oid) {
           const abstractionChanged = this.currentAiAbstractionId !== oid;
           this.currentAiAbstractionId = oid;
-          if (abstractionChanged || this.loadedDocumentContextId !== oid) {
-            this.loadDocumentContext(oid);
+          if (abstractionChanged) {
+            this.documentSource = null;
+            this.documentFileName = null;
+            this.documentLoadError = null;
+            this.documentOptions = [];
+            this.selectedDocumentId = null;
+            this.isDocumentLoading = false;
+            this.loadedDocumentContextId = null;
+          }
+
+          if (this.activeTabIndex === 0) {
+            this.ensureDocumentContextLoaded();
           }
           if (state.aiOutput && state.leaseId === oid) {
             this.populateFromAiOutput(state.aiOutput);
@@ -201,6 +211,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   onTabChange(index: number): void {
     this.activeTabIndex = index;
+
+    if (index === 0) {
+      this.ensureDocumentContextLoaded();
+    }
   }
 
   onDocumentSelectionChange(documentId: string): void {
@@ -411,6 +425,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       ? ({ url: documentUrl } as DocumentSource)
       : null;
     this.documentFileName = documentFileName;
+  }
+
+  private ensureDocumentContextLoaded(): void {
+    if (
+      !this.currentAiAbstractionId ||
+      this.isDocumentLoading ||
+      this.loadedDocumentContextId === this.currentAiAbstractionId
+    ) {
+      return;
+    }
+
+    this.loadDocumentContext(this.currentAiAbstractionId);
   }
 
   private syncGlobalSidebarState(): void {
