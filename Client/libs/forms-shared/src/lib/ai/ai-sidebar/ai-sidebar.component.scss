@@ -182,6 +182,10 @@
     text-transform: uppercase;
     letter-spacing: 0.4px;
     margin-bottom: 2px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    word-break: break-word;
   }
 
   &__field-value {
