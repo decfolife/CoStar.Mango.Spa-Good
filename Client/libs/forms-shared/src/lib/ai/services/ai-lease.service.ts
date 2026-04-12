@@ -32,6 +32,15 @@ export interface CreateAiAbstractionResponse {
   aiAbstractionId: number;
 }
 
+export interface AiAbstractionDocument {
+  aiAbstractionDocumentId?: number;
+  aiAbstractionId?: number;
+  fileName?: string;
+  documentFileName?: string;
+  url?: string;
+  documentUrl?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AiLeaseService {
   private readonly apiUrl = UtilitiesService.getBaseApiUrl(
@@ -78,6 +87,19 @@ export class AiLeaseService {
     return this.http
       .get<ApiResponse>(`${this.apiUrl}AiAbstractions/GetAiAbstractionsList`)
       .pipe(map((res) => res.data as AiAbstractionDetail[]));
+  }
+
+  getAbstractionDocuments(
+    aiAbstractionId: number
+  ): Observable<AiAbstractionDocument[]> {
+    return this.http
+      .get<ApiResponse>(
+        `${this.apiUrl}AiAbstractions/GetAiAbstractionDocuments`,
+        {
+          params: { aiAbstractionId },
+        }
+      )
+      .pipe(map((res) => (res.data as AiAbstractionDocument[]) ?? []));
   }
 
   /**

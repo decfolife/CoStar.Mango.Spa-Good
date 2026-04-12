@@ -12,8 +12,13 @@ import { combineLatest, Subject } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
-import { AiLeaseService } from '../services/ai-lease.service';
+import {
+  AiAbstractionDetail,
+  AiAbstractionDocument,
+  AiLeaseService,
+} from '../services/ai-lease.service';
 import { AiSidebarService } from './ai-sidebar.service';
+import type { DocumentSource } from 'document-viewer-sdk';
 
 interface SidebarField {
   label: string;
@@ -42,6 +47,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   rentScheduleItems: any[] = [];
   abatementItems: any[] = [];
   currentWidth = 420;
+  activeTabIndex = 1;
+  documentSource: DocumentSource | null = null;
+  documentFileName: string | null = null;
+  documentLoadError: string | null = null;
 
   private isDragging = false;
   private dragStartX = 0;
@@ -126,6 +135,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           state.leaseId ?? (params['oid'] ? Number(params['oid']) : null);
 
         if (state.isOpen && oid) {
+          this.loadDocumentContext(oid);
           if (state.aiOutput && state.leaseId === oid) {
             this.populateFromAiOutput(state.aiOutput);
           } else {
@@ -136,6 +146,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.rentScheduleItems = [];
           this.abatementItems = [];
           this.errorMessage = null;
+          this.documentSource = null;
+          this.documentFileName = null;
+          this.documentLoadError = null;
+          this.activeTabIndex = 1;
         }
       });
   }
@@ -160,6 +174,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   copyCitation(text: string): void {
     navigator.clipboard?.writeText(text);
+  }
+
+  onTabChange(index: number): void {
+    this.activeTabIndex = index;
   }
 
   // ─── Resize ──────────────────────────────────────────────────────────────────
@@ -216,6 +234,98 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
       });
+  }
+
+  private loadDocumentContext(aiAbstractionId: number): void {
+    this.documentLoadError = null;
+
+    this.aiLeaseService
+      .getAbstractionDocuments(aiAbstractionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (documents) => {
+          if (this.populateDocumentContextFromDocuments(documents)) {
+            return;
+          }
+
+          this.loadDocumentContextFallback(aiAbstractionId);
+        },
+        error: () => this.loadDocumentContextFallback(aiAbstractionId),
+      });
+  }
+
+  private loadDocumentContextFallback(aiAbstractionId: number): void {
+    this.aiLeaseService
+      .getAbstractionById(aiAbstractionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (detail) => {
+          this.populateDocumentContext(detail);
+          if (!this.documentSource) {
+            this.documentLoadError = 'Failed to load document metadata.';
+          }
+        },
+        error: () => {
+          this.documentSource = null;
+          this.documentFileName = null;
+          this.documentLoadError = 'Failed to load document metadata.';
+        },
+      });
+  }
+
+  private populateDocumentContextFromDocuments(
+    documents: AiAbstractionDocument[] | null | undefined
+  ): boolean {
+    const primaryDocument = documents?.find(
+      (document) => !!(document.url ?? document.documentUrl)
+    );
+
+    if (!primaryDocument) {
+      return false;
+    }
+
+    const documentUrl = primaryDocument.url ?? primaryDocument.documentUrl ?? null;
+    const documentFileName =
+      primaryDocument.fileName ?? primaryDocument.documentFileName ?? null;
+
+    this.documentSource = documentUrl
+      ? ({ url: documentUrl } as DocumentSource)
+      : null;
+    this.documentFileName = documentFileName;
+    this.documentLoadError = null;
+
+    return !!this.documentSource;
+  }
+
+  private populateDocumentContext(detail: AiAbstractionDetail | null): void {
+    const context = this.parseContext(detail?.contextJson);
+    const documentUrl =
+      (detail as any)?.documentUrl ??
+      context?.documentUrl ??
+      context?.documents?.[0]?.url ??
+      null;
+    const documentFileName =
+      (detail as any)?.documentFileName ??
+      context?.documentFileName ??
+      context?.documents?.[0]?.fileName ??
+      null;
+
+    this.documentSource = documentUrl
+      ? ({ url: documentUrl } as DocumentSource)
+      : null;
+    this.documentFileName = documentFileName;
+  }
+
+  private parseContext(contextJson?: string | null): any | null {
+    if (!contextJson) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(contextJson);
+    } catch {
+      return null;
+    }
   }
 
   private populateFromAiOutput(data: IAIOutput): void {

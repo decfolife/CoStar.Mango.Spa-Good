@@ -36,9 +36,41 @@
     <span>{{ errorMessage }}</span>
   </div>
 
+  <div *ngIf="!isLoading && !errorMessage" class="ai-sidebar__tabs">
+    <button
+      type="button"
+      class="ai-sidebar__tab"
+      [class.ai-sidebar__tab--active]="activeTabIndex === 0"
+      (click)="onTabChange(0)"
+    >
+      Document
+    </button>
+    <button
+      type="button"
+      class="ai-sidebar__tab"
+      [class.ai-sidebar__tab--active]="activeTabIndex === 1"
+      (click)="onTabChange(1)"
+    >
+      Ai Summary
+    </button>
+  </div>
+
+  <div
+    *ngIf="!isLoading && !errorMessage && activeTabIndex === 0"
+    class="ai-sidebar__document-tab"
+  >
+    <mango-ai-document-viewer
+      [src]="documentSource"
+      [filename]="documentFileName || undefined"
+    ></mango-ai-document-viewer>
+    <div *ngIf="documentLoadError" class="ai-sidebar__document-note">
+      {{ documentLoadError }}
+    </div>
+  </div>
+
   <!-- Content -->
   <div
-    *ngIf="!isLoading && !errorMessage && sections.length"
+    *ngIf="!isLoading && !errorMessage && sections.length && activeTabIndex === 1"
     class="ai-sidebar__content"
   >
     <div *ngFor="let section of sections" class="ai-sidebar__section">
