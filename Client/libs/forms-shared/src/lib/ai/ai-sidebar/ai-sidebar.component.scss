@@ -214,13 +214,15 @@
 
   &__document-popout {
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     background: #fff;
     color: #1a386e;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 10px 12px;
     cursor: pointer;
     transition:
       background-color 0.2s ease,
@@ -229,6 +231,13 @@
     &:hover {
       background: #eff4fb;
       border-color: #94a3b8;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      line-height: 18px;
     }
   }
 
