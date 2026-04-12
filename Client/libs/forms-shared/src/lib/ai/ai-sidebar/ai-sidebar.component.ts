@@ -277,14 +277,16 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     documents: AiAbstractionDocument[] | null | undefined
   ): boolean {
     const primaryDocument = documents?.find(
-      (document) => !!(document.url ?? document.documentUrl)
+      (document) =>
+        !!this.aiLeaseService.getAbstractionDocumentUrl(document)
     );
 
     if (!primaryDocument) {
       return false;
     }
 
-    const documentUrl = primaryDocument.url ?? primaryDocument.documentUrl ?? null;
+    const documentUrl =
+      this.aiLeaseService.getAbstractionDocumentUrl(primaryDocument);
     const documentFileName =
       primaryDocument.fileName ?? primaryDocument.documentFileName ?? null;
 

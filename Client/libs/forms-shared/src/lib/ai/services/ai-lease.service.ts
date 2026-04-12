@@ -33,6 +33,7 @@ export interface CreateAiAbstractionResponse {
 }
 
 export interface AiAbstractionDocument {
+  documentId?: number;
   aiAbstractionDocumentId?: number;
   aiAbstractionId?: number;
   fileName?: string;
@@ -100,6 +101,20 @@ export class AiLeaseService {
         }
       )
       .pipe(map((res) => (res.data as AiAbstractionDocument[]) ?? []));
+  }
+
+  getAbstractionDocumentUrl(document: AiAbstractionDocument): string | null {
+    const explicitUrl = document.url ?? document.documentUrl ?? null;
+    if (explicitUrl) {
+      return explicitUrl;
+    }
+
+    const documentId = document.documentId ?? document.aiAbstractionDocumentId;
+    if (!documentId) {
+      return null;
+    }
+
+    return `${this.apiUrl}AiAbstractions/GetAiAbstractionDocumentFile?documentId=${documentId}`;
   }
 
   /**
