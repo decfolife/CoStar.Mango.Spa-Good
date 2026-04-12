@@ -132,6 +132,7 @@
     "npm": "^7.21.0",
     "path": "^0.12.7",
     "pdfjs-dist": "4.10.38",
+    "primeicons": "^7.0.0",
     "primeng": "^15.0.0",
     "rxjs": "^6.6.7",
     "rxjs-compat": "^6.6.7",
