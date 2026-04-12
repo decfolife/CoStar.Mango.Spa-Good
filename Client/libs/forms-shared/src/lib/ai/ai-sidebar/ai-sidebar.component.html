@@ -56,8 +56,9 @@
   </div>
 
   <div
-    *ngIf="!isLoading && !errorMessage && activeTabIndex === 0"
+    *ngIf="!isLoading && !errorMessage"
     class="ai-sidebar__document-tab"
+    [hidden]="activeTabIndex !== 0"
   >
     <div *ngIf="documentOptions.length" class="ai-sidebar__document-toolbar">
       <div class="ai-sidebar__document-toolbar-row">
@@ -102,8 +103,9 @@
 
   <!-- Content -->
   <div
-    *ngIf="!isLoading && !errorMessage && sections.length && activeTabIndex === 1"
+    *ngIf="!isLoading && !errorMessage && sections.length"
     class="ai-sidebar__content"
+    [hidden]="activeTabIndex !== 1"
   >
     <div *ngFor="let section of sections" class="ai-sidebar__section">
       <!-- Section header -->

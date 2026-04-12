@@ -61,6 +61,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   selectedDocumentId: number | null = null;
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
+  private loadedDocumentContextId: number | null = null;
 
   private isDragging = false;
   private dragStartX = 0;
@@ -140,14 +141,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       )
       .subscribe(([state, params]) => {
         this.isOpen = state.isOpen;
+        this.syncGlobalSidebarState();
         // Prefer explicit leaseId from service (AI abstraction route),
         // fall back to ?oid= query param (dynamic form route)
         const oid =
           state.leaseId ?? (params['oid'] ? Number(params['oid']) : null);
 
         if (state.isOpen && oid) {
+          const abstractionChanged = this.currentAiAbstractionId !== oid;
           this.currentAiAbstractionId = oid;
-          this.loadDocumentContext(oid);
+          if (abstractionChanged || this.loadedDocumentContextId !== oid) {
+            this.loadDocumentContext(oid);
+          }
           if (state.aiOutput && state.leaseId === oid) {
             this.populateFromAiOutput(state.aiOutput);
           } else {
@@ -165,12 +170,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.selectedDocumentId = null;
           this.isDocumentLoading = false;
           this.currentAiAbstractionId = null;
+          this.loadedDocumentContextId = null;
           this.activeTabIndex = 1;
         }
       });
   }
 
   ngOnDestroy(): void {
+    this.clearGlobalSidebarState();
     this.resizeObserver?.disconnect();
     this.destroy$.next();
     this.destroy$.complete();
@@ -250,6 +257,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       this.MAX_WIDTH,
       Math.max(this.MIN_WIDTH, this.dragStartWidth + delta)
     );
+    this.syncGlobalSidebarState();
   }
 
   @HostListener('document:mouseup')
@@ -287,6 +295,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private loadDocumentContext(aiAbstractionId: number): void {
+    this.loadedDocumentContextId = aiAbstractionId;
     this.documentLoadError = null;
     this.documentSource = null;
     this.documentFileName = null;
@@ -402,6 +411,17 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       ? ({ url: documentUrl } as DocumentSource)
       : null;
     this.documentFileName = documentFileName;
+  }
+
+  private syncGlobalSidebarState(): void {
+    document.documentElement.style.setProperty(
+      '--ai-sidebar-width',
+      this.isOpen ? `${this.currentWidth}px` : '0px'
+    );
+  }
+
+  private clearGlobalSidebarState(): void {
+    document.documentElement.style.setProperty('--ai-sidebar-width', '0px');
   }
 
   private parseContext(contextJson?: string | null): any | null {
