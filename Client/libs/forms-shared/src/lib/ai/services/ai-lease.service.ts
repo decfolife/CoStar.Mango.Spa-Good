@@ -34,7 +34,6 @@ export interface CreateAiAbstractionResponse {
 
 export interface AiAbstractionDocument {
   documentId?: number;
-  aiAbstractionDocumentId?: number;
   aiAbstractionId?: number;
   fileName?: string;
   documentFileName?: string;
@@ -109,7 +108,7 @@ export class AiLeaseService {
       return explicitUrl;
     }
 
-    const documentId = document.documentId ?? document.aiAbstractionDocumentId;
+    const documentId = document.documentId;
     if (!documentId) {
       return null;
     }
