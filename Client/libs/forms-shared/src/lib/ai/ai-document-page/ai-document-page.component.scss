@@ -13,10 +13,10 @@
 
 .ai-document-page__header {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 20px 24px 16px;
+  padding: 16px 24px;
   border-bottom: 1px solid #d8e1ec;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
@@ -80,4 +80,20 @@
   flex: 1;
   min-height: 0;
   padding: 20px 24px 24px;
+}
+
+@media (max-width: 768px) {
+  .ai-document-page__header {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 16px 20px;
+  }
+
+  .ai-document-page__state,
+  .ai-document-page__viewer {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
