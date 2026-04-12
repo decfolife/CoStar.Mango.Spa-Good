@@ -32,6 +32,12 @@ interface SidebarSection {
   isExpanded: boolean;
 }
 
+interface DocumentOption {
+  documentId: number;
+  fileName: string;
+  mimeType?: string;
+}
+
 @Component({
   selector: 'mango-ai-sidebar',
   templateUrl: './ai-sidebar.component.html',
@@ -51,6 +57,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentSource: DocumentSource | null = null;
   documentFileName: string | null = null;
   documentLoadError: string | null = null;
+  documentOptions: DocumentOption[] = [];
+  selectedDocumentId: number | null = null;
+  isDocumentLoading = false;
 
   private isDragging = false;
   private dragStartX = 0;
@@ -149,6 +158,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentSource = null;
           this.documentFileName = null;
           this.documentLoadError = null;
+          this.documentOptions = [];
+          this.selectedDocumentId = null;
+          this.isDocumentLoading = false;
           this.activeTabIndex = 1;
         }
       });
@@ -178,6 +190,22 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   onTabChange(index: number): void {
     this.activeTabIndex = index;
+  }
+
+  onDocumentSelectionChange(documentId: string): void {
+    const resolvedDocumentId = Number(documentId);
+    if (!resolvedDocumentId || resolvedDocumentId === this.selectedDocumentId) {
+      return;
+    }
+
+    const document = this.documentOptions.find(
+      (item) => item.documentId === resolvedDocumentId
+    );
+    if (!document) {
+      return;
+    }
+
+    this.loadDocumentFile(document);
   }
 
   // ─── Resize ──────────────────────────────────────────────────────────────────
@@ -238,6 +266,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   private loadDocumentContext(aiAbstractionId: number): void {
     this.documentLoadError = null;
+    this.documentSource = null;
+    this.documentFileName = null;
+    this.documentOptions = [];
+    this.selectedDocumentId = null;
+    this.isDocumentLoading = true;
 
     this.aiLeaseService
       .getAbstractionDocuments(aiAbstractionId)
@@ -260,6 +293,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (detail) => {
+          this.isDocumentLoading = false;
           this.populateDocumentContext(detail);
           if (!this.documentSource) {
             this.documentLoadError = 'Failed to load document metadata.';
@@ -269,6 +303,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentSource = null;
           this.documentFileName = null;
           this.documentLoadError = 'Failed to load document metadata.';
+          this.isDocumentLoading = false;
         },
       });
   }
@@ -276,25 +311,59 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   private populateDocumentContextFromDocuments(
     documents: AiAbstractionDocument[] | null | undefined
   ): boolean {
-    const primaryDocument = documents?.find(
-      (document) =>
-        !!this.aiLeaseService.getAbstractionDocumentSource(document)
-    );
+    const validDocuments =
+      documents
+        ?.map((document) => ({
+          documentId: document.documentId ?? 0,
+          fileName:
+            document.fileName ??
+            document.documentFileName ??
+            `Document ${document.documentId ?? ''}`.trim(),
+          mimeType: document.mimeType,
+        }))
+        .filter((document) => document.documentId > 0) ?? [];
 
-    if (!primaryDocument) {
+    this.documentOptions = validDocuments;
+
+    if (!validDocuments.length) {
+      this.isDocumentLoading = false;
       return false;
     }
 
-    const documentSource =
-      this.aiLeaseService.getAbstractionDocumentSource(primaryDocument);
-    const documentFileName =
-      primaryDocument.fileName ?? primaryDocument.documentFileName ?? null;
+    this.loadDocumentFile(validDocuments[0]);
 
-    this.documentSource = documentSource;
-    this.documentFileName = documentFileName;
+    return true;
+  }
+
+  private loadDocumentFile(document: DocumentOption): void {
+    this.selectedDocumentId = document.documentId;
+    this.documentFileName = document.fileName;
     this.documentLoadError = null;
+    this.documentSource = null;
+    this.isDocumentLoading = true;
 
-    return !!this.documentSource;
+    this.aiLeaseService
+      .getAbstractionDocumentBlob({
+        documentId: document.documentId,
+        fileName: document.fileName,
+        mimeType: document.mimeType,
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (blob) => {
+          const fileType = blob.type || document.mimeType || 'application/octet-stream';
+          this.documentSource = new File([blob], document.fileName, {
+            type: fileType,
+          });
+          this.documentLoadError = null;
+          this.isDocumentLoading = false;
+        },
+        error: () => {
+          this.documentSource = null;
+          this.documentLoadError = 'Failed to load document file.';
+          this.isDocumentLoading = false;
+        },
+      });
   }
 
   private populateDocumentContext(detail: AiAbstractionDetail | null): void {

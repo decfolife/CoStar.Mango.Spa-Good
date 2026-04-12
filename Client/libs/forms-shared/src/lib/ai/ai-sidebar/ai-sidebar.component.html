@@ -59,6 +59,27 @@
     *ngIf="!isLoading && !errorMessage && activeTabIndex === 0"
     class="ai-sidebar__document-tab"
   >
+    <div *ngIf="documentOptions.length" class="ai-sidebar__document-toolbar">
+      <label class="ai-sidebar__document-label" for="ai-document-select">
+        Document
+      </label>
+      <select
+        id="ai-document-select"
+        class="ai-sidebar__document-select"
+        [value]="selectedDocumentId ?? ''"
+        (change)="onDocumentSelectionChange($any($event.target).value)"
+      >
+        <option
+          *ngFor="let document of documentOptions"
+          [value]="document.documentId"
+        >
+          {{ document.fileName }}
+        </option>
+      </select>
+    </div>
+    <div *ngIf="isDocumentLoading" class="ai-sidebar__document-loading">
+      Loading document...
+    </div>
     <mango-ai-document-viewer
       [src]="documentSource"
       [filename]="documentFileName || undefined"

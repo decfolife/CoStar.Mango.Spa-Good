@@ -3,10 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
-import { JwtService, UtilitiesService } from '@mango/core-shared';
+import { UtilitiesService } from '@mango/core-shared';
 import { IAIOutput } from '../models/ai-output.model';
 import { AiLeaseListItem } from '../models/ai-form.model';
-import type { DocumentSource } from 'document-viewer-sdk';
 
 export interface AiAbstractionDetail {
   aiAbstractionId: number;
@@ -38,6 +37,9 @@ export interface AiAbstractionDocument {
   aiAbstractionId?: number;
   fileName?: string;
   documentFileName?: string;
+  fileSizeBytes?: number;
+  mimeType?: string;
+  sortOrder?: number;
   url?: string;
   documentUrl?: string;
 }
@@ -49,10 +51,7 @@ export class AiLeaseService {
     'http://localhost:5000'
   );
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly jwtService: JwtService
-  ) {}
+  constructor(private readonly http: HttpClient) {}
 
   createAbstraction(
     formData: FormData
@@ -120,26 +119,14 @@ export class AiLeaseService {
     return `${this.apiUrl}AiAbstractions/GetAiAbstractionDocumentFile?documentId=${documentId}`;
   }
 
-  getAbstractionDocumentSource(
-    document: AiAbstractionDocument
-  ): DocumentSource | null {
+  getAbstractionDocumentBlob(document: AiAbstractionDocument): Observable<Blob> {
     const documentUrl = this.getAbstractionDocumentUrl(document);
-    if (!documentUrl) {
-      return null;
-    }
-
-    const httpHeaders: Record<string, string> = {
-      'source-app': 'crem-mango',
-    };
-
-    if (UtilitiesService.isLocalEnvironment()) {
-      const token = this.jwtService.getToken();
-      if (token) {
-        httpHeaders['Authorization'] = `Bearer ${token}`;
-      }
-    }
-
-    return { url: documentUrl, httpHeaders };
+    return this.http.get(documentUrl!, {
+      responseType: 'blob',
+      headers: {
+        'source-app': 'crem-mango',
+      },
+    });
   }
 
   /**
