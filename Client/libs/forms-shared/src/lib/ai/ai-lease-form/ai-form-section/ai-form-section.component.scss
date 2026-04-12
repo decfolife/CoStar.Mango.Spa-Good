@@ -117,6 +117,16 @@ mat-card.mat-mdc-card {
           margin-left: 4px;
           word-break: break-word;
           color: #000;
+
+          &.df-superLabel {
+            color: #1d4f91;
+
+            &:hover {
+              color: #5f8cc3;
+              text-decoration: underline;
+              cursor: pointer !important;
+            }
+          }
         }
       }
 

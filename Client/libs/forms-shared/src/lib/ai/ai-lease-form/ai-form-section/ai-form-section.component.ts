@@ -19,6 +19,7 @@ export class AiFormSectionComponent implements OnInit {
   @Input() formGroup: FormGroup;
   @Input() editMode = false;
   @Input() isExpanded = true;
+  @Input() isSuperUser = false;
 
   rentSchedule: AiRentScheduleSection | null = null;
 
@@ -93,6 +94,20 @@ export class AiFormSectionComponent implements OnInit {
 
   toggleExpanded(): void {
     this.isExpanded = !this.isExpanded;
+  }
+
+  onKeyDownOnLabel(event: KeyboardEvent, field: AiFormField): void {
+    if (event.key === 'Enter') {
+      this.openLabelLink(field);
+    }
+  }
+
+  openLabelLink(field: AiFormField): void {
+    if (!this.isSuperUser || !field.key) {
+      return;
+    }
+
+    window.open(`/Forms/admin/formitemAE.asp?fFormItemID=${field.key}`, '_blank');
   }
 
   getFieldControl(fieldKey: string): any {

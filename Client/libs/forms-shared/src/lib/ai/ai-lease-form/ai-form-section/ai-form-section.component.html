@@ -55,6 +55,10 @@
                 </div>
                 <crem-input-label
                   class="df-formSection-fieldLabel"
+                  [ngClass]="{ 'df-superLabel': isSuperUser }"
+                  [tabindex]="isSuperUser && !editMode && isExpanded ? 0 : -1"
+                  (keydown)="onKeyDownOnLabel($event, field)"
+                  (click)="openLabelLink(field)"
                   [label]="field.label"
                 ></crem-input-label>
               </div>

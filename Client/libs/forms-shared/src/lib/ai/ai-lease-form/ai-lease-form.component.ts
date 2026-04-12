@@ -34,6 +34,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   pageSubtitle = '';
   hasRenderableContent = false;
   parentBuildingLink: { label: string; queryParams: Record<string, number> } | null = null;
+  isSuperUser = false;
 
   private leaseId: number;
   private cachedFormId = 0;
@@ -54,6 +55,13 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.mangoAppFacade.contactRecord$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((contact) => {
+        this.isSuperUser =
+          contact?.userRoleName?.toLowerCase().trim() === 'superuser';
+      });
+
     this.route.paramMap
       .pipe(
         switchMap((params) => {
