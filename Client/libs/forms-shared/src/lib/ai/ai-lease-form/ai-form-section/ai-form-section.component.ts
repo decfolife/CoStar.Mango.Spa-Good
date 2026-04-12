@@ -6,6 +6,7 @@ import {
   AiDropdownItem,
   AiFormSection,
   AiRentScheduleSection,
+  AiRadioOption,
 } from '../../models/ai-form.model';
 
 @Component({
@@ -107,10 +108,12 @@ export class AiFormSectionComponent implements OnInit {
   }
 
   formatDisplayValue(field: AiFormField): string {
-    const val = field.value;
+    const val = this.getCurrentFieldValue(field);
     if (val == null || val === '') return '—';
 
     switch (field.type) {
+      case 'multiselect':
+        return this.getMultiSelectDisplayValue(field, val);
       case 'dropdown':
         return this.getDropdownDisplayValue(field, val);
       case 'boolean':
@@ -132,6 +135,81 @@ export class AiFormSectionComponent implements OnInit {
     }
   }
 
+  getCurrentFieldValue(field: AiFormField): any {
+    return this.getFieldControl(field.key)?.value ?? field.value;
+  }
+
+  shouldRenderField(field: AiFormField): boolean {
+    return field.type !== 'hidden';
+  }
+
+  isDropdownField(field: AiFormField): boolean {
+    return field.type === 'dropdown';
+  }
+
+  isMultiSelectField(field: AiFormField): boolean {
+    return field.type === 'multiselect';
+  }
+
+  isTextAreaField(field: AiFormField): boolean {
+    return field.type === 'textarea';
+  }
+
+  isDateField(field: AiFormField): boolean {
+    return field.type === 'date';
+  }
+
+  isBooleanField(field: AiFormField): boolean {
+    return field.type === 'boolean';
+  }
+
+  isRadioField(field: AiFormField): boolean {
+    return field.type === 'radio';
+  }
+
+  isImageField(field: AiFormField): boolean {
+    return field.type === 'image';
+  }
+
+  isEmailField(field: AiFormField): boolean {
+    return field.type === 'email';
+  }
+
+  isPasswordField(field: AiFormField): boolean {
+    return field.type === 'password';
+  }
+
+  isTextOnlyField(field: AiFormField): boolean {
+    return field.type === 'textonly';
+  }
+
+  isStandardInputField(field: AiFormField): boolean {
+    return ![
+      'dropdown',
+      'multiselect',
+      'boolean',
+      'date',
+      'textarea',
+      'radio',
+      'image',
+      'email',
+      'textonly',
+      'hidden',
+    ].includes(field.type);
+  }
+
+  getInputType(field: AiFormField): 'text' | 'number' | 'password' {
+    if (field.type === 'number' || field.type === 'currency' || field.type === 'percent') {
+      return 'number';
+    }
+
+    if (field.type === 'password') {
+      return 'password';
+    }
+
+    return 'text';
+  }
+
   getDropdownValueExpr(field: AiFormField): string {
     return field.valueExpr || 'id';
   }
@@ -141,12 +219,17 @@ export class AiFormSectionComponent implements OnInit {
   }
 
   onDropdownSelected(field: AiFormField, selectedItems: any[]): void {
-    const selectedItem = selectedItems?.[0];
     const valueExpr = this.getDropdownValueExpr(field);
-    const nextValue =
-      selectedItem && valueExpr in selectedItem
-        ? selectedItem[valueExpr]
-        : null;
+    const nextValue = field.type === 'multiselect'
+      ? (selectedItems ?? [])
+          .filter((item) => item && valueExpr in item)
+          .map((item) => item[valueExpr])
+      : (() => {
+          const selectedItem = selectedItems?.[0];
+          return selectedItem && valueExpr in selectedItem
+            ? selectedItem[valueExpr]
+            : null;
+        })();
 
     this.getFieldControl(field.key)?.setValue(nextValue);
     field.value = nextValue;
@@ -167,7 +250,7 @@ export class AiFormSectionComponent implements OnInit {
     )
       ?.filter(
         (field) =>
-          field.type === 'dropdown' &&
+          (field.type === 'dropdown' || field.type === 'multiselect') &&
           !field.dropdownItems?.length &&
           !!field.requestTypeId
       )
@@ -219,5 +302,33 @@ export class AiFormSectionComponent implements OnInit {
     }
 
     return String(matchedItem?.[displayExpr] ?? value);
+  }
+
+  private getMultiSelectDisplayValue(field: AiFormField, value: any): string {
+    const values = Array.isArray(value)
+      ? value
+      : typeof value === 'string' && value.length
+        ? value.split(',').map((item) => item.trim()).filter(Boolean)
+        : [];
+
+    if (!values.length) {
+      return '—';
+    }
+
+    return values
+      .map((item) => this.getDropdownDisplayValue(field, item))
+      .join(', ');
+  }
+
+  getRadioOptions(field: AiFormField): AiRadioOption[] {
+    return field.radioOptions ?? [];
+  }
+
+  getImageWidth(field: AiFormField): number {
+    return field.formItemFieldWidth || 400;
+  }
+
+  getImageHeight(field: AiFormField): number {
+    return field.formItemFieldHeight || 300;
   }
 }

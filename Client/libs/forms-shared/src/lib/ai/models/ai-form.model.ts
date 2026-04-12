@@ -7,11 +7,24 @@ export type AiFieldType =
   | 'date'
   | 'boolean'
   | 'percent'
-  | 'dropdown';
+  | 'dropdown'
+  | 'textarea'
+  | 'email'
+  | 'image'
+  | 'radio'
+  | 'multiselect'
+  | 'hidden'
+  | 'textonly'
+  | 'password';
 
 export interface AiDropdownItem {
   id: string | number;
   name: string;
+}
+
+export interface AiRadioOption {
+  value: string;
+  display: string;
 }
 
 export interface AiFormField {
@@ -34,6 +47,14 @@ export interface AiFormField {
   column?: number;
   sortOrder?: number;
   sourceIndex?: number;
+  formItemTypeID?: number;
+  formItemTypeName?: string;
+  dataTypeID?: number;
+  formItemParameters?: string | null;
+  formItemViewOnly?: boolean;
+  formItemFieldWidth?: number;
+  formItemFieldHeight?: number;
+  radioOptions?: AiRadioOption[];
 }
 
 export interface AiFormSectionColumn {

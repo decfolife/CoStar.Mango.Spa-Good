@@ -132,6 +132,16 @@ mat-card.mat-mdc-card {
         }
       }
 
+      .ai-form-image {
+        max-width: 100%;
+        object-fit: contain;
+      }
+
+      .ai-form-email {
+        color: inherit;
+        text-decoration: underline;
+      }
+
       crem-input-label {
         color: #000;
 
@@ -141,6 +151,12 @@ mat-card.mat-mdc-card {
           line-height: normal;
           color: #000;
         }
+      }
+
+      crem-radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
       }
     }
   }

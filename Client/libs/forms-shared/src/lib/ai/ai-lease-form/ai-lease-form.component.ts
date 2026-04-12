@@ -407,6 +407,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     sourceIndex = 0
   ): AiFormField {
     const sectionDetail = field.formItemSectionDetail ?? {};
+    const formItemTypeName =
+      field.formItemType?.formItemType ??
+      field.formItemType?.FormItemType ??
+      field.formItemTypeName ??
+      null;
     const dropdownItems = this.normalizeDropdownItems(
       dropdownValuesByFormItemId[String(field.formItemID)] ?? []
     );
@@ -426,11 +431,51 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       column: this.getFieldColumn(field),
       sortOrder: this.getFieldSortOrder(field),
       sourceIndex,
+      formItemTypeID: field.formItemTypeID ?? undefined,
+      formItemTypeName,
+      dataTypeID: field.dataTypeID ?? sectionDetail.dataTypeID ?? undefined,
+      formItemParameters: field.formItemParameters ?? null,
+      formItemViewOnly: Boolean(field.formItemViewOnly),
+      formItemFieldWidth: field.formItemFieldWidth ?? undefined,
+      formItemFieldHeight: field.formItemFieldHeight ?? undefined,
+      radioOptions: this.parseFormItemParameters(field.formItemParameters),
     };
   }
 
   private resolveAiFieldType(field: any): AiFieldType {
     const sectionDetail = field.formItemSectionDetail ?? {};
+    const formItemTypeName = (
+      field.formItemType?.formItemType ??
+      field.formItemType?.FormItemType ??
+      field.formItemTypeName ??
+      ''
+    ).toString();
+
+    switch (formItemTypeName) {
+      case 'List Box':
+        return 'dropdown';
+      case 'Comment Area':
+        return 'textarea';
+      case 'EmailAddress':
+        return 'email';
+      case 'Image':
+      case 'Dyn Form Image':
+        return 'image';
+      case 'Checkbox':
+        return 'boolean';
+      case 'Radio Button':
+        return 'radio';
+      case 'Multi-Select(Dropdown Based)':
+      case 'Multi-Select (SQL Based)':
+        return 'multiselect';
+      case 'Hidden':
+      case 'Filler':
+        return 'hidden';
+      case 'Text only':
+        return 'textonly';
+      case 'Password':
+        return 'password';
+    }
 
     if (field.formItemTypeID === FormWizardTypeID.LIST_BOX) return 'dropdown';
     switch (field.dataTypeID ?? sectionDetail.dataTypeID) {
@@ -558,6 +603,29 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       .filter((item) => item.id !== undefined && item.id !== null);
   }
 
+  private parseFormItemParameters(parameters: string | null | undefined) {
+    if (!parameters) {
+      return undefined;
+    }
+
+    const options = parameters
+      .split('|')
+      .map((param) => {
+        const [valuePart, labelPart] = param.split(',');
+        const value = valuePart?.split('=')[1]?.trim();
+        const display = labelPart?.split('=')[1]?.trim();
+
+        if (!value || !display) {
+          return null;
+        }
+
+        return { value, display };
+      })
+      .filter(Boolean);
+
+    return options.length ? options : undefined;
+  }
+
   // ─── Form Group Builder ──────────────────────────────────────────────────────
 
   private buildFormGroup(sections: AiFormSection[]): FormGroup {
@@ -567,12 +635,54 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       const sectionControls: { [key: string]: FormControl } = {};
 
       section.fields.forEach((field) => {
-        sectionControls[field.key] = new FormControl({ value: field.value ?? null, disabled: true });
+        sectionControls[field.key] = new FormControl({
+          value: this.getInitialFieldValue(field),
+          disabled: true,
+        });
       });
 
       root[section.key] = new FormGroup(sectionControls);
     });
 
     return new FormGroup(root);
+  }
+
+  private getInitialFieldValue(field: AiFormField): any {
+    if (field.type === 'boolean') {
+      return this.toBoolean(field.value);
+    }
+
+    if (field.type === 'multiselect') {
+      if (Array.isArray(field.value)) {
+        return field.value;
+      }
+
+      if (typeof field.value === 'string' && field.value.trim().length) {
+        return field.value
+          .split(',')
+          .map((value) => value.trim())
+          .filter(Boolean);
+      }
+
+      return [];
+    }
+
+    return field.value ?? null;
+  }
+
+  private toBoolean(value: any): boolean {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      return value === 1;
+    }
+
+    if (typeof value === 'string') {
+      return ['true', '1', 'yes', 'y'].includes(value.trim().toLowerCase());
+    }
+
+    return false;
   }
 }

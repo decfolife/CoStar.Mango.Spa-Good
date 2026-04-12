@@ -40,7 +40,7 @@
           *ngFor="let column of section.columnGroups || []"
         >
           <ng-container *ngFor="let field of column.fields">
-            <div class="field-container df-formSection-field">
+            <div class="field-container df-formSection-field" *ngIf="shouldRenderField(field)">
               <!-- Label container: history icon + label text -->
               <div class="df-formSection-labelContainer">
                 <div class="df-infoHistoryData">
@@ -61,10 +61,26 @@
 
               <!-- Field content -->
               <div class="field-content df-formSection-fieldContent">
-                <!-- View mode: dropdown -->
+                <img
+                  *ngIf="isImageField(field) && getCurrentFieldValue(field)"
+                  class="ai-form-image"
+                  [src]="getCurrentFieldValue(field)"
+                  [width]="getImageWidth(field)"
+                  [height]="getImageHeight(field)"
+                  [alt]="field.label"
+                />
+
+                <a
+                  *ngIf="!editMode && isEmailField(field) && getCurrentFieldValue(field)"
+                  class="ai-form-email"
+                  [href]="'mailto:' + getCurrentFieldValue(field)"
+                >
+                  {{ getCurrentFieldValue(field) }}
+                </a>
+
                 <span
                   class="df-dropdown-readonly-wrapper"
-                  *ngIf="!editMode && field.type === 'dropdown'"
+                  *ngIf="!editMode && (isDropdownField(field) || isMultiSelectField(field))"
                   tabindex="0"
                 >
                   <span class="sr-only"
@@ -80,18 +96,55 @@
                     [readOnlyStyle]="'text-only'"
                     [formControlName]="field.key"
                     [tabindex]="-1"
+                    [selectMode]="isMultiSelectField(field) ? 'multiple' : 'single'"
+                    [showCheckBoxesMode]="isMultiSelectField(field) ? 'always' : 'none'"
                   ></crem-dropdown>
                 </span>
 
-                <!-- View mode -->
                 <crem-input-label
-                  *ngIf="!editMode && field.type !== 'dropdown'"
+                  *ngIf="!editMode && isTextOnlyField(field)"
                   [label]="formatDisplayValue(field)"
                 ></crem-input-label>
 
-                <!-- Edit mode: dropdown -->
+                <crem-check-box
+                  *ngIf="!editMode && isBooleanField(field)"
+                  [formControlName]="field.key"
+                  [disabled]="true"
+                ></crem-check-box>
+
+                <crem-radio-group
+                  *ngIf="!editMode && isRadioField(field)"
+                  [formControlName]="field.key"
+                  [name]="'ai-radio-group-' + field.key"
+                  [ariaLabel]="field.label"
+                  [disabled]="true"
+                >
+                  <crem-radio-field
+                    *ngFor="let option of getRadioOptions(field)"
+                    [value]="option.value"
+                    [readOnly]="true"
+                    [readOnlyStyle]="'text-only'"
+                  >
+                    {{ option.display }}
+                  </crem-radio-field>
+                </crem-radio-group>
+
+                <crem-input-label
+                  *ngIf="
+                    !editMode &&
+                    !isDropdownField(field) &&
+                    !isMultiSelectField(field) &&
+                    !isBooleanField(field) &&
+                    !isRadioField(field) &&
+                    !isImageField(field) &&
+                    !isEmailField(field) &&
+                    !isTextOnlyField(field)
+                  "
+                  [label]="formatDisplayValue(field)"
+                ></crem-input-label>
+
                 <crem-dropdown
-                  *ngIf="editMode && field.type === 'dropdown'"
+                  *ngIf="editMode && (isDropdownField(field) || isMultiSelectField(field))"
                   [id]="'ai-form-dropdown-' + field.key"
                   [dataSource]="field.dropdownItems || []"
                   [showClearButton]="true"
@@ -104,40 +157,48 @@
                   [searchMode]="'contains'"
                   [formControlName]="field.key"
                   [initialSelectedValue]="getFieldControl(field.key)?.value"
+                  [selectMode]="isMultiSelectField(field) ? 'multiple' : 'single'"
+                  [showCheckBoxesMode]="isMultiSelectField(field) ? 'always' : 'none'"
                   (selectedItems)="onDropdownSelected(field, $event)"
                 ></crem-dropdown>
 
-                <!-- Edit mode: text / number / currency / percent -->
                 <crem-input
-                  *ngIf="
-                    editMode &&
-                    field.type !== 'boolean' &&
-                    field.type !== 'date' &&
-                    field.type !== 'dropdown'
-                  "
-                  [inputType]="
-                    field.type === 'number' ||
-                    field.type === 'currency' ||
-                    field.type === 'percent'
-                      ? 'number'
-                      : 'text'
-                  "
+                  *ngIf="editMode && isStandardInputField(field)"
+                  [inputType]="getInputType(field)"
                   [formControlName]="field.key"
                 ></crem-input>
 
-                <!-- Edit mode: date -->
+                <crem-input
+                  *ngIf="editMode && isTextAreaField(field)"
+                  [inputType]="'textarea'"
+                  [formControlName]="field.key"
+                ></crem-input>
+
                 <crem-date-picker
-                  *ngIf="editMode && field.type === 'date'"
+                  *ngIf="editMode && isDateField(field)"
                   [formControlName]="field.key"
                   dateFormat="MM/dd/yyyy"
                   [useMaskBehavior]="false"
                 ></crem-date-picker>
 
-                <!-- Edit mode: boolean -->
-                <mat-checkbox
-                  *ngIf="editMode && field.type === 'boolean'"
+                <crem-check-box
+                  *ngIf="editMode && isBooleanField(field)"
                   [formControlName]="field.key"
-                ></mat-checkbox>
+                ></crem-check-box>
+
+                <crem-radio-group
+                  *ngIf="editMode && isRadioField(field)"
+                  [formControlName]="field.key"
+                  [name]="'ai-radio-group-' + field.key"
+                  [ariaLabel]="field.label"
+                >
+                  <crem-radio-field
+                    *ngFor="let option of getRadioOptions(field)"
+                    [value]="option.value"
+                  >
+                    {{ option.display }}
+                  </crem-radio-field>
+                </crem-radio-group>
 
                 <!-- Citation -->
                 <div *ngIf="field.citation" class="ai-citation">
