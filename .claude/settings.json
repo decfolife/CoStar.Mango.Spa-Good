@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/michaelcurtis/developer/rem-document-viewer/**)",
+      "Read(//Users/michaelcurtis/developer/formsengine/**)",
+      "Bash(npm ls:*)"
+    ]
+  }
+}
