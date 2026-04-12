@@ -1,7 +1,1 @@
 @import "document-viewer-sdk/dist/assets/style.css";
-
-.ai-document-page .rpdf-toolbar {
-  position: sticky;
-  top: var(--ai-document-page-header-height, 96px);
-  z-index: 20;
-}
