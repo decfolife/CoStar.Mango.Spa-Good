@@ -309,7 +309,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private loadDocumentContext(aiAbstractionId: number): void {
-    this.loadedDocumentContextId = aiAbstractionId;
     this.documentLoadError = null;
     this.documentSource = null;
     this.documentFileName = null;
@@ -322,13 +321,16 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (documents) => {
-          if (this.populateDocumentContextFromDocuments(documents)) {
+          if (this.populateDocumentContextFromDocuments(aiAbstractionId, documents)) {
             return;
           }
 
           this.loadDocumentContextFallback(aiAbstractionId);
         },
-        error: () => this.loadDocumentContextFallback(aiAbstractionId),
+        error: () => {
+          this.loadedDocumentContextId = null;
+          this.loadDocumentContextFallback(aiAbstractionId);
+        },
       });
   }
 
@@ -340,13 +342,17 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         next: (detail) => {
           this.isDocumentLoading = false;
           this.populateDocumentContext(detail);
-          if (!this.documentSource) {
+          if (this.documentSource) {
+            this.loadedDocumentContextId = aiAbstractionId;
+          } else {
+            this.loadedDocumentContextId = null;
             this.documentLoadError = 'Failed to load document metadata.';
           }
         },
         error: () => {
           this.documentSource = null;
           this.documentFileName = null;
+          this.loadedDocumentContextId = null;
           this.documentLoadError = 'Failed to load document metadata.';
           this.isDocumentLoading = false;
         },
@@ -354,6 +360,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private populateDocumentContextFromDocuments(
+    aiAbstractionId: number,
     documents: AiAbstractionDocument[] | null | undefined
   ): boolean {
     const validDocuments =
@@ -372,9 +379,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
     if (!validDocuments.length) {
       this.isDocumentLoading = false;
+      this.loadedDocumentContextId = null;
       return false;
     }
 
+    this.loadedDocumentContextId = aiAbstractionId;
     this.loadDocumentFile(validDocuments[0]);
 
     return true;
@@ -428,11 +437,22 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private ensureDocumentContextLoaded(): void {
-    if (
-      !this.currentAiAbstractionId ||
-      this.isDocumentLoading ||
-      this.loadedDocumentContextId === this.currentAiAbstractionId
-    ) {
+    if (!this.currentAiAbstractionId || this.isDocumentLoading) {
+      return;
+    }
+
+    if (this.loadedDocumentContextId === this.currentAiAbstractionId) {
+      if (!this.documentSource) {
+        const selectedDocument =
+          this.documentOptions.find(
+            (document) => document.documentId === this.selectedDocumentId
+          ) ?? this.documentOptions[0];
+
+        if (selectedDocument) {
+          this.loadDocumentFile(selectedDocument);
+        }
+      }
+
       return;
     }
 
