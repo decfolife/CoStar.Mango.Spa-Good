@@ -4,9 +4,11 @@
 }
 
 .ai-document-page {
-  min-height: 100vh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
+  padding-top: 8px;
+  box-sizing: border-box;
   background:
     linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
 }
@@ -83,6 +85,10 @@
 }
 
 @media (max-width: 768px) {
+  .ai-document-page {
+    padding-top: 6px;
+  }
+
   .ai-document-page__header {
     align-items: stretch;
     flex-direction: column;
