@@ -18,6 +18,6 @@ import { AiDocumentViewerComponent } from './ai-document-viewer.component';
     DxDataGridModule,
     SkeletonModule,
   ],
-  exports: [AiSidebarComponent],
+  exports: [AiSidebarComponent, AiDocumentViewerComponent],
 })
 export class AiSidebarModule {}

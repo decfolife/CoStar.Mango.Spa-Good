@@ -7,7 +7,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -60,6 +60,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentOptions: DocumentOption[] = [];
   selectedDocumentId: number | null = null;
   isDocumentLoading = false;
+  currentAiAbstractionId: number | null = null;
 
   private isDragging = false;
   private dragStartX = 0;
@@ -116,6 +117,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     private readonly aiSidebarService: AiSidebarService,
     private readonly aiLeaseService: AiLeaseService,
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly el: ElementRef<HTMLElement>
   ) {}
 
@@ -144,6 +146,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           state.leaseId ?? (params['oid'] ? Number(params['oid']) : null);
 
         if (state.isOpen && oid) {
+          this.currentAiAbstractionId = oid;
           this.loadDocumentContext(oid);
           if (state.aiOutput && state.leaseId === oid) {
             this.populateFromAiOutput(state.aiOutput);
@@ -161,6 +164,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentOptions = [];
           this.selectedDocumentId = null;
           this.isDocumentLoading = false;
+          this.currentAiAbstractionId = null;
           this.activeTabIndex = 1;
         }
       });
@@ -206,6 +210,24 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
 
     this.loadDocumentFile(document);
+  }
+
+  openDocumentInNewWindow(): void {
+    if (!this.currentAiAbstractionId) {
+      return;
+    }
+
+    const tree = this.router.createUrlTree(
+      ['/crem/portfolio/ai-abstractions/document', this.currentAiAbstractionId],
+      {
+        queryParams: this.selectedDocumentId
+          ? { documentId: this.selectedDocumentId }
+          : {},
+      }
+    );
+
+    const url = this.router.serializeUrl(tree);
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   // ─── Resize ──────────────────────────────────────────────────────────────────
@@ -343,18 +365,15 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.isDocumentLoading = true;
 
     this.aiLeaseService
-      .getAbstractionDocumentBlob({
+      .getAbstractionDocumentFile({
         documentId: document.documentId,
         fileName: document.fileName,
         mimeType: document.mimeType,
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (blob) => {
-          const fileType = blob.type || document.mimeType || 'application/octet-stream';
-          this.documentSource = new File([blob], document.fileName, {
-            type: fileType,
-          });
+        next: (file) => {
+          this.documentSource = file;
           this.documentLoadError = null;
           this.isDocumentLoading = false;
         },

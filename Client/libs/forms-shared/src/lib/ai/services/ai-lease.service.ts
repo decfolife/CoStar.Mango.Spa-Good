@@ -129,6 +129,22 @@ export class AiLeaseService {
     });
   }
 
+  getAbstractionDocumentFile(document: AiAbstractionDocument): Observable<File> {
+    const fileName =
+      document.fileName ??
+      document.documentFileName ??
+      `document-${document.documentId ?? 'unknown'}`;
+
+    return this.getAbstractionDocumentBlob(document).pipe(
+      map(
+        (blob) =>
+          new File([blob], fileName, {
+            type: blob.type || document.mimeType || 'application/octet-stream',
+          })
+      )
+    );
+  }
+
   /**
    * Returns the parsed IAIOutput for an abstraction whenever aiOutputJson exists.
    * Calls the backend GetAiAbstractionById endpoint and deserialises aiOutputJson.

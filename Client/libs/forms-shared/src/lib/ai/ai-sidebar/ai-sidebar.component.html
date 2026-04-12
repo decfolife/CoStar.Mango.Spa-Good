@@ -60,22 +60,33 @@
     class="ai-sidebar__document-tab"
   >
     <div *ngIf="documentOptions.length" class="ai-sidebar__document-toolbar">
-      <label class="ai-sidebar__document-label" for="ai-document-select">
-        Document
-      </label>
-      <select
-        id="ai-document-select"
-        class="ai-sidebar__document-select"
-        [value]="selectedDocumentId ?? ''"
-        (change)="onDocumentSelectionChange($any($event.target).value)"
-      >
-        <option
-          *ngFor="let document of documentOptions"
-          [value]="document.documentId"
+      <div class="ai-sidebar__document-toolbar-row">
+        <div class="ai-sidebar__document-input-group">
+          <label class="ai-sidebar__document-label" for="ai-document-select">
+            Document
+          </label>
+          <select
+            id="ai-document-select"
+            class="ai-sidebar__document-select"
+            [value]="selectedDocumentId ?? ''"
+            (change)="onDocumentSelectionChange($any($event.target).value)"
+          >
+            <option
+              *ngFor="let document of documentOptions"
+              [value]="document.documentId"
+            >
+              {{ document.fileName }}
+            </option>
+          </select>
+        </div>
+        <button
+          type="button"
+          class="ai-sidebar__document-popout"
+          (click)="openDocumentInNewWindow()"
         >
-          {{ document.fileName }}
-        </option>
-      </select>
+          Open In New Window
+        </button>
+      </div>
     </div>
     <div *ngIf="isDocumentLoading" class="ai-sidebar__document-loading">
       Loading document...
