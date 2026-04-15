@@ -31,6 +31,7 @@ declare module 'document-viewer-sdk' {
     filename?: string;
     toolbar?: boolean | ToolbarConfig;
     darkMode?: boolean;
+    searchQuery?: string;
     className?: string;
     style?: React.CSSProperties;
     onLoad?: (...args: any[]) => void;

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
+import { AiSidebarService } from '../../ai-sidebar/ai-sidebar.service';
 import {
   AiFormField,
   AiDropdownItem,
@@ -17,13 +18,17 @@ import {
 export class AiFormSectionComponent implements OnInit {
   @Input() section: AiFormSection;
   @Input() formGroup: FormGroup;
+  @Input() leaseId: number | null = null;
   @Input() editMode = false;
   @Input() isExpanded = true;
   @Input() isSuperUser = false;
 
   rentSchedule: AiRentScheduleSection | null = null;
 
-  constructor(private readonly formWizardService: FormWizardService) {}
+  constructor(
+    private readonly formWizardService: FormWizardService,
+    private readonly aiSidebarService: AiSidebarService
+  ) {}
 
   readonly rentScheduleColumns = [
     { dataField: 'startMonth', caption: 'Start Mo.', width: 90 },
@@ -257,6 +262,28 @@ export class AiFormSectionComponent implements OnInit {
     return (this.rentSchedule?.abatementItems?.length ?? 0) > 0;
   }
 
+  canSearchFieldInDocument(field: AiFormField): boolean {
+    return (
+      !this.editMode &&
+      !!this.leaseId &&
+      !!field.isAiOutputField &&
+      !!this.getDocumentSearchTerm(field)
+    );
+  }
+
+  openDocumentSearch(field: AiFormField): void {
+    if (!this.leaseId) {
+      return;
+    }
+
+    const searchTerm = this.getDocumentSearchTerm(field);
+    if (!searchTerm) {
+      return;
+    }
+
+    this.aiSidebarService.openDocumentSearch(this.leaseId, searchTerm);
+  }
+
   private loadDropdownOptions(): void {
     (
       this.section?.columnGroups?.reduce(
@@ -282,6 +309,32 @@ export class AiFormSectionComponent implements OnInit {
           },
         });
       });
+  }
+
+  private getDocumentSearchTerm(field: AiFormField): string | null {
+    const currentValue = this.getCurrentFieldValue(field);
+    if (currentValue == null || currentValue === '') {
+      return null;
+    }
+
+    let searchTerm: string;
+    switch (field.type) {
+      case 'dropdown':
+      case 'multiselect':
+      case 'boolean':
+      case 'currency':
+      case 'percent':
+      case 'number':
+      case 'date':
+        searchTerm = this.formatDisplayValue(field);
+        break;
+      default:
+        searchTerm = String(field.displayValue ?? currentValue);
+        break;
+    }
+
+    const trimmed = searchTerm.trim();
+    return trimmed && trimmed !== '—' ? trimmed : null;
   }
 
   private normalizeDropdownItems(items: any): AiDropdownItem[] {

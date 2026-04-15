@@ -56,6 +56,7 @@ export interface AiFormField {
   formItemFieldHeight?: number;
   radioOptions?: AiRadioOption[];
   displayValue?: string;
+  isAiOutputField?: boolean;
 }
 
 export interface AiFormSectionColumn {

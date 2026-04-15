@@ -36,7 +36,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   parentBuildingLink: { label: string; queryParams: Record<string, number> } | null = null;
   isSuperUser = false;
 
-  private leaseId: number;
+  leaseId: number;
   private cachedFormId = 0;
   private hasStartedRendering = false;
   private readonly destroy$ = new Subject<void>();
@@ -451,6 +451,10 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       formItemFieldHeight: field.formItemFieldHeight ?? undefined,
       radioOptions: this.parseFormItemParameters(field.formItemParameters),
       displayValue: this.resolveFieldDisplayValue(field, detail),
+      isAiOutputField:
+        field.formItemAnswer !== null &&
+        field.formItemAnswer !== undefined &&
+        String(field.formItemAnswer).trim() !== '',
     };
   }
 

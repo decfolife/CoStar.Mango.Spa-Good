@@ -209,6 +209,18 @@
                   <crem-icon icon="faQuoteLeft" size="xs"></crem-icon>
                   <span>{{ field.citation }}</span>
                 </div>
+
+                <button
+                  *ngIf="canSearchFieldInDocument(field)"
+                  type="button"
+                  class="ai-document-search-link"
+                  (click)="openDocumentSearch(field)"
+                >
+                  <mat-icon class="ai-document-search-link__icon"
+                    >auto_awesome</mat-icon
+                  >
+                  <span>AI Abstracted</span>
+                </button>
               </div>
             </div>
           </ng-container>

@@ -61,7 +61,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   selectedDocumentId: number | null = null;
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
+  documentSearchQuery: string | null = null;
   private loadedDocumentContextId: number | null = null;
+  private handledDocumentRequestId = 0;
 
   private isDragging = false;
   private dragStartX = 0;
@@ -136,6 +138,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           ([prevState, prevParams], [nextState, nextParams]) =>
             prevState.isOpen === nextState.isOpen &&
             prevState.leaseId === nextState.leaseId &&
+            prevState.documentRequestId === nextState.documentRequestId &&
             prevParams['oid'] === nextParams['oid']
         )
       )
@@ -157,7 +160,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.documentOptions = [];
             this.selectedDocumentId = null;
             this.isDocumentLoading = false;
+            this.documentSearchQuery = null;
             this.loadedDocumentContextId = null;
+          }
+
+          if (state.documentRequestId !== this.handledDocumentRequestId) {
+            this.handledDocumentRequestId = state.documentRequestId;
+            this.documentSearchQuery = state.documentSearchQuery?.trim() || null;
+            this.activeTabIndex = 0;
           }
 
           if (this.activeTabIndex === 0) {
@@ -180,7 +190,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.selectedDocumentId = null;
           this.isDocumentLoading = false;
           this.currentAiAbstractionId = null;
+          this.documentSearchQuery = null;
           this.loadedDocumentContextId = null;
+          this.handledDocumentRequestId = 0;
           this.activeTabIndex = 1;
         }
       });
