@@ -24,6 +24,10 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   searchText = '';
   selectedPortfolioId: number | null = null;
   portfolioOptions: Array<{ id: number; name: string }> = [];
+  private readonly dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
 
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
@@ -107,6 +111,19 @@ export class AiListPageComponent implements OnInit, OnDestroy {
       this.grid.instance,
       'AI Lease Abstractions'
     );
+  }
+
+  formatDateTime(value: string | null | undefined): string {
+    if (!value) {
+      return '—';
+    }
+
+    const parsedValue = new Date(value);
+    if (Number.isNaN(parsedValue.getTime())) {
+      return '—';
+    }
+
+    return this.dateTimeFormatter.format(parsedValue);
   }
 
   private loadLeases(showLoading = false): void {

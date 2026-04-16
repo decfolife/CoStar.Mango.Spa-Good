@@ -132,18 +132,16 @@
       <dxi-column
         dataField="createdDate"
         caption="Submitted"
-        dataType="date"
-        format="MM/dd/yyyy"
-        [width]="120"
+        [width]="150"
         [sortOrder]="'desc'"
+        cellTemplate="submittedDateTemplate"
       ></dxi-column>
 
       <dxi-column
         dataField="lastModifiedDate"
         caption="Last Updated"
-        dataType="date"
-        format="MM/dd/yyyy"
-        [width]="130"
+        [width]="160"
+        cellTemplate="lastUpdatedDateTemplate"
       ></dxi-column>
 
       <div *dxTemplate="let cell of 'tenantLinkTemplate'">
@@ -162,6 +160,14 @@
           ></span>
           {{ cell.data.status }}
         </span>
+      </div>
+
+      <div *dxTemplate="let cell of 'submittedDateTemplate'">
+        <span>{{ formatDateTime(cell.data.createdDate) }}</span>
+      </div>
+
+      <div *dxTemplate="let cell of 'lastUpdatedDateTemplate'">
+        <span>{{ formatDateTime(cell.data.lastModifiedDate) }}</span>
       </div>
     </dx-data-grid>
   </div>

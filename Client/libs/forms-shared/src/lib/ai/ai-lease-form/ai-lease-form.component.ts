@@ -13,6 +13,7 @@ import { ObjectType } from '@mango/data-models/lib-data-models';
 import { ObjectTypeType } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { BreadCrumb } from '@mango/data-models/lib-data-models';
+import { ObjectParentLinker } from '../../model/dynamic-forms.interface';
 
 @Component({
   selector: 'mango-ai-lease-form',
@@ -264,19 +265,18 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           detail?.buildingId ?? 0,
           detail?.buildingId ? ObjectType.BUILDING : 0
         ).pipe(catchError(() => of({ data: {} }))),
-        buildingForm:
-          detail?.buildingId
-            ? this.dynamicFormsService
-                .getFormForObjectTypeType(ObjectTypeType.Building)
-                .pipe(catchError(() => of({ data: null })))
-            : of({ data: null }),
+        parentLink: this.dynamicFormsService
+          .getParentLink(
+            this.leaseId,
+            AiLeaseFormComponent.LEASE_OBJECT_TYPE_ID
+          )
+          .pipe(catchError(() => of({ data: null }))),
       })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: ({ mappedForm, dropdownValues, buildingForm }) => {
+          next: ({ mappedForm, dropdownValues, parentLink }) => {
             this.parentBuildingLink = this.buildParentBuildingLink(
-              detail,
-              buildingForm?.data
+              parentLink?.data ?? null
             );
             this.sections = this.groupIntoSections(
               mappedForm.fields,
@@ -553,20 +553,19 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
   }
 
   private buildParentBuildingLink(
-    detail: any,
-    buildingFormId: number | null | undefined
+    parentLink: ObjectParentLinker | null | undefined
   ): { label: string; queryParams: Record<string, number> } | null {
-    if (!detail?.buildingId || !detail?.buildingName || !buildingFormId) {
+    if (!parentLink?.formId || !parentLink?.objectId || !parentLink?.labelText) {
       return null;
     }
 
     return {
-      label: `Building: ${detail.buildingName}`,
+      label: parentLink.labelText,
       queryParams: {
-        fid: Number(buildingFormId),
-        oid: Number(detail.buildingId),
+        fid: Number(parentLink.formId),
+        oid: Number(parentLink.objectId),
         otid: ObjectType.BUILDING,
-        ottid: ObjectTypeType.Building,
+        ottid: Number(parentLink.objectTypeTypeId ?? ObjectTypeType.Building),
       },
     };
   }
