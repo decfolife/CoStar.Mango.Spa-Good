@@ -6,6 +6,7 @@ import { AiLeaseListItem } from '../models/ai-form.model';
 import { AiLeaseService } from '../services/ai-lease.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ExportDevexDatagridService } from '@mango/core-shared';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Component({
   selector: 'mango-ai-list-page',
@@ -24,7 +25,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   searchText = '';
   selectedPortfolioId: number | null = null;
   portfolioOptions: Array<{ id: number; name: string }> = [];
-  private readonly dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+  private dateTimeFormatter = new Intl.DateTimeFormat('en-US', {
     dateStyle: 'short',
     timeStyle: 'short',
   });
@@ -36,10 +37,21 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     private readonly aiLeaseService: AiLeaseService,
     private readonly exportToExcelService: ExportDevexDatagridService,
     private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly mangoAppFacade: MangoAppFacade
   ) {}
 
   ngOnInit(): void {
+    this.mangoAppFacade.dateFormatPreference$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((format) => {
+        const locale = format === 'dd.MM.yyyy' ? 'en-GB' : 'en-US';
+        this.dateTimeFormatter = new Intl.DateTimeFormat(locale, {
+          dateStyle: 'short',
+          timeStyle: 'short',
+        });
+      });
+
     this.activatedRoute.queryParamMap
       .pipe(takeUntil(this.destroy$))
       .subscribe({
