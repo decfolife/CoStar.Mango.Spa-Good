@@ -6,7 +6,6 @@ import { AiLeaseListItem } from '../models/ai-form.model';
 import { AiLeaseService } from '../services/ai-lease.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ExportDevexDatagridService } from '@mango/core-shared';
-import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 
 @Component({
   selector: 'mango-ai-list-page',
@@ -25,10 +24,6 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   searchText = '';
   selectedPortfolioId: number | null = null;
   portfolioOptions: Array<{ id: number; name: string }> = [];
-  private dateTimeFormatter = new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  });
 
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
@@ -37,21 +32,10 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     private readonly aiLeaseService: AiLeaseService,
     private readonly exportToExcelService: ExportDevexDatagridService,
     private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly mangoAppFacade: MangoAppFacade
+    private readonly activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.mangoAppFacade.dateFormatPreference$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((format) => {
-        const locale = format === 'dd.MM.yyyy' ? 'en-GB' : 'en-US';
-        this.dateTimeFormatter = new Intl.DateTimeFormat(locale, {
-          dateStyle: 'short',
-          timeStyle: 'short',
-        });
-      });
-
     this.activatedRoute.queryParamMap
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -126,16 +110,10 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   }
 
   formatDateTime(value: string | null | undefined): string {
-    if (!value) {
-      return '—';
-    }
-
-    const parsedValue = new Date(value);
-    if (Number.isNaN(parsedValue.getTime())) {
-      return '—';
-    }
-
-    return this.dateTimeFormatter.format(parsedValue);
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    return date.toLocaleString('en-US');
   }
 
   private loadLeases(showLoading = false): void {
