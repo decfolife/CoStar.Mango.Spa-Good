@@ -265,12 +265,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           detail?.buildingId ?? 0,
           detail?.buildingId ? ObjectType.BUILDING : 0
         ).pipe(catchError(() => of({ data: {} }))),
-        parentLink: this.dynamicFormsService
-          .getParentLink(
-            this.leaseId,
-            AiLeaseFormComponent.LEASE_OBJECT_TYPE_ID
-          )
-          .pipe(catchError(() => of({ data: null }))),
+        parentLink: detail?.buildingId
+          ? this.dynamicFormsService
+              .getParentLink(detail.buildingId, ObjectType.BUILDING)
+              .pipe(catchError(() => of({ data: null })))
+          : of({ data: null }),
       })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -659,11 +658,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       field?.formItemSectionDetail?.formItemLabel,
     ]
       .filter(Boolean)
-      .map((value: string) => value.toLowerCase());
+      .map((value: string) => this.normalizeCandidate(value));
 
     if (
       candidates.some((value) =>
-        ['portfolio', 'portfolioid', 'mastergroup', 'company', 'companyid'].includes(value)
+        ['portfolio', 'portfolioid', 'mastergroup', 'mastergrouppid', 'company', 'companyid', 'portfolioname'].includes(value)
       )
     ) {
       return detail?.portfolioName ?? undefined;
@@ -671,7 +670,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
     if (
       candidates.some((value) =>
-        ['buildingid', 'parentbuildingid'].includes(value)
+        ['building', 'buildingid', 'buildingname', 'parentbuildingid', 'propertyname', 'property'].includes(value)
       )
     ) {
       return detail?.buildingName ?? undefined;
