@@ -69,12 +69,12 @@
           <select
             id="ai-document-select"
             class="ai-sidebar__document-select"
-            [value]="selectedDocumentId ?? ''"
+            [value]="selectedDocumentGuid ?? ''"
             (change)="onDocumentSelectionChange($any($event.target).value)"
           >
             <option
               *ngFor="let document of documentOptions"
-              [value]="document.documentId"
+              [value]="document.documentGuid"
             >
               {{ document.fileName }}
             </option>

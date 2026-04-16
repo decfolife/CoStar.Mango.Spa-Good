@@ -33,6 +33,7 @@ interface SidebarSection {
 }
 
 interface DocumentOption {
+  documentGuid: string;
   documentId: number;
   fileName: string;
   mimeType?: string;
@@ -58,7 +59,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentFileName: string | null = null;
   documentLoadError: string | null = null;
   documentOptions: DocumentOption[] = [];
-  selectedDocumentId: number | null = null;
+  selectedDocumentGuid: string | null = null;
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
   documentSearchQuery: string | null = null;
@@ -158,7 +159,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.documentFileName = null;
             this.documentLoadError = null;
             this.documentOptions = [];
-            this.selectedDocumentId = null;
+            this.selectedDocumentGuid = null;
             this.isDocumentLoading = false;
             this.documentSearchQuery = null;
             this.loadedDocumentContextId = null;
@@ -187,7 +188,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentFileName = null;
           this.documentLoadError = null;
           this.documentOptions = [];
-          this.selectedDocumentId = null;
+          this.selectedDocumentGuid = null;
           this.isDocumentLoading = false;
           this.currentAiAbstractionId = null;
           this.documentSearchQuery = null;
@@ -229,14 +230,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDocumentSelectionChange(documentId: string): void {
-    const resolvedDocumentId = Number(documentId);
-    if (!resolvedDocumentId || resolvedDocumentId === this.selectedDocumentId) {
+  onDocumentSelectionChange(documentGuid: string): void {
+    if (!documentGuid || documentGuid === this.selectedDocumentGuid) {
       return;
     }
 
     const document = this.documentOptions.find(
-      (item) => item.documentId === resolvedDocumentId
+      (item) => item.documentGuid === documentGuid
     );
     if (!document) {
       return;
@@ -253,8 +253,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     const tree = this.router.createUrlTree(
       ['/crem/portfolio/ai-abstractions/document', this.currentAiAbstractionId],
       {
-        queryParams: this.selectedDocumentId
-          ? { documentId: this.selectedDocumentId }
+        queryParams: this.selectedDocumentGuid
+          ? { documentGuid: this.selectedDocumentGuid }
           : {},
       }
     );
@@ -325,7 +325,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentSource = null;
     this.documentFileName = null;
     this.documentOptions = [];
-    this.selectedDocumentId = null;
+    this.selectedDocumentGuid = null;
     this.isDocumentLoading = true;
 
     this.aiLeaseService
@@ -378,14 +378,15 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     const validDocuments =
       documents
         ?.map((document) => ({
+          documentGuid: document.documentGuid ?? '',
           documentId: document.documentId ?? 0,
           fileName:
             document.fileName ??
             document.documentFileName ??
-            `Document ${document.documentId ?? ''}`.trim(),
+            `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim(),
           mimeType: document.mimeType,
         }))
-        .filter((document) => document.documentId > 0) ?? [];
+        .filter((document) => Boolean(document.documentGuid)) ?? [];
 
     this.documentOptions = validDocuments;
 
@@ -402,7 +403,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private loadDocumentFile(document: DocumentOption): void {
-    this.selectedDocumentId = document.documentId;
+    this.selectedDocumentGuid = document.documentGuid;
     this.documentFileName = document.fileName;
     this.documentLoadError = null;
     this.documentSource = null;
@@ -410,6 +411,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
     this.aiLeaseService
       .getAbstractionDocumentFile({
+        documentGuid: document.documentGuid,
         documentId: document.documentId,
         fileName: document.fileName,
         mimeType: document.mimeType,
@@ -457,7 +459,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       if (!this.documentSource) {
         const selectedDocument =
           this.documentOptions.find(
-            (document) => document.documentId === this.selectedDocumentId
+            (document) => document.documentGuid === this.selectedDocumentGuid
           ) ?? this.documentOptions[0];
 
         if (selectedDocument) {

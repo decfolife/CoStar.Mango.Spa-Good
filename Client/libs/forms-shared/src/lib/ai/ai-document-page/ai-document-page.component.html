@@ -9,12 +9,12 @@
       <select
         id="ai-document-page-select"
         class="ai-document-page__select"
-        [value]="selectedDocumentId ?? ''"
+        [value]="selectedDocumentGuid ?? ''"
         (change)="onDocumentSelectionChange($any($event.target).value)"
       >
         <option
           *ngFor="let document of documentOptions"
-          [value]="document.documentId"
+          [value]="document.documentGuid ?? ''"
         >
           {{ document.fileName }}
         </option>

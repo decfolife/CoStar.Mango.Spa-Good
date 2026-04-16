@@ -9,6 +9,7 @@ import {
 } from '../services/ai-lease.service';
 
 interface DocumentOption {
+  documentGuid: string | null;
   documentId: number;
   fileName: string;
   mimeType?: string;
@@ -21,7 +22,7 @@ interface DocumentOption {
 })
 export class AiDocumentPageComponent implements OnInit, OnDestroy {
   documentOptions: DocumentOption[] = [];
-  selectedDocumentId: number | null = null;
+  selectedDocumentGuid: string | null = null;
   documentSource: DocumentSource | null = null;
   documentFileName: string | null = null;
   isLoading = false;
@@ -52,14 +53,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onDocumentSelectionChange(documentId: string): void {
-    const resolvedDocumentId = Number(documentId);
-    if (!resolvedDocumentId || resolvedDocumentId === this.selectedDocumentId) {
+  onDocumentSelectionChange(documentGuid: string): void {
+    if (!documentGuid || documentGuid === this.selectedDocumentGuid) {
       return;
     }
 
     const document = this.documentOptions.find(
-      (item) => item.documentId === resolvedDocumentId
+      (item) => item.documentGuid === documentGuid
     );
     if (!document) {
       return;
@@ -74,7 +74,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.documentSource = null;
     this.documentFileName = null;
     this.documentOptions = [];
-    this.selectedDocumentId = null;
+    this.selectedDocumentGuid = null;
 
     this.aiLeaseService
       .getAbstractionDocuments(aiAbstractionId)
@@ -90,11 +90,11 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
             return;
           }
 
-          const requestedDocumentId =
-            Number(this.route.snapshot.queryParamMap.get('documentId') ?? 0) ||
+          const requestedDocumentGuid =
+            this.route.snapshot.queryParamMap.get('documentGuid')?.trim() ||
             null;
           const initialDocument =
-            options.find((item) => item.documentId === requestedDocumentId) ??
+            options.find((item) => item.documentGuid === requestedDocumentGuid) ??
             options[0];
 
           this.loadDocumentFile(initialDocument);
@@ -107,7 +107,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   }
 
   private loadDocumentFile(document: DocumentOption): void {
-    this.selectedDocumentId = document.documentId;
+    this.selectedDocumentGuid = document.documentGuid;
     this.documentFileName = document.fileName;
     this.documentSource = null;
     this.errorMessage = null;
@@ -115,6 +115,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
 
     this.aiLeaseService
       .getAbstractionDocumentFile({
+        documentGuid: document.documentGuid ?? undefined,
         documentId: document.documentId,
         fileName: document.fileName,
         mimeType: document.mimeType,
@@ -137,13 +138,14 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   private mapDocuments(documents: AiAbstractionDocument[]): DocumentOption[] {
     return documents
       .map((document) => ({
+        documentGuid: document.documentGuid ?? null,
         documentId: document.documentId ?? 0,
         fileName:
           document.fileName ??
           document.documentFileName ??
-          `Document ${document.documentId ?? ''}`.trim(),
+          `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim(),
         mimeType: document.mimeType,
       }))
-      .filter((document) => document.documentId > 0);
+      .filter((document) => Boolean(document.documentGuid));
   }
 }

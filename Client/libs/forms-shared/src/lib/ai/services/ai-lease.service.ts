@@ -240,7 +240,7 @@ export class AiLeaseService {
     const fileName =
       document.fileName ??
       document.documentFileName ??
-      `document-${document.documentId ?? 'unknown'}`;
+      `document-${document.documentGuid ?? document.documentId ?? 'unknown'}`;
 
     return this.getAbstractionDocumentBlob(document).pipe(
       map(
