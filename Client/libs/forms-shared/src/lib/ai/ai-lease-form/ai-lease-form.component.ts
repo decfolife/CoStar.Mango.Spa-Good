@@ -712,22 +712,44 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       return this.toBoolean(field.value);
     }
 
+    if (field.type === 'dropdown') {
+      return this.resolveDropdownId(field, field.value);
+    }
+
     if (field.type === 'multiselect') {
-      if (Array.isArray(field.value)) {
-        return field.value;
-      }
+      const rawValues = Array.isArray(field.value)
+        ? field.value
+        : typeof field.value === 'string' && field.value.trim().length
+          ? field.value.split(',').map((v) => v.trim()).filter(Boolean)
+          : [];
 
-      if (typeof field.value === 'string' && field.value.trim().length) {
-        return field.value
-          .split(',')
-          .map((value) => value.trim())
-          .filter(Boolean);
-      }
-
-      return [];
+      return rawValues.map((v) => this.resolveDropdownId(field, v) ?? v);
     }
 
     return field.value ?? null;
+  }
+
+  private resolveDropdownId(field: AiFormField, value: any): any {
+    if (value == null || !field.dropdownItems?.length) {
+      return value ?? null;
+    }
+
+    const valueExpr = field.valueExpr ?? 'id';
+    const displayExpr = field.displayExpr ?? 'name';
+
+    // Already matches a known ID — no resolution needed
+    const byId = field.dropdownItems.find(
+      (item) => String((item as any)[valueExpr]) === String(value)
+    );
+    if (byId) return (byId as any)[valueExpr];
+
+    // Match by display name (case-insensitive) — AI returns text, we need the ID
+    const byName = field.dropdownItems.find(
+      (item) =>
+        String((item as any)[displayExpr]).toLowerCase() ===
+        String(value).toLowerCase()
+    );
+    return byName ? (byName as any)[valueExpr] : value;
   }
 
   private toBoolean(value: any): boolean {
