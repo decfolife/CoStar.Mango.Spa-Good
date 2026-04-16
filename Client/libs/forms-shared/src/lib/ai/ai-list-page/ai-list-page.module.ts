@@ -10,7 +10,6 @@ import {
 } from '@mango/ui-shared/lib-ui-elements';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AddAiLeaseModalModule } from 'libs/ui-shared/lib-ui-shared/src/lib/add-ai-lease-modal/add-ai-lease-modal.module';
 import { AiListPageComponent } from './ai-list-page.component';
 
 @NgModule({
@@ -24,7 +23,6 @@ import { AiListPageComponent } from './ai-list-page.component';
     DropdownModule,
     SkeletonModule,
     MatDialogModule,
-    AddAiLeaseModalModule,
   ],
   providers: [ExportDevexDatagridService],
   exports: [AiListPageComponent],
