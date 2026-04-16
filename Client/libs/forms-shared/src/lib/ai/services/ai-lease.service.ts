@@ -81,6 +81,7 @@ export interface CreateLeaseAbstractionPipelineJobResponse {
 
 export interface AiAbstractionDocument {
   documentId?: number;
+  documentGuid?: string;
   aiAbstractionId?: number;
   fileName?: string;
   documentFileName?: string;
@@ -217,12 +218,12 @@ export class AiLeaseService {
       return explicitUrl;
     }
 
-    const documentId = document.documentId;
-    if (!documentId) {
+    const documentGuid = document.documentGuid;
+    if (!documentGuid) {
       return null;
     }
 
-    return `${this.apiUrl}AiAbstractions/GetAiAbstractionDocumentFile?documentId=${documentId}`;
+    return `${this.apiUrl}AiAbstractions/GetAiAbstractionDocumentFile?documentGuid=${documentGuid}`;
   }
 
   getAbstractionDocumentBlob(document: AiAbstractionDocument): Observable<Blob> {

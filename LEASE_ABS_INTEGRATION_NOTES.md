@@ -199,11 +199,22 @@ Required settings:
 - `LeaseAbstractionApi:BaseUrl`
 - `LeaseAbstractionApi:PollIntervalSeconds`
 - `LeaseAbstractionApi:MaxPollAttempts`
+- `LeaseAbstractionApi:ApiKeyHeaderName`
+- `LeaseAbstractionApi:ApiKey`
+- `LeaseAbstractionApi:AuthorizationScheme`
+- `LeaseAbstractionApi:AuthorizationToken`
 - `LeaseAbstractionApi:ResultAttachmentTypeId`
 - `LeaseAbstractionApi:AwsRegion`
 - `LeaseAbstractionApi:KmsKeyId`
 
 3. Validate that FormsEngine can authenticate to `lease-abs-api` in the real environment.
+
+Important auth note:
+
+- FormsEngine inbound auth and `lease-abs-api` outbound auth are separate concerns
+- the FormsEngine user bearer token should not be forwarded to `lease-abs-api`
+- for development, `lease-abs-api` can be called with a configured API key header
+- the current FormsEngine branch has been updated to use `LeaseAbstractionApi` config for outbound auth instead of forwarding `Request.Headers.Authorization`
 
 4. Validate that encrypted result downloads can be decrypted in the real environment.
 
