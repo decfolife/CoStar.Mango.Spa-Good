@@ -7,7 +7,7 @@ import { AiLeaseService } from '../services/ai-lease.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ExportDevexDatagridService } from '@mango/core-shared';
 import { MatDialog } from '@angular/material/dialog';
-import { AddAiLeaseModalComponent } from '@mango/ui-shared/lib-ui-shared';
+import { AddAiLeaseModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-ai-lease-modal/add-ai-lease-modal.component';
 
 @Component({
   selector: 'mango-ai-list-page',
