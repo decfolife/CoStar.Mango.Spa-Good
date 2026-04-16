@@ -427,6 +427,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       dropdownValuesByFormItemId[String(field.formItemID)] ?? []
     );
 
+    const detailValue = this.resolveDetailValue(field, detail);
+    const resolvedValue = field.formItemAnswer ?? detailValue?.id ?? null;
+
     return {
       key: String(field.formItemID),
       label:
@@ -435,7 +438,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         field.formItemFriendlyName ||
         field.formItemName,
       type: this.resolveAiFieldType(field),
-      value: field.formItemAnswer ?? null,
+      value: resolvedValue,
       dropdownId: field.dropdownID || undefined,
       requestTypeId: field.requestTypeID || undefined,
       dropdownItems: dropdownItems.length ? dropdownItems : undefined,
@@ -450,7 +453,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       formItemFieldWidth: field.formItemFieldWidth ?? undefined,
       formItemFieldHeight: field.formItemFieldHeight ?? undefined,
       radioOptions: this.parseFormItemParameters(field.formItemParameters),
-      displayValue: this.resolveFieldDisplayValue(field, detail),
+      displayValue: detailValue?.displayName,
       isAiOutputField:
         field.formItemAnswer !== null &&
         field.formItemAnswer !== undefined &&
@@ -645,10 +648,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     return options.length ? options : undefined;
   }
 
-  private resolveFieldDisplayValue(field: any, detail?: any): string | undefined {
-    if (!detail) {
-      return undefined;
-    }
+  private resolveDetailValue(
+    field: any,
+    detail?: any
+  ): { id: any; displayName: string } | undefined {
+    if (!detail) return undefined;
 
     const candidates = [
       field?.formItemSystemName,
@@ -661,19 +665,19 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       .map((value: string) => this.normalizeCandidate(value));
 
     if (
-      candidates.some((value) =>
-        ['portfolio', 'portfolioid', 'mastergroup', 'mastergrouppid', 'company', 'companyid', 'portfolioname'].includes(value)
-      )
+      candidates.some((v) =>
+        ['portfolio', 'portfolioid', 'mastergroup', 'mastergrouppid', 'company', 'companyid', 'portfolioname'].includes(v)
+      ) && detail.portfolioId && detail.portfolioName
     ) {
-      return detail?.portfolioName ?? undefined;
+      return { id: detail.portfolioId, displayName: detail.portfolioName };
     }
 
     if (
-      candidates.some((value) =>
-        ['building', 'buildingid', 'buildingname', 'parentbuildingid', 'propertyname', 'property'].includes(value)
-      )
+      candidates.some((v) =>
+        ['building', 'buildingid', 'buildingname', 'parentbuildingid', 'propertyname', 'property'].includes(v)
+      ) && detail.buildingId && detail.buildingName
     ) {
-      return detail?.buildingName ?? undefined;
+      return { id: detail.buildingId, displayName: detail.buildingName };
     }
 
     return undefined;
