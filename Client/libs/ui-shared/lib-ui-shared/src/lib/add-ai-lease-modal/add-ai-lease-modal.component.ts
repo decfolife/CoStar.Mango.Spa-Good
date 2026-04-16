@@ -8,7 +8,7 @@ import {
   VALIDATION_ERROR,
 } from '@mango/data-models/lib-data-models';
 import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
-import { AiLeaseService } from '@mango/forms-shared';
+import { AiLeaseService } from 'libs/forms-shared/src/lib/ai/services/ai-lease.service';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
