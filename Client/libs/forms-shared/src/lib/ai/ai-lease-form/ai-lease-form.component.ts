@@ -282,6 +282,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
               mappedForm.fields,
               mappedForm.sections,
               dropdownValues?.data ?? {},
+              aiOutput,
               detail
             );
             this.sectionsExpanded = this.sections.map(() => true);
@@ -366,17 +367,27 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     fields: any[],
     sections: any[],
     dropdownValuesByFormItemId: Record<string, any[]> = {},
+    aiOutput?: IAIOutput,
     detail?: any
   ): AiFormSection[] {
     return sections
       .slice()
       .sort((a, b) => a.formSectionSortOrder - b.formSectionSortOrder)
+      .filter((section) => !this.isParentLinkSection(section))
       .map((section) => {
         const normalizedColumns = this.normalizeSectionColumns(section.formSectionColumns);
         const sectionFields = fields
           .filter((f) => !this.isParentLinkField(f))
           .filter((f) => this.getFieldSectionId(f) === section.formSectionID)
-          .map((f, index) => this.toAiFormField(f, dropdownValuesByFormItemId, index, detail));
+          .map((f, index) =>
+            this.toAiFormField(
+              f,
+              dropdownValuesByFormItemId,
+              index,
+              aiOutput,
+              detail
+            )
+          );
         const outlierFields = sectionFields.filter(
           (field) => (field.column ?? 1) > normalizedColumns
         );
@@ -415,6 +426,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     field: any,
     dropdownValuesByFormItemId: Record<string, any[]> = {},
     sourceIndex = 0,
+    aiOutput?: IAIOutput,
     detail?: any
   ): AiFormField {
     const sectionDetail = field.formItemSectionDetail ?? {};
@@ -426,6 +438,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     const dropdownItems = this.normalizeDropdownItems(
       dropdownValuesByFormItemId[String(field.formItemID)] ?? []
     );
+    const fieldType = this.resolveAiFieldType(field);
+    const fallbackValue = this.resolveAiFieldValue(field, aiOutput, detail);
+    const resolvedValue = this.hasMeaningfulValue(field.formItemAnswer)
+      ? field.formItemAnswer
+      : fallbackValue;
 
     return {
       key: String(field.formItemID),
@@ -434,8 +451,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         field.formItemLabel ||
         field.formItemFriendlyName ||
         field.formItemName,
-      type: this.resolveAiFieldType(field),
-      value: field.formItemAnswer ?? null,
+      type: fieldType,
+      value: resolvedValue,
       dropdownId: field.dropdownID || undefined,
       requestTypeId: field.requestTypeID || undefined,
       dropdownItems: dropdownItems.length ? dropdownItems : undefined,
@@ -450,11 +467,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       formItemFieldWidth: field.formItemFieldWidth ?? undefined,
       formItemFieldHeight: field.formItemFieldHeight ?? undefined,
       radioOptions: this.parseFormItemParameters(field.formItemParameters),
-      displayValue: this.resolveFieldDisplayValue(field, detail),
+      displayValue: this.resolveFieldDisplayValue(field, resolvedValue, detail),
       isAiOutputField:
-        field.formItemAnswer !== null &&
-        field.formItemAnswer !== undefined &&
-        String(field.formItemAnswer).trim() !== '',
+        this.hasMeaningfulValue(resolvedValue),
     };
   }
 
@@ -533,6 +548,10 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     return Math.min(Math.floor(parsedColumns), 4);
   }
 
+  private isParentLinkSection(section: any): boolean {
+    return this.normalizeCandidate(section?.formSectionName) === 'leaseparentlink';
+  }
+
   private isParentLinkField(field: any): boolean {
     const candidates = [
       field?.formItemSystemName,
@@ -542,9 +561,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       field?.formItemSectionDetail?.formItemLabel,
     ]
       .filter(Boolean)
-      .map((value: string) => value.toLowerCase());
+      .map((value: string) => this.normalizeCandidate(value));
 
-    return candidates.includes('lease_parentlink');
+    return candidates.includes('leaseparentlink');
   }
 
   private buildParentBuildingLink(
@@ -642,20 +661,20 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     return options.length ? options : undefined;
   }
 
-  private resolveFieldDisplayValue(field: any, detail?: any): string | undefined {
+  private resolveFieldDisplayValue(
+    field: any,
+    resolvedValue: any,
+    detail?: any
+  ): string | undefined {
+    if (this.hasMeaningfulValue(resolvedValue)) {
+      return undefined;
+    }
+
     if (!detail) {
       return undefined;
     }
 
-    const candidates = [
-      field?.formItemSystemName,
-      field?.formItemName,
-      field?.formItemFriendlyName,
-      field?.formItemLabel,
-      field?.formItemSectionDetail?.formItemLabel,
-    ]
-      .filter(Boolean)
-      .map((value: string) => value.toLowerCase());
+    const candidates = this.getFieldCandidates(field);
 
     if (
       candidates.some((value) =>
@@ -667,13 +686,212 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
 
     if (
       candidates.some((value) =>
-        ['building', 'buildingid', 'parentbuildingid', 'buildingname'].includes(value)
+        ['buildingid', 'parentbuildingid'].includes(value)
       )
     ) {
       return detail?.buildingName ?? undefined;
     }
 
     return undefined;
+  }
+
+  private resolveAiFieldValue(
+    field: any,
+    aiOutput?: IAIOutput,
+    detail?: any
+  ): any {
+    if (!aiOutput) {
+      return null;
+    }
+
+    const candidates = this.getFieldCandidates(field);
+    const address = aiOutput.basics?.addresses?.value?.[0];
+    const parsedAddress = this.parseAddress(address);
+    const suite = aiOutput.basics?.suite?.value ?? null;
+    const tenant = aiOutput.basics?.tenant?.value ?? null;
+    const landlord = aiOutput.basics?.landlord?.value ?? null;
+    const spaceUse = aiOutput.basics?.spaceUse?.value ?? null;
+    const leaseType = aiOutput.basics?.leaseType?.value ?? null;
+    const dealType = aiOutput.basics?.dealType?.value ?? null;
+    const squareFootage = aiOutput.basics?.squareFootage?.value ?? null;
+    const entireBuilding = aiOutput.basics?.entireBuilding?.value ?? null;
+    const signDate = aiOutput.dates?.leaseSignDate?.value ?? null;
+    const commencementDate =
+      aiOutput.dates?.leaseCommencementDate?.value ??
+      aiOutput.dates?.leaseStartDate?.value ??
+      null;
+    const rentCommencementDate = aiOutput.dates?.rentCommencementDate?.value ?? null;
+    const leaseEndDate = aiOutput.dates?.leaseEndDate?.value ?? null;
+    const termMonths = aiOutput.dates?.leaseTermInMonths?.value ?? null;
+    const effectiveRent = aiOutput.rent?.effectiveRent?.value ?? null;
+    const annualEscalation = aiOutput.rent?.annualEscalation?.value?.percent ?? null;
+    const tiAllowance = aiOutput.rent?.tenantImprovementAllowance?.value ?? null;
+
+    if (candidates.some((value) => ['tenant', 'tenantname'].includes(value))) {
+      return tenant;
+    }
+
+    if (candidates.some((value) => ['landlord', 'landlordname', 'legalentity'].includes(value))) {
+      return landlord;
+    }
+
+    if (candidates.some((value) => ['buildingname'].includes(value))) {
+      return detail?.buildingName ?? null;
+    }
+
+    if (candidates.some((value) => ['address1', 'streetaddress', 'propertyaddress'].includes(value))) {
+      return parsedAddress.address1;
+    }
+
+    if (candidates.some((value) => ['address2'].includes(value))) {
+      return parsedAddress.address2;
+    }
+
+    if (candidates.some((value) => ['city'].includes(value))) {
+      return parsedAddress.city;
+    }
+
+    if (candidates.some((value) => ['state'].includes(value))) {
+      return parsedAddress.state;
+    }
+
+    if (candidates.some((value) => ['zip', 'zipcode', 'postalcode'].includes(value))) {
+      return parsedAddress.zip;
+    }
+
+    if (candidates.some((value) => ['floorsuite', 'suite'].includes(value))) {
+      return suite;
+    }
+
+    if (candidates.some((value) => ['primaryuse', 'spaceuse'].includes(value))) {
+      return spaceUse;
+    }
+
+    if (candidates.some((value) => ['leasetype'].includes(value))) {
+      return leaseType;
+    }
+
+    if (candidates.some((value) => ['dealtype'].includes(value))) {
+      return dealType;
+    }
+
+    if (candidates.some((value) => ['squarefootage', 'rentablearea', 'grossarea', 'leasedarea', 'sqft', 'netrentablearea'].includes(value))) {
+      return squareFootage;
+    }
+
+    if (candidates.some((value) => ['entirebuilding'].includes(value))) {
+      return entireBuilding;
+    }
+
+    if (candidates.some((value) => ['leasesigndate', 'signdate', 'executiondate', 'signeddate'].includes(value))) {
+      return signDate;
+    }
+
+    if (candidates.some((value) => ['leasecommencementdate', 'commencementdate', 'commencement', 'leasestartdate', 'begindate', 'startdate', 'leasebegindate'].includes(value))) {
+      return commencementDate;
+    }
+
+    if (candidates.some((value) => ['rentcommencementdate', 'rentcommencement', 'rcd'].includes(value))) {
+      return rentCommencementDate;
+    }
+
+    if (candidates.some((value) => ['leaseenddate', 'enddate', 'expirationdate', 'expiration'].includes(value))) {
+      return leaseEndDate;
+    }
+
+    if (candidates.some((value) => ['leasetermmonths', 'termmonths', 'terminmonths', 'term'].includes(value))) {
+      return termMonths;
+    }
+
+    if (candidates.some((value) => ['effectiverent', 'baserent', 'annualrent', 'rentpersf'].includes(value))) {
+      return effectiveRent;
+    }
+
+    if (candidates.some((value) => ['annualescalation', 'escalationrate', 'escalation', 'rentescalation'].includes(value))) {
+      return annualEscalation;
+    }
+
+    if (candidates.some((value) => ['tiallowance', 'tenantimprovementallowance', 'tenantimprovement', 'tiamount'].includes(value))) {
+      return tiAllowance;
+    }
+
+    return null;
+  }
+
+  private getFieldCandidates(field: any): string[] {
+    return [
+      field?.formItemSystemName,
+      field?.formItemName,
+      field?.formItemFriendlyName,
+      field?.formItemLabel,
+      field?.formItemSectionDetail?.formItemLabel,
+    ]
+      .filter(Boolean)
+      .map((value: string) => this.normalizeCandidate(value));
+  }
+
+  private normalizeCandidate(value: string | null | undefined): string {
+    return String(value ?? '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+  }
+
+  private hasMeaningfulValue(value: any): boolean {
+    if (value === null || value === undefined) {
+      return false;
+    }
+
+    if (typeof value === 'string') {
+      return value.trim().length > 0 && value.trim() !== '—';
+    }
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    return true;
+  }
+
+  private parseAddress(address: any): {
+    address1: string | null;
+    address2: string | null;
+    city: string | null;
+    state: string | null;
+    zip: string | null;
+  } {
+    const address1 = address?.StreetAddress?.trim?.() || null;
+    const cityStateZip = address?.CityStateZip?.trim?.() || null;
+
+    if (!cityStateZip) {
+      return {
+        address1,
+        address2: null,
+        city: null,
+        state: null,
+        zip: null,
+      };
+    }
+
+    const match = cityStateZip.match(/^(.*?),\s*([A-Za-z ]+?)\s+(\d{5}(?:-\d{4})?)$/);
+    if (match) {
+      return {
+        address1,
+        address2: null,
+        city: match[1].trim(),
+        state: match[2].trim(),
+        zip: match[3].trim(),
+      };
+    }
+
+    const parts = cityStateZip.split(',').map((part: string) => part.trim()).filter(Boolean);
+
+    return {
+      address1,
+      address2: null,
+      city: parts[0] ?? null,
+      state: parts[1] ?? null,
+      zip: null,
+    };
   }
 
   // ─── Form Group Builder ──────────────────────────────────────────────────────
