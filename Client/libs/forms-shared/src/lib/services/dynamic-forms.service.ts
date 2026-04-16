@@ -18,7 +18,10 @@ import { HttpResponse } from '@angular/common/http';
   providedIn: 'root',
 })
 export class DynamicFormsService extends EndpointService {
-  formWizardUrl: string = UtilitiesService.getBaseApiUrl(Api.formWizard);
+  formWizardUrl: string = UtilitiesService.getBaseApiUrl(
+    Api.formWizard,
+    'http://localhost:5000'
+  );
   // formWizardUrl = `https://localhost:57320/api/`;
   objectActions: string = UtilitiesService.getBaseApiUrl(Api.objectActions);
   projectUrl: string = UtilitiesService.getBaseApiUrl(Api.projects);

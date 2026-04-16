@@ -58,7 +58,7 @@ export class AiDocumentViewerComponent
     zoomSelect: true,
     zoomIn: true,
     rotate: true,
-    download: true,
+    download: false,
     print: true,
     search: true,
   };
