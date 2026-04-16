@@ -6,6 +6,8 @@ import { AiLeaseListItem } from '../models/ai-form.model';
 import { AiLeaseService } from '../services/ai-lease.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ExportDevexDatagridService } from '@mango/core-shared';
+import { MatDialog } from '@angular/material/dialog';
+import { AddAiLeaseModalComponent } from '@mango/ui-shared/lib-ui-shared';
 
 @Component({
   selector: 'mango-ai-list-page',
@@ -32,7 +34,8 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     private readonly aiLeaseService: AiLeaseService,
     private readonly exportToExcelService: ExportDevexDatagridService,
     private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -107,6 +110,22 @@ export class AiListPageComponent implements OnInit, OnDestroy {
       this.grid.instance,
       'AI Lease Abstractions'
     );
+  }
+
+  openNewAbstractionModal(): void {
+    this.dialog.open(AddAiLeaseModalComponent, {
+      disableClose: true,
+      width: '70vw',
+      minWidth: '320px',
+      maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
+      data: {
+        objectTypeId: 4,
+        objectId: 0,
+        objectName: '',
+      },
+    });
   }
 
   formatDateTime(value: string | null | undefined): string {

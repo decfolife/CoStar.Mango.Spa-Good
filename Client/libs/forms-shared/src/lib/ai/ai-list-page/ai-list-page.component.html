@@ -38,9 +38,17 @@
       <crem-button
         [id]="'page-header-export'"
         text="Export"
-        color="primary"
+        color="secondary"
         [disabled]="isLoading"
         (buttonClick)="exportToExcel()"
+      >
+      </crem-button>
+      <crem-button
+        [id]="'page-header-new-abstraction'"
+        text="New AI Abstraction"
+        color="primary"
+        [disabled]="isLoading"
+        (buttonClick)="openNewAbstractionModal()"
       >
       </crem-button>
     </div>
