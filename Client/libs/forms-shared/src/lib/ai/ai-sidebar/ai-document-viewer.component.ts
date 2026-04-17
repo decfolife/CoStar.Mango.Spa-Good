@@ -6,6 +6,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  NgZone,
   OnDestroy,
   Output,
   ViewChild,
@@ -112,7 +113,10 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
     };
   }
 
-  constructor(private readonly cdr: ChangeDetectorRef) {}
+  constructor(
+    private readonly cdr: ChangeDetectorRef,
+    private readonly ngZone: NgZone,
+  ) {}
 
   ngAfterViewInit(): void {
     if (this._hostRef && !this.root) {
@@ -146,7 +150,9 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
         // controlled mode which causes the React 18 concurrent-mode race.
         initialBookmarks: this._initialBookmarks,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
-          this.bookmarksChange.emit(bookmarks);
+          // React callbacks run outside Angular's zone — run() ensures
+          // RxJS schedulers (debounceTime) and HttpClient fire correctly.
+          this.ngZone.run(() => this.bookmarksChange.emit(bookmarks));
         },
         onLoad: () => {
           this.viewerError = null;

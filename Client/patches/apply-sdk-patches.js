@@ -181,18 +181,18 @@ const patches = [
     `    } = useHighlighting({ initialHighlights: initialBookmarks });
     // In uncontrolled mode fire onBookmarksChange whenever internal state changes
     // so Angular can debounce-save without owning React state.
-    const _onBCRef = useRef(onBookmarksChange);
-    _onBCRef.current = onBookmarksChange;
-    const _initBMRef = useRef(initialBookmarks);
-    useEffect(() => { _initBMRef.current = initialBookmarks; }, [initialBookmarks]);
+    const _onBookmarksChangeRef = useRef(onBookmarksChange);
+    _onBookmarksChangeRef.current = onBookmarksChange;
+    const _initialBookmarksRef = useRef(initialBookmarks);
+    useEffect(() => { _initialBookmarksRef.current = initialBookmarks; }, [initialBookmarks]);
     const _onChangeMountedRef = useRef(false);
     useEffect(() => {
       if (isBookmarksControlled) return;
       // Skip the initial mount render — that's not a user action.
       if (!_onChangeMountedRef.current) { _onChangeMountedRef.current = true; return; }
       // Skip when state was just seeded from initialBookmarks (not a user action).
-      if (internalHighlights === _initBMRef.current) return;
-      _onBCRef.current == null ? void 0 : _onBCRef.current(internalHighlights);
+      if (internalHighlights === _initialBookmarksRef.current) return;
+      _onBookmarksChangeRef.current == null ? void 0 : _onBookmarksChangeRef.current(internalHighlights);
     }, [internalHighlights, isBookmarksControlled]);
     const highlights = isBookmarksControlled ? bookmarksProp : internalHighlights;`,
     'PDFViewer: uncontrolled onChange effect',
