@@ -454,11 +454,33 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private loadHighlights(documentGuid: string): void {
+    // Snapshot the reference BEFORE the async call. If the user adds a highlight
+    // before the response arrives (common on OCR docs where the SDK fires
+    // onBookmarksChange almost immediately), currentBookmarks will point to a
+    // new array and the snapshot check below will prevent a stale [] from
+    // overwriting the user's in-progress highlights.
+    const snapshotRef = this.currentBookmarks;
     this.aiLeaseService
       .getDocumentHighlights(documentGuid)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (bookmarks) => { this.currentBookmarks = bookmarks; },
+        next: (savedBookmarks) => {
+          if (!savedBookmarks.length) {
+            // Nothing saved — only apply if the user hasn't highlighted yet.
+            if (this.currentBookmarks === snapshotRef) {
+              this.currentBookmarks = savedBookmarks;
+            }
+          } else {
+            // Merge: keep any highlights the user added before the response
+            // arrived, plus any from the backend that aren't already present.
+            const currentIds = new Set(this.currentBookmarks.map((h) => h.id));
+            const merged = [
+              ...this.currentBookmarks,
+              ...savedBookmarks.filter((h) => !currentIds.has(h.id)),
+            ];
+            this.currentBookmarks = merged;
+          }
+        },
         error: () => { /* non-critical — document still usable without saved highlights */ },
       });
   }
