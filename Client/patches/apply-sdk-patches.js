@@ -103,6 +103,61 @@ const patches = [
   ],
 
   // ------------------------------------------------------------------
+  // FIX 1b: DocumentViewer — accept and forward initialBookmarks to PDFViewer
+  // ------------------------------------------------------------------
+  [
+    `function DocumentViewer({
+  src,
+  filename: filenameProp,
+  toolbar = true,
+  darkMode = false,
+  className,
+  style,
+  bookmarks,
+  onBookmarksChange,
+  searchQuery,
+  onLoad,
+  onError
+}) {`,
+    `function DocumentViewer({
+  src,
+  filename: filenameProp,
+  toolbar = true,
+  darkMode = false,
+  className,
+  style,
+  bookmarks,
+  initialBookmarks,
+  onBookmarksChange,
+  searchQuery,
+  onLoad,
+  onError
+}) {`,
+    'DocumentViewer: accept initialBookmarks prop',
+    'initialBookmarks,\n  onBookmarksChange,\n  searchQuery,\n  onLoad,\n  onError\n}) {',
+  ],
+
+  [
+    `        bookmarks,
+        onBookmarksChange,
+        searchQuery
+      }
+    );
+  }
+  if (!state.buffer) return null;`,
+    `        bookmarks,
+        initialBookmarks,
+        onBookmarksChange,
+        searchQuery
+      }
+    );
+  }
+  if (!state.buffer) return null;`,
+    'DocumentViewer: forward initialBookmarks to PDFViewer',
+    'initialBookmarks,\n        onBookmarksChange,\n        searchQuery\n      }\n    );\n  }\n  if (!state.buffer) return null;',
+  ],
+
+  // ------------------------------------------------------------------
   // FIX 1b: PDFViewer — accept initialBookmarks prop
   // ------------------------------------------------------------------
   [
@@ -130,15 +185,18 @@ const patches = [
     _onBCRef.current = onBookmarksChange;
     const _initBMRef = useRef(initialBookmarks);
     useEffect(() => { _initBMRef.current = initialBookmarks; }, [initialBookmarks]);
+    const _onChangeMountedRef = useRef(false);
     useEffect(() => {
       if (isBookmarksControlled) return;
+      // Skip the initial mount render — that's not a user action.
+      if (!_onChangeMountedRef.current) { _onChangeMountedRef.current = true; return; }
       // Skip when state was just seeded from initialBookmarks (not a user action).
       if (internalHighlights === _initBMRef.current) return;
       _onBCRef.current == null ? void 0 : _onBCRef.current(internalHighlights);
     }, [internalHighlights, isBookmarksControlled]);
     const highlights = isBookmarksControlled ? bookmarksProp : internalHighlights;`,
     'PDFViewer: uncontrolled onChange effect',
-    '} = useHighlighting({ initialHighlights: initialBookmarks });',
+    '_onChangeMountedRef',
   ],
 ];
 
