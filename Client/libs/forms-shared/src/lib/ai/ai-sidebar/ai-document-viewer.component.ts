@@ -40,6 +40,7 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
 
   @Input() set src(value: DocumentSource | null) {
     this._src = value;
+    this._pendingOcrIds.clear();
     this.renderReactTree();
   }
 
@@ -74,6 +75,16 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   private _filename?: string;
   private _searchQuery?: string;
   private _liveBookmarks: HighlightRange[] = [];
+  /**
+   * Tracks highlight IDs that were added with empty text on scanned PDFs, meaning
+   * the SDK kicked off an async region-OCR call (runRegionOcrFallback) to fill
+   * the text.  When that async call resolves, it uses a stale closure whose
+   * bookmarksProp was captured BEFORE our root.render() committed — so it maps
+   * over an empty array and fires onBookmarksChange([]).  We detect this by
+   * watching for IDs that entered with text=="" and ignore the spurious empty
+   * reset that follows.
+   */
+  private _pendingOcrIds = new Set<string>();
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
   viewerError: string | null = null;
@@ -143,15 +154,47 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
         searchQuery: this._searchQuery,
         bookmarks: this._liveBookmarks,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
+          // --- Stale-closure OCR guard ---
+          // On scanned PDFs the SDK calls runRegionOcrFallback() (an async
+          // Promise) that captures onHighlightUpdate at effect-setup time.
+          // By the time the Promise resolves, our root.render() has committed a
+          // NEW updateHighlight — but the stale closure still uses the OLD one
+          // whose bookmarksProp was [].  Mapping over [] yields [], so it fires
+          // onBookmarksChange([]) and wipes everything.
+          //
+          // Detection: any highlight arriving with text=="" is waiting for region
+          // OCR to fill its text.  We track those IDs.  If onBookmarksChange([])
+          // fires while pending IDs exist, it is the stale-closure reset — ignore
+          // it and re-render with the bookmarks we already have.
+          if (bookmarks.length === 0 && this._pendingOcrIds.size > 0) {
+            this._pendingOcrIds.clear();
+            this.renderReactTree(); // push _liveBookmarks back to SDK
+            return;
+          }
+
+          // Track highlights that arrived with no text (region OCR pending).
+          const prevIds = new Set(this._liveBookmarks.map((h) => h.id));
+          for (const h of bookmarks) {
+            if (!prevIds.has(h.id) && !h.text) {
+              // New highlight, no text yet — region OCR will attempt to fill it
+              this._pendingOcrIds.add(h.id);
+            } else if (h.text && this._pendingOcrIds.has(h.id)) {
+              // OCR filled the text — no longer pending
+              this._pendingOcrIds.delete(h.id);
+            }
+          }
+          // Remove IDs that were deleted by the user
+          for (const id of this._pendingOcrIds) {
+            if (!bookmarks.some((h) => h.id === id)) {
+              this._pendingOcrIds.delete(id);
+            }
+          }
+
           // Store the exact same reference so the @Input setter ignores it.
-          // The setter guard (value === _liveBookmarks) will skip the re-render
-          // when Angular echoes this back via [bookmarks] binding.
           this._liveBookmarks = bookmarks;
-          // Update the SDK prop immediately — it is controlled and will revert
-          // to the old bookmarks value (and fire onBookmarksChange([])) if we
-          // don't push the new array back as a prop right away.
+          // Update SDK prop (controlled mode — it reverts without this).
           this.renderReactTree();
-          // Notify sidebar for debounced save (same reference, setter is a no-op)
+          // Notify sidebar for debounced save (same reference, setter is a no-op).
           this.bookmarksChange.emit(bookmarks);
         },
         onLoad: () => {
