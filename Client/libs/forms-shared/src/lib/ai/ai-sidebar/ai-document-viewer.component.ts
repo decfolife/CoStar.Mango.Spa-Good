@@ -57,16 +57,38 @@ export class AiDocumentViewerComponent
   viewerError: string | null = null;
   isLoaded = false;
 
-  readonly toolbar: ToolbarConfig = {
-    navigation: true,
-    zoomOut: true,
-    zoomSelect: true,
-    zoomIn: true,
-    rotate: true,
-    download: false,
-    print: true,
-    search: true,
-  };
+  private get toolbar(): ToolbarConfig {
+    return {
+      navigation: true,
+      zoomOut: true,
+      zoomSelect: true,
+      zoomIn: true,
+      rotate: true,
+      download: false,
+      print: true,
+      search: true,
+      rightSlot: this.searchQuery?.trim()
+        ? React.createElement(
+            'span',
+            {
+              style: {
+                fontSize: '12px',
+                padding: '2px 8px',
+                borderRadius: '4px',
+                background: '#fef08a',
+                color: '#713f12',
+                whiteSpace: 'nowrap',
+                maxWidth: '200px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              },
+              title: `Searching: ${this.searchQuery}`,
+            },
+            `"${this.searchQuery}"`
+          )
+        : undefined,
+    };
+  }
 
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
