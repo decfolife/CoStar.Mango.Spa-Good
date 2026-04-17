@@ -34,6 +34,8 @@
     <mango-ai-document-viewer
       [src]="documentSource"
       [filename]="documentFileName || undefined"
+      [bookmarks]="currentBookmarks"
+      (bookmarksChange)="onBookmarksChange($event)"
     ></mango-ai-document-viewer>
   </div>
 </div>

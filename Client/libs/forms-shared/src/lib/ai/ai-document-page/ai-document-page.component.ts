@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import type { DocumentSource } from 'document-viewer-sdk';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import type { DocumentSource, HighlightRange } from 'document-viewer-sdk';
 import {
   AiAbstractionDocument,
   AiLeaseService,
@@ -25,11 +25,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   selectedDocumentGuid: string | null = null;
   documentSource: DocumentSource | null = null;
   documentFileName: string | null = null;
+  currentBookmarks: HighlightRange[] = [];
   isLoading = false;
   errorMessage: string | null = null;
 
   private aiAbstractionId: number | null = null;
   private readonly destroy$ = new Subject<void>();
+  private readonly bookmarkSave$ = new Subject<{ documentGuid: string; bookmarks: HighlightRange[] }>();
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -37,6 +39,15 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.bookmarkSave$
+      .pipe(debounceTime(1500), takeUntil(this.destroy$))
+      .subscribe(({ documentGuid, bookmarks }) => {
+        this.aiLeaseService
+          .saveDocumentHighlights(documentGuid, bookmarks)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe();
+      });
+
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.aiAbstractionId = Number(params.get('id') ?? 0) || null;
       if (!this.aiAbstractionId) {
@@ -66,6 +77,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     }
 
     this.loadDocumentFile(document);
+  }
+
+  onBookmarksChange(bookmarks: HighlightRange[]): void {
+    this.currentBookmarks = bookmarks;
+    if (this.selectedDocumentGuid) {
+      this.bookmarkSave$.next({ documentGuid: this.selectedDocumentGuid, bookmarks });
+    }
   }
 
   private loadDocuments(aiAbstractionId: number): void {
@@ -110,6 +128,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.selectedDocumentGuid = document.documentGuid;
     this.documentFileName = document.fileName;
     this.documentSource = null;
+    this.currentBookmarks = [];
     this.errorMessage = null;
     this.isLoading = true;
 
@@ -126,12 +145,38 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
           this.documentSource = file;
           this.errorMessage = null;
           this.isLoading = false;
+          if (document.documentGuid) {
+            this.loadHighlights(document.documentGuid);
+          }
         },
         error: () => {
           this.documentSource = null;
           this.errorMessage = 'Failed to load the selected document.';
           this.isLoading = false;
         },
+      });
+  }
+
+  private loadHighlights(documentGuid: string): void {
+    const snapshotRef = this.currentBookmarks;
+    this.aiLeaseService
+      .getDocumentHighlights(documentGuid)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (savedBookmarks) => {
+          if (!savedBookmarks.length) {
+            if (this.currentBookmarks === snapshotRef) {
+              this.currentBookmarks = savedBookmarks;
+            }
+          } else {
+            const currentIds = new Set(this.currentBookmarks.map((h) => h.id));
+            this.currentBookmarks = [
+              ...this.currentBookmarks,
+              ...savedBookmarks.filter((h) => !currentIds.has(h.id)),
+            ];
+          }
+        },
+        error: () => { /* non-critical */ },
       });
   }
 
