@@ -143,10 +143,11 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
           // Store the exact same reference so the @Input setter ignores it
           this._liveBookmarks = bookmarks;
-          // Update React immediately — stay in controlled mode
-          this.renderReactTree();
           // Notify sidebar for debounced save (same reference, setter is a no-op)
           this.bookmarksChange.emit(bookmarks);
+          // Do NOT call renderReactTree() here — the SDK manages bookmark state
+          // internally (uncontrolled). Passing a new bookmarks prop reference back
+          // triggers a "restore", resetting SDK state and erasing the highlight.
         },
         onLoad: () => {
           this.viewerError = null;
