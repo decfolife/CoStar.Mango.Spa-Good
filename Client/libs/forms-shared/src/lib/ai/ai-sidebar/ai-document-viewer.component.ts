@@ -54,6 +54,7 @@ export class AiDocumentViewerComponent
 
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
+  private _bookmarkCallbackInFlight = false;
   viewerError: string | null = null;
   isLoaded = false;
 
@@ -99,10 +100,19 @@ export class AiDocumentViewerComponent
     }
   }
 
-  ngOnChanges(_changes: SimpleChanges): void {
-    if (this.root) {
-      this.renderReactTree();
-    }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.root) return;
+
+    // When bookmarks change because the SDK just fired onBookmarksChange, don't
+    // call root.render() — the SDK already has the correct state and calling
+    // root.render() synchronously inside React's own event handler breaks things.
+    // We do need to re-render when bookmarks are loaded from the backend (flag is false).
+    const onlyBookmarksChanged =
+      changes['bookmarks'] && Object.keys(changes).length === 1;
+
+    if (onlyBookmarksChanged && this._bookmarkCallbackInFlight) return;
+
+    this.renderReactTree();
   }
 
   ngOnDestroy(): void {
@@ -131,7 +141,10 @@ export class AiDocumentViewerComponent
         searchQuery: this.searchQuery,
         bookmarks: this.bookmarks,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
+          this._bookmarkCallbackInFlight = true;
           this.bookmarksChange.emit(bookmarks);
+          // Clear the flag after Angular's change detection has run
+          Promise.resolve().then(() => { this._bookmarkCallbackInFlight = false; });
         },
         onLoad: () => {
           this.viewerError = null;
