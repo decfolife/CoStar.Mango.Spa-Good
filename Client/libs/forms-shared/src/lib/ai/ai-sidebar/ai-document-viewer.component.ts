@@ -41,9 +41,6 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
 
   @Input() set src(value: DocumentSource | null) {
     this._src = value;
-    // Reset initial bookmarks when the document changes so the SDK clears
-    // its internal state and is ready to accept the next document's highlights.
-    this._initialBookmarks = [];
     this.renderReactTree();
   }
 
