@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "nx",
-    "postinstall": "node ./decorate-angular-cli.js && npx patch-package",
+    "postinstall": "node ./decorate-angular-cli.js && node ./patches/apply-sdk-patches.js",
     "nx": "node --max_old_space_size=8192 ./node_modules/nx/bin/nx.js",
     "start": "node --max_old_space_size=8192 ./node_modules/nx/bin/nx.js serve mango --configuration=fast",
     "start:local": "node --max_old_space_size=8192 ./node_modules/nx/bin/nx.js serve mango --configuration=local",
@@ -201,7 +201,6 @@
     "jest-html-reporter": "^3.10.2",
     "jest-preset-angular": "13.1.6",
     "nx": "16.10.0",
-    "patch-package": "^8.0.1",
     "prettier": "2.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
