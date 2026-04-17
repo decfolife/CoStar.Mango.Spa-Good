@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
-import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import type { HighlightRange } from 'document-viewer-sdk';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
 import {
@@ -63,8 +64,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
   documentSearchQuery: string | null = null;
+  currentBookmarks: HighlightRange[] = [];
   private loadedDocumentContextId: number | null = null;
   private handledDocumentRequestId = 0;
+  private readonly bookmarkSave$ = new Subject<{ documentGuid: string; bookmarks: HighlightRange[] }>();
 
   private isDragging = false;
   private dragStartX = 0;
@@ -126,6 +129,16 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Debounce highlight saves — user might be adding several in quick succession
+    this.bookmarkSave$
+      .pipe(debounceTime(1500), takeUntil(this.destroy$))
+      .subscribe(({ documentGuid, bookmarks }) => {
+        this.aiLeaseService
+          .saveDocumentHighlights(documentGuid, bookmarks)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe();
+      });
+
     // Repaint grids whenever the sidebar's width changes (drag or open/close transition)
     this.resizeObserver = new ResizeObserver(() => {
       this.dataGrids?.forEach((grid) => grid.instance?.repaint());
@@ -407,6 +420,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentFileName = document.fileName;
     this.documentLoadError = null;
     this.documentSource = null;
+    this.currentBookmarks = [];
     this.isDocumentLoading = true;
 
     this.aiLeaseService
@@ -422,12 +436,30 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentSource = file;
           this.documentLoadError = null;
           this.isDocumentLoading = false;
+          this.loadHighlights(document.documentGuid);
         },
         error: () => {
           this.documentSource = null;
           this.documentLoadError = 'Failed to load document file.';
           this.isDocumentLoading = false;
         },
+      });
+  }
+
+  onBookmarksChange(bookmarks: HighlightRange[]): void {
+    this.currentBookmarks = bookmarks;
+    if (this.selectedDocumentGuid) {
+      this.bookmarkSave$.next({ documentGuid: this.selectedDocumentGuid, bookmarks });
+    }
+  }
+
+  private loadHighlights(documentGuid: string): void {
+    this.aiLeaseService
+      .getDocumentHighlights(documentGuid)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (bookmarks) => { this.currentBookmarks = bookmarks; },
+        error: () => { /* non-critical — document still usable without saved highlights */ },
       });
   }
 

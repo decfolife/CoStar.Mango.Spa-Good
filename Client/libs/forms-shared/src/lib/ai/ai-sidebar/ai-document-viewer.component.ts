@@ -4,9 +4,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -15,6 +17,7 @@ import { createRoot, Root } from 'react-dom/client';
 import {
   DocumentViewer,
   type DocumentSource,
+  type HighlightRange,
   type ToolbarConfig,
 } from 'document-viewer-sdk';
 
@@ -46,6 +49,8 @@ export class AiDocumentViewerComponent
   @Input() src: DocumentSource | null = null;
   @Input() filename?: string;
   @Input() searchQuery?: string;
+  @Input() bookmarks: HighlightRange[] = [];
+  @Output() bookmarksChange = new EventEmitter<HighlightRange[]>();
 
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
@@ -102,6 +107,10 @@ export class AiDocumentViewerComponent
         toolbar: this.toolbar,
         darkMode: false,
         searchQuery: this.searchQuery,
+        bookmarks: this.bookmarks,
+        onBookmarksChange: (bookmarks: HighlightRange[]) => {
+          this.bookmarksChange.emit(bookmarks);
+        },
         onLoad: () => {
           this.viewerError = null;
           this.isLoaded = true;

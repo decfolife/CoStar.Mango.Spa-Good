@@ -6,6 +6,7 @@ import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
 import { IAIOutput } from '../models/ai-output.model';
 import { AiLeaseListItem } from '../models/ai-form.model';
+import type { HighlightRange } from 'document-viewer-sdk';
 
 export interface AiAbstractionDetail {
   aiAbstractionId: number;
@@ -299,6 +300,28 @@ export class AiLeaseService {
         params: { aiAbstractionId, formId, objectTypeId },
       })
       .pipe(map((res) => res.data as { fields: any[]; sections: any[] }));
+  }
+
+  getDocumentHighlights(documentGuid: string): Observable<HighlightRange[]> {
+    return this.http
+      .get<ApiResponse>(`${this.apiUrl}AiAbstractions/GetDocumentHighlights`, {
+        params: { documentGuid },
+      })
+      .pipe(map((res) => (res.data as HighlightRange[]) ?? []));
+  }
+
+  saveDocumentHighlights(
+    documentGuid: string,
+    bookmarks: HighlightRange[]
+  ): Observable<void> {
+    // Strip non-serialisable DOM node references before sending
+    const payload = bookmarks.map(({ startContainer, endContainer, ...rest }) => rest);
+    return this.http
+      .post<ApiResponse>(`${this.apiUrl}AiAbstractions/SaveDocumentHighlights`, {
+        documentGuid,
+        highlightsJson: JSON.stringify(payload),
+      })
+      .pipe(map(() => void 0));
   }
 
   /**
