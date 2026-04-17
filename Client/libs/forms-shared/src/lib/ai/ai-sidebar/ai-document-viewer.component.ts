@@ -54,13 +54,15 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Pass saved bookmarks here to restore them when switching documents.
-   * The viewer tracks live changes internally — this is an initialization input,
-   * not a controlled binding. A reference change triggers a restore.
+   * The SDK uses a controlled bookmarks model — it will revert highlights and
+   * fire onBookmarksChange([]) if the `bookmarks` prop isn't kept up to date.
+   * We maintain _liveBookmarks as the authoritative copy and pass it on every
+   * root.render() call.  The reference guard below prevents re-renders when
+   * Angular echoes our own emissions back through the [bookmarks] binding.
    */
   @Input() set bookmarks(value: HighlightRange[]) {
-    // Only restore when the reference changes (e.g. loaded from backend for a new doc).
-    // Ignore updates that came from our own onBookmarksChange emission.
+    // Same reference means this came from our own onBookmarksChange emission —
+    // _liveBookmarks is already correct and renderReactTree() already ran.
     if (value === this._liveBookmarks) return;
     this._liveBookmarks = value ?? [];
     this.renderReactTree();
@@ -141,13 +143,16 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
         searchQuery: this._searchQuery,
         bookmarks: this._liveBookmarks,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
-          // Store the exact same reference so the @Input setter ignores it
+          // Store the exact same reference so the @Input setter ignores it.
+          // The setter guard (value === _liveBookmarks) will skip the re-render
+          // when Angular echoes this back via [bookmarks] binding.
           this._liveBookmarks = bookmarks;
+          // Update the SDK prop immediately — it is controlled and will revert
+          // to the old bookmarks value (and fire onBookmarksChange([])) if we
+          // don't push the new array back as a prop right away.
+          this.renderReactTree();
           // Notify sidebar for debounced save (same reference, setter is a no-op)
           this.bookmarksChange.emit(bookmarks);
-          // Do NOT call renderReactTree() here — the SDK manages bookmark state
-          // internally (uncontrolled). Passing a new bookmarks prop reference back
-          // triggers a "restore", resetting SDK state and erasing the highlight.
         },
         onLoad: () => {
           this.viewerError = null;
