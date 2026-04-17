@@ -11,6 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import * as React from 'react';
+import { flushSync } from 'react-dom';
 import { createRoot, Root } from 'react-dom/client';
 import {
   DocumentViewer,
@@ -168,7 +169,7 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
           // it and re-render with the bookmarks we already have.
           if (bookmarks.length === 0 && this._pendingOcrIds.size > 0) {
             this._pendingOcrIds.clear();
-            this.renderReactTree(); // push _liveBookmarks back to SDK
+            flushSync(() => this.renderReactTree()); // synchronously restore
             return;
           }
 
@@ -192,8 +193,11 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
 
           // Store the exact same reference so the @Input setter ignores it.
           this._liveBookmarks = bookmarks;
-          // Update SDK prop (controlled mode — it reverts without this).
-          this.renderReactTree();
+          // flushSync forces React to commit the new bookmarksProp synchronously
+          // before the current JS task continues.  Without this, React 18 concurrent
+          // mode defers root.render(), leaving highlights = bookmarksProp = [] for
+          // one frame — the "flash then disappear" the user sees.
+          flushSync(() => this.renderReactTree());
           // Notify sidebar for debounced save (same reference, setter is a no-op).
           this.bookmarksChange.emit(bookmarks);
         },
