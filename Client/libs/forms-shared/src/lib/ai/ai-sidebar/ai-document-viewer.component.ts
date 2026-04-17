@@ -6,10 +6,8 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   OnDestroy,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import * as React from 'react';
@@ -27,34 +25,55 @@ import {
   styleUrls: ['./ai-document-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AiDocumentViewerComponent
-  implements AfterViewInit, OnChanges, OnDestroy
-{
+export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   @ViewChild('host')
   set hostRef(value: ElementRef<HTMLDivElement> | undefined) {
-    if (value?.nativeElement === this._hostRef?.nativeElement) {
-      return;
-    }
-
+    if (value?.nativeElement === this._hostRef?.nativeElement) return;
     this.root?.unmount();
     this.root = null;
     this._hostRef = value;
-
     if (value && !this.root) {
       this.root = createRoot(value.nativeElement);
       this.renderReactTree();
     }
   }
 
-  @Input() src: DocumentSource | null = null;
-  @Input() filename?: string;
-  @Input() searchQuery?: string;
-  @Input() bookmarks: HighlightRange[] = [];
+  @Input() set src(value: DocumentSource | null) {
+    this._src = value;
+    this.renderReactTree();
+  }
+
+  @Input() set filename(value: string | undefined) {
+    this._filename = value;
+    this.renderReactTree();
+  }
+
+  @Input() set searchQuery(value: string | undefined) {
+    this._searchQuery = value;
+    this.renderReactTree();
+  }
+
+  /**
+   * Pass saved bookmarks here to restore them when switching documents.
+   * The viewer tracks live changes internally — this is an initialization input,
+   * not a controlled binding. A reference change triggers a restore.
+   */
+  @Input() set bookmarks(value: HighlightRange[]) {
+    // Only restore when the reference changes (e.g. loaded from backend for a new doc).
+    // Ignore updates that came from our own onBookmarksChange emission.
+    if (value === this._liveBookmarks) return;
+    this._liveBookmarks = value ?? [];
+    this.renderReactTree();
+  }
+
   @Output() bookmarksChange = new EventEmitter<HighlightRange[]>();
 
+  private _src: DocumentSource | null = null;
+  private _filename?: string;
+  private _searchQuery?: string;
+  private _liveBookmarks: HighlightRange[] = [];
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
-  private _bookmarkCallbackInFlight = false;
   viewerError: string | null = null;
   isLoaded = false;
 
@@ -68,7 +87,7 @@ export class AiDocumentViewerComponent
       download: false,
       print: true,
       search: true,
-      rightSlot: this.searchQuery?.trim()
+      rightSlot: this._searchQuery?.trim()
         ? React.createElement(
             'span',
             {
@@ -83,9 +102,9 @@ export class AiDocumentViewerComponent
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
               },
-              title: `Searching: ${this.searchQuery}`,
+              title: `Searching: ${this._searchQuery}`,
             },
-            `"${this.searchQuery}"`
+            `"${this._searchQuery}"`
           )
         : undefined,
     };
@@ -100,51 +119,34 @@ export class AiDocumentViewerComponent
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (!this.root) return;
-
-    // When bookmarks change because the SDK just fired onBookmarksChange, don't
-    // call root.render() — the SDK already has the correct state and calling
-    // root.render() synchronously inside React's own event handler breaks things.
-    // We do need to re-render when bookmarks are loaded from the backend (flag is false).
-    const onlyBookmarksChanged =
-      changes['bookmarks'] && Object.keys(changes).length === 1;
-
-    if (onlyBookmarksChanged && this._bookmarkCallbackInFlight) return;
-
-    this.renderReactTree();
-  }
-
   ngOnDestroy(): void {
     this.root?.unmount();
     this.root = null;
   }
 
   private renderReactTree(): void {
-    if (!this.root || !this.src) {
+    if (!this.root || !this._src) {
       this.viewerError = null;
       this.isLoaded = false;
       this.cdr.markForCheck();
       return;
     }
 
-    this.viewerError = null;
-    this.isLoaded = false;
-    this.cdr.markForCheck();
-
     this.root.render(
       React.createElement(DocumentViewer, {
-        src: this.src,
-        filename: this.filename,
+        src: this._src,
+        filename: this._filename,
         toolbar: this.toolbar,
         darkMode: false,
-        searchQuery: this.searchQuery,
-        bookmarks: this.bookmarks,
+        searchQuery: this._searchQuery,
+        bookmarks: this._liveBookmarks,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
-          this._bookmarkCallbackInFlight = true;
+          // Store the exact same reference so the @Input setter ignores it
+          this._liveBookmarks = bookmarks;
+          // Update React immediately — stay in controlled mode
+          this.renderReactTree();
+          // Notify sidebar for debounced save (same reference, setter is a no-op)
           this.bookmarksChange.emit(bookmarks);
-          // Clear the flag after Angular's change detection has run
-          Promise.resolve().then(() => { this._bookmarkCallbackInFlight = false; });
         },
         onLoad: () => {
           this.viewerError = null;
@@ -158,8 +160,8 @@ export class AiDocumentViewerComponent
             'The document viewer failed to load this file.';
           this.isLoaded = false;
           console.error('AI document viewer load error', {
-            filename: this.filename,
-            src: this.src,
+            filename: this._filename,
+            src: this._src,
             error: err,
           });
           this.cdr.markForCheck();
