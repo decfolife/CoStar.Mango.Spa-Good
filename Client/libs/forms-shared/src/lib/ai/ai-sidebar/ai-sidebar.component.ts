@@ -64,7 +64,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
   documentSearchQuery: string | null = null;
+  /** Saved highlights passed to [initialBookmarks] — set once per document load. */
   currentBookmarks: HighlightRange[] = [];
+  /** True once the user adds a highlight; prevents loadHighlights from overwriting. */
+  private _viewerHasUserChanges = false;
   private loadedDocumentContextId: number | null = null;
   private handledDocumentRequestId = 0;
   private readonly bookmarkSave$ = new Subject<{ documentGuid: string; bookmarks: HighlightRange[] }>();
@@ -421,6 +424,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentLoadError = null;
     this.documentSource = null;
     this.currentBookmarks = [];
+    this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
 
     this.aiLeaseService
@@ -447,41 +451,25 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   onBookmarksChange(bookmarks: HighlightRange[]): void {
-    this.currentBookmarks = bookmarks;
+    // SDK owns the highlights state — we only save here, no state update needed.
+    this._viewerHasUserChanges = true;
     if (this.selectedDocumentGuid) {
       this.bookmarkSave$.next({ documentGuid: this.selectedDocumentGuid, bookmarks });
     }
   }
 
   private loadHighlights(documentGuid: string): void {
-    // Snapshot the reference BEFORE the async call. If the user adds a highlight
-    // before the response arrives (common on OCR docs where the SDK fires
-    // onBookmarksChange almost immediately), currentBookmarks will point to a
-    // new array and the snapshot check below will prevent a stale [] from
-    // overwriting the user's in-progress highlights.
-    const snapshotRef = this.currentBookmarks;
     this.aiLeaseService
       .getDocumentHighlights(documentGuid)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (savedBookmarks) => {
-          if (!savedBookmarks.length) {
-            // Nothing saved — only apply if the user hasn't highlighted yet.
-            if (this.currentBookmarks === snapshotRef) {
-              this.currentBookmarks = savedBookmarks;
-            }
-          } else {
-            // Merge: keep any highlights the user added before the response
-            // arrived, plus any from the backend that aren't already present.
-            const currentIds = new Set(this.currentBookmarks.map((h) => h.id));
-            const merged = [
-              ...this.currentBookmarks,
-              ...savedBookmarks.filter((h) => !currentIds.has(h.id)),
-            ];
-            this.currentBookmarks = merged;
-          }
+          // If the user already highlighted before the response arrived, don't
+          // overwrite their work — the SDK's internal state already has their changes.
+          if (this._viewerHasUserChanges) return;
+          this.currentBookmarks = savedBookmarks;
         },
-        error: () => { /* non-critical — document still usable without saved highlights */ },
+        error: () => { /* non-critical */ },
       });
   }
 

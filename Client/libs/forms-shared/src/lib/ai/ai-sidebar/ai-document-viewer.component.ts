@@ -11,7 +11,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import * as React from 'react';
-import { flushSync } from 'react-dom';
 import { createRoot, Root } from 'react-dom/client';
 import {
   DocumentViewer,
@@ -41,6 +40,9 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
 
   @Input() set src(value: DocumentSource | null) {
     this._src = value;
+    // Reset initial bookmarks when the document changes so the SDK clears
+    // its internal state and is ready to accept the next document's highlights.
+    this._initialBookmarks = [];
     this.renderReactTree();
   }
 
@@ -55,26 +57,23 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * The SDK uses a controlled bookmarks model — it will revert highlights and
-   * fire onBookmarksChange([]) if the `bookmarks` prop isn't kept up to date.
-   * We maintain _liveBookmarks as the authoritative copy and pass it on every
-   * root.render() call.  The reference guard below prevents re-renders when
-   * Angular echoes our own emissions back through the [bookmarks] binding.
+   * Saved highlights to restore when the document first loads.
+   * Passed once after loadHighlights() resolves — the SDK seeds its own internal
+   * state from this and manages highlights from there on.  Angular never updates
+   * this after user interaction, so there is no controlled-mode re-render loop.
    */
-  @Input() set bookmarks(value: HighlightRange[]) {
-    // Same reference means this came from our own onBookmarksChange emission —
-    // _liveBookmarks is already correct and renderReactTree() already ran.
-    if (value === this._liveBookmarks) return;
-    this._liveBookmarks = value ?? [];
+  @Input() set initialBookmarks(value: HighlightRange[]) {
+    this._initialBookmarks = value ?? [];
     this.renderReactTree();
   }
 
+  /** Fires whenever the user adds, removes or clears a highlight. */
   @Output() bookmarksChange = new EventEmitter<HighlightRange[]>();
 
   private _src: DocumentSource | null = null;
   private _filename?: string;
   private _searchQuery?: string;
-  private _liveBookmarks: HighlightRange[] = [];
+  private _initialBookmarks: HighlightRange[] = [];
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
   viewerError: string | null = null;
@@ -142,16 +141,11 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
         toolbar: this.toolbar,
         darkMode: false,
         searchQuery: this._searchQuery,
-        bookmarks: this._liveBookmarks,
+        // Pass as initialBookmarks (SDK-internal uncontrolled state).
+        // bookmarks prop is intentionally NOT passed — that would enable
+        // controlled mode which causes the React 18 concurrent-mode race.
+        initialBookmarks: this._initialBookmarks,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
-          // Store the exact same reference so the @Input setter ignores it.
-          this._liveBookmarks = bookmarks;
-          // flushSync forces React to commit the new bookmarksProp synchronously
-          // before the current JS task continues.  Without this, React 18 concurrent
-          // mode defers root.render(), leaving a one-frame gap where the SDK sees
-          // bookmarksProp=[] and reverts the highlight.
-          flushSync(() => this.renderReactTree());
-          // Notify sidebar for debounced save (same reference, setter is a no-op).
           this.bookmarksChange.emit(bookmarks);
         },
         onLoad: () => {
@@ -173,7 +167,7 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
           this.cdr.markForCheck();
         },
         style: { height: '100%', width: '100%' },
-      })
+      } as any)
     );
   }
 }

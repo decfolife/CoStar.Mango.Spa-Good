@@ -26,6 +26,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   documentSource: DocumentSource | null = null;
   documentFileName: string | null = null;
   currentBookmarks: HighlightRange[] = [];
+  private _viewerHasUserChanges = false;
   isLoading = false;
   errorMessage: string | null = null;
 
@@ -80,7 +81,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   }
 
   onBookmarksChange(bookmarks: HighlightRange[]): void {
-    this.currentBookmarks = bookmarks;
+    this._viewerHasUserChanges = true;
     if (this.selectedDocumentGuid) {
       this.bookmarkSave$.next({ documentGuid: this.selectedDocumentGuid, bookmarks });
     }
@@ -129,6 +130,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.documentFileName = document.fileName;
     this.documentSource = null;
     this.currentBookmarks = [];
+    this._viewerHasUserChanges = false;
     this.errorMessage = null;
     this.isLoading = true;
 
@@ -158,23 +160,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   }
 
   private loadHighlights(documentGuid: string): void {
-    const snapshotRef = this.currentBookmarks;
     this.aiLeaseService
       .getDocumentHighlights(documentGuid)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (savedBookmarks) => {
-          if (!savedBookmarks.length) {
-            if (this.currentBookmarks === snapshotRef) {
-              this.currentBookmarks = savedBookmarks;
-            }
-          } else {
-            const currentIds = new Set(this.currentBookmarks.map((h) => h.id));
-            this.currentBookmarks = [
-              ...this.currentBookmarks,
-              ...savedBookmarks.filter((h) => !currentIds.has(h.id)),
-            ];
-          }
+          if (this._viewerHasUserChanges) return;
+          this.currentBookmarks = savedBookmarks;
         },
         error: () => { /* non-critical */ },
       });
