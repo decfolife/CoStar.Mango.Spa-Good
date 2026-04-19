@@ -129,6 +129,20 @@ export class MangoNavigationService {
       return;
     }
 
+    const spaUrl = isCategory ? navLink.categorySpaUrl : navLink.spaUrl;
+    const spaQueryParameters = isCategory
+      ? navLink.categorySpaQueryParameters
+      : navLink.spaQueryParameters;
+    const usesNgRouting = navLink.usesNgRouting && !!spaUrl;
+
+    if (usesNgRouting) {
+      const params = spaQueryParameters
+        ? UtilitiesService.queryStringToParams(`?${spaQueryParameters}`)
+        : undefined;
+      this.navigateTo(spaUrl, params);
+      return;
+    }
+
     // When navLink is the link for a category we need to navigate to the category url
     let redirectionUrl = isCategory ? navLink.categoryLinkUrl : navLink.linkUrl;
     redirectionUrl = `${
