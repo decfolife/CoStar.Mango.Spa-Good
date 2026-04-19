@@ -54,11 +54,7 @@
     </div>
   </div>
 
-  <div *ngIf="errorMessage" class="ai-list-page__error">
-    <p>{{ errorMessage }}</p>
-  </div>
-
-  <div *ngIf="!errorMessage" class="list-page-data-grid-wrapper">
+  <div class="list-page-data-grid-wrapper">
     <dx-data-grid
       id="aiLeaseListGrid"
       class="list-page-data-grid"
@@ -130,6 +126,14 @@
       ></dxi-column>
 
       <dxi-column
+        caption="Actions"
+        [width]="130"
+        [allowFiltering]="false"
+        [allowSorting]="false"
+        cellTemplate="actionsTemplate"
+      ></dxi-column>
+
+      <dxi-column
         dataField="aiLeaseEndDate"
         caption="Lease End Date"
         dataType="date"
@@ -168,6 +172,22 @@
           ></span>
           {{ cell.data.status }}
         </span>
+      </div>
+
+      <div *dxTemplate="let cell of 'actionsTemplate'">
+        <button
+          *ngIf="isProcessing(cell.data.status)"
+          type="button"
+          class="status-action-link"
+          [disabled]="updatingStatusAiAbstractionId === cell.data.id"
+          (click)="markAsError(cell.data, $event)"
+        >
+          {{
+            updatingStatusAiAbstractionId === cell.data.id
+              ? 'Saving...'
+              : 'Mark Error'
+          }}
+        </button>
       </div>
 
       <div *dxTemplate="let cell of 'submittedDateTemplate'">

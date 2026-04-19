@@ -1,0 +1,57 @@
+<crem-modal
+  modalId="ai-mark-error-modal"
+  [modalTitle]="'Mark AI Abstraction as Error'"
+  [closeIconVisible]="true"
+  [customFooter]="true"
+>
+  <div modalContent class="ai-mark-error-dialog">
+    <p class="ai-mark-error-dialog__intro">
+      This will manually change the AI abstraction status from
+      <strong>{{ data.currentStatus }}</strong> to <strong>Error</strong>.
+    </p>
+
+    <div class="ai-mark-error-dialog__meta">
+      <div>
+        <span class="ai-mark-error-dialog__label">AI Abstraction ID:</span>
+        <span>{{ data.aiAbstractionId }}</span>
+      </div>
+      <div *ngIf="data.tenantName">
+        <span class="ai-mark-error-dialog__label">Tenant:</span>
+        <span>{{ data.tenantName }}</span>
+      </div>
+      <div *ngIf="data.buildingName">
+        <span class="ai-mark-error-dialog__label">Building:</span>
+        <span>{{ data.buildingName }}</span>
+      </div>
+    </div>
+
+    <label class="ai-mark-error-dialog__reason-label" for="ai-mark-error-reason">
+      Error Message
+    </label>
+    <textarea
+      id="ai-mark-error-reason"
+      class="ai-mark-error-dialog__reason"
+      [formControl]="reasonControl"
+      rows="5"
+    ></textarea>
+  </div>
+
+  <div modalFooter class="ai-mark-error-dialog__footer">
+    <div footerRightControls class="ai-mark-error-dialog__actions">
+      <crem-button
+        type="secondary"
+        id="ai-mark-error-cancel"
+        (click)="cancel()"
+      >
+        Cancel
+      </crem-button>
+      <crem-button
+        type="primary"
+        id="ai-mark-error-confirm"
+        (click)="confirm()"
+      >
+        Mark Error
+      </crem-button>
+    </div>
+  </div>
+</crem-modal>

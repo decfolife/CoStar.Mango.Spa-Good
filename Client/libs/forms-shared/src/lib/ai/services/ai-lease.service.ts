@@ -38,6 +38,12 @@ export interface CreateAiAbstractionResponse {
   aiAbstractionId: number;
 }
 
+export interface UpdateAiAbstractionStatusRequest {
+  aiAbstractionId: number;
+  status: 'Pending' | 'Processing' | 'Complete' | 'Error' | 'Cancelled';
+  errorMessage?: string;
+}
+
 export interface LeaseAbstractionPipelineDocumentInput {
   fileName?: string;
   customerId?: string;
@@ -282,6 +288,17 @@ export class AiLeaseService {
         aiAbstractionId,
         reviewedFormData,
       })
+      .pipe(map(() => void 0));
+  }
+
+  updateAiAbstractionStatus(
+    request: UpdateAiAbstractionStatusRequest
+  ): Observable<void> {
+    return this.http
+      .post<ApiResponse>(
+        `${this.apiUrl}AiAbstractions/UpdateAiAbstractionStatus`,
+        request
+      )
       .pipe(map(() => void 0));
   }
 

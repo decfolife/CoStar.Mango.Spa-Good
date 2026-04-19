@@ -1,0 +1,62 @@
+.ai-mark-error-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+
+  &__intro {
+    margin: 0;
+    color: #344054;
+    line-height: 1.5;
+  }
+
+  &__meta {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #344054;
+    font-size: 14px;
+  }
+
+  &__label {
+    font-weight: 600;
+    margin-right: 6px;
+  }
+
+  &__reason-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #344054;
+  }
+
+  &__reason {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    border: 1px solid #98a2b3;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font: inherit;
+    line-height: 1.5;
+    color: #101828;
+
+    &:focus {
+      outline: 2px solid #98c1eb;
+      outline-offset: 1px;
+      border-color: #0559b3;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+}
