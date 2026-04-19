@@ -91,7 +91,7 @@ export class NavigationEffect {
   );
 
   // temporary method to add AI Leases link under Leases in 
-  // CREM left nav until it's available from the backend. 
+  // the left nav until it's available from the backend. 
   // This is needed to support navigation to AI Leases page 
   // from CREM while the feature is being developed and not yet released.
   private addAiLeasesNavLink(

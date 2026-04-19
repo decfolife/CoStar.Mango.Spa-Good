@@ -49,6 +49,11 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
     this.renderReactTree();
   }
 
+  @Input() set textContent(value: string | undefined) {
+    this._textContent = value?.trim() ? value : undefined;
+    this.renderReactTree();
+  }
+
   @Input() set searchQuery(value: string | undefined) {
     this._searchQuery = value;
     this.renderReactTree();
@@ -70,6 +75,7 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
 
   private _src: DocumentSource | null = null;
   private _filename?: string;
+  private _textContent?: string;
   private _searchQuery?: string;
   private _initialBookmarks: HighlightRange[] = [];
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
@@ -127,10 +133,23 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
     this.root = null;
   }
 
+  get textModeContent(): string | null {
+    return this._src ? null : this._textContent ?? null;
+  }
+
   private renderReactTree(): void {
-    if (!this.root || !this._src) {
+    if (!this.root) {
       this.viewerError = null;
       this.isLoaded = false;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (!this._src) {
+      this.root.unmount();
+      this.root = createRoot(this._hostRef!.nativeElement);
+      this.viewerError = null;
+      this.isLoaded = Boolean(this._textContent);
       this.cdr.markForCheck();
       return;
     }

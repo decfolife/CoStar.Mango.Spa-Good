@@ -103,8 +103,19 @@ export interface AiAbstractionDocument {
   externalAbstractionStatus?: string;
   externalStatusDetail?: string;
   externalAiOutputJson?: string;
+  artifacts?: AiAbstractionDocumentArtifact[];
   url?: string;
   documentUrl?: string;
+}
+
+export interface AiAbstractionDocumentArtifact {
+  artifactId?: number;
+  artifactGuid?: string;
+  displayName?: string;
+  artifactType?: string;
+  mimeType?: string;
+  attachmentTypeId?: number;
+  contentText?: string;
 }
 
 @Injectable({ providedIn: 'root' })

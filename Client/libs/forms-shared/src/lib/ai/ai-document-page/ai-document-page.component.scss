@@ -49,6 +49,34 @@
   min-width: 320px;
 }
 
+.ai-document-page__document-summary {
+  margin-top: 10px;
+}
+
+.ai-document-page__document-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-document-page__document-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #e8eef7;
+  color: #1f3d67;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ai-document-page__document-detail {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #526071;
+}
+
 .ai-document-page__label {
   display: block;
   font-size: 11px;
@@ -91,6 +119,39 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+.ai-document-page__pipeline-panel {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  border: 1px solid #d8e1ec;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  overflow: hidden;
+}
+
+.ai-document-page__pipeline-label {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5edf6;
+  background: #f8fbff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4b5f79;
+}
+
+.ai-document-page__pipeline-output {
+  margin: 0;
+  padding: 14px;
+  max-height: 220px;
+  overflow: auto;
+  background: #fbfdff;
+  color: #17325c;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .ai-document-page__viewer mango-ai-document-viewer {

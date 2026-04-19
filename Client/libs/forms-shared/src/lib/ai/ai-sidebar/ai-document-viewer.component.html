@@ -1,9 +1,12 @@
 <div class="ai-document-viewer">
-  <div #host class="ai-document-viewer__host"></div>
+  <div *ngIf="src" #host class="ai-document-viewer__host"></div>
+  <div *ngIf="textModeContent" class="ai-document-viewer__text-mode">
+    <pre class="ai-document-viewer__text-pre">{{ textModeContent }}</pre>
+  </div>
   <div *ngIf="viewerError" class="ai-document-viewer__error">
     {{ viewerError }}
   </div>
-  <div *ngIf="!src" class="ai-document-viewer__empty">
+  <div *ngIf="!src && !textModeContent" class="ai-document-viewer__empty">
     <mat-icon>description</mat-icon>
     <div class="ai-document-viewer__empty-title">Document unavailable</div>
     <div class="ai-document-viewer__empty-text">
