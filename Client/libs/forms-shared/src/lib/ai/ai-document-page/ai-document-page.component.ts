@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { EMPTY, Subject } from 'rxjs';
+import { catchError, debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import type { DocumentSource, HighlightRange } from 'document-viewer-sdk';
 import {
   AiAbstractionDocument,
@@ -41,13 +41,22 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.bookmarkSave$
-      .pipe(debounceTime(1500), takeUntil(this.destroy$))
-      .subscribe(({ documentGuid, bookmarks }) => {
-        this.aiLeaseService
-          .saveDocumentHighlights(documentGuid, bookmarks)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe();
-      });
+      .pipe(
+        debounceTime(1500),
+        switchMap(({ documentGuid, bookmarks }) =>
+          this.aiLeaseService.saveDocumentHighlights(documentGuid, bookmarks).pipe(
+            catchError((error) => {
+              console.error('Failed to save document highlights', {
+                documentGuid,
+                error,
+              });
+              return EMPTY;
+            })
+          )
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
 
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.aiAbstractionId = Number(params.get('id') ?? 0) || null;
@@ -82,6 +91,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
 
   onBookmarksChange(bookmarks: HighlightRange[]): void {
     this._viewerHasUserChanges = true;
+    this.currentBookmarks = bookmarks;
     if (this.selectedDocumentGuid) {
       this.bookmarkSave$.next({ documentGuid: this.selectedDocumentGuid, bookmarks });
     }

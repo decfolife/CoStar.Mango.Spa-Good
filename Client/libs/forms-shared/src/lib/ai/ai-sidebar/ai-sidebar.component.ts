@@ -8,8 +8,14 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { combineLatest, EMPTY, Subject } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  takeUntil,
+} from 'rxjs/operators';
 import type { HighlightRange } from 'document-viewer-sdk';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
@@ -134,13 +140,22 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Debounce highlight saves — user might be adding several in quick succession
     this.bookmarkSave$
-      .pipe(debounceTime(1500), takeUntil(this.destroy$))
-      .subscribe(({ documentGuid, bookmarks }) => {
-        this.aiLeaseService
-          .saveDocumentHighlights(documentGuid, bookmarks)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe();
-      });
+      .pipe(
+        debounceTime(1500),
+        switchMap(({ documentGuid, bookmarks }) =>
+          this.aiLeaseService.saveDocumentHighlights(documentGuid, bookmarks).pipe(
+            catchError((error) => {
+              console.error('Failed to save document highlights', {
+                documentGuid,
+                error,
+              });
+              return EMPTY;
+            })
+          )
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
 
     // Repaint grids whenever the sidebar's width changes (drag or open/close transition)
     this.resizeObserver = new ResizeObserver(() => {
@@ -451,8 +466,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   onBookmarksChange(bookmarks: HighlightRange[]): void {
-    // SDK owns the highlights state — we only save here, no state update needed.
     this._viewerHasUserChanges = true;
+    this.currentBookmarks = bookmarks;
     if (this.selectedDocumentGuid) {
       this.bookmarkSave$.next({ documentGuid: this.selectedDocumentGuid, bookmarks });
     }
