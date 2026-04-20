@@ -102,44 +102,48 @@ export class NavigationEffect {
       return navigationLinks;
     }
 
-    return navigationLinks.map((link) => {
-      if (link.name !== 'Leases' && link.dynamicName !== 'Leases') {
-        return link;
-      }
+    const leasesIndex = navigationLinks.findIndex(
+      (link) => link.name === 'Leases' || link.dynamicName === 'Leases'
+    );
 
-      const existingChildren = Array.isArray(link.subChildLevelNavLinks)
-        ? [...link.subChildLevelNavLinks]
-        : [];
+    if (leasesIndex < 0) {
+      return navigationLinks;
+    }
 
-      if (existingChildren.some((child) => child.name === 'AI Leases')) {
-        return link;
-      }
+    if (
+      navigationLinks.some(
+        (link) => link.name === 'AI Leases' || link.dynamicName === 'AI Leases'
+      )
+    ) {
+      return navigationLinks;
+    }
 
-      const aiLeasesLink: SharedLeftNavLink = {
-        ...link,
-        id: undefined,
-        name: 'AI Leases',
-        dynamicName: 'AI Leases',
-        categoryHasFlyOutMenu: false,
-        categoryIsCurrentlyActiveLink: false,
-        categoryLinkUrl: '',
-        categorySpaUrl: '',
-        categorySpaQueryParameters: undefined,
-        sortOrder: (existingChildren[existingChildren.length - 1]?.sortOrder ?? link.sortOrder) + 1,
-        linkUrl: '/crem/portfolio/ai-abstractions',
-        usesNgRouting: true,
-        spaUrl: '/crem/portfolio/ai-abstractions',
-        spaQueryParameters: undefined,
-        isCurrentlyActiveLink: false,
-        subChildLevel: (link.subChildLevel ?? 0) + 1,
-        subChildLevelNavLinks: [],
-      };
+    const leasesLink = navigationLinks[leasesIndex];
+    const aiLeasesLink: SharedLeftNavLink = {
+      ...leasesLink,
+      id: undefined,
+      name: 'AI Leases',
+      dynamicName: 'AI Leases',
+      categoryHasFlyOutMenu: false,
+      categoryIsCurrentlyActiveLink: false,
+      categoryLinkUrl: leasesLink.categoryLinkUrl,
+      categorySpaUrl: leasesLink.categorySpaUrl,
+      categorySpaQueryParameters: leasesLink.categorySpaQueryParameters,
+      sortOrder: leasesLink.sortOrder + 1,
+      linkUrl: '/crem/portfolio/ai-abstractions',
+      usesNgRouting: true,
+      spaUrl: '/crem/portfolio/ai-abstractions',
+      spaQueryParameters: undefined,
+      isCurrentlyActiveLink: false,
+      subChildLevel: leasesLink.subChildLevel,
+      subChildLevelNavLinks: leasesLink.subChildLevelNavLinks,
+    };
 
-      return {
-        ...link,
-        subChildLevelNavLinks: [...existingChildren, aiLeasesLink],
-      };
-    });
+    return [
+      ...navigationLinks.slice(0, leasesIndex + 1),
+      aiLeasesLink,
+      ...navigationLinks.slice(leasesIndex + 1),
+    ];
   }
 
   navigateLeftNavMenu$ = createEffect(
