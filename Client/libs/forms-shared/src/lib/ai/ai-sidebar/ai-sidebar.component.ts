@@ -44,12 +44,11 @@ interface DocumentOption {
   type: 'document' | 'artifact';
   documentGuid: string | null;
   documentId: number;
-  groupId: string;
-  groupLabel: string;
   url?: string;
   artifactGuid?: string | null;
   artifactId?: number;
   fileName: string;
+  displayLabel: string;
   artifactType?: string;
   attachmentTypeId?: number;
   mimeType?: string;
@@ -58,11 +57,6 @@ interface DocumentOption {
   externalAbstractionStatus?: string;
   externalStatusDetail?: string;
   externalAiOutputJson?: string;
-}
-
-interface DocumentOptionGroup {
-  key: string;
-  items: DocumentOption[];
 }
 
 @Component({
@@ -85,7 +79,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentFileName: string | null = null;
   documentLoadError: string | null = null;
   documentOptions: DocumentOption[] = [];
-  groupedDocumentOptions: DocumentOptionGroup[] = [];
   selectedDocumentKey: string | null = null;
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
@@ -225,7 +218,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.documentFileName = null;
             this.documentLoadError = null;
             this.documentOptions = [];
-            this.groupedDocumentOptions = [];
             this.selectedDocumentKey = null;
             this.isDocumentLoading = false;
             this.documentSearchQuery = null;
@@ -256,7 +248,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentFileName = null;
           this.documentLoadError = null;
           this.documentOptions = [];
-          this.groupedDocumentOptions = [];
           this.selectedDocumentKey = null;
           this.isDocumentLoading = false;
           this.currentAiAbstractionId = null;
@@ -418,7 +409,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentSource = null;
     this.documentFileName = null;
     this.documentOptions = [];
-    this.groupedDocumentOptions = [];
     this.selectedDocumentKey = null;
     this.isDocumentLoading = true;
 
@@ -434,7 +424,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentSource = null;
           this.documentFileName = null;
           this.documentOptions = [];
-          this.groupedDocumentOptions = [];
           this.documentLoadError = 'Failed to load document metadata.';
           this.isDocumentLoading = false;
         },
@@ -452,7 +441,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       }, []) ?? [];
 
     this.documentOptions = validDocuments;
-    this.groupedDocumentOptions = this.groupDocumentOptions(validDocuments);
 
     if (!validDocuments.length) {
       this.isDocumentLoading = false;
@@ -673,14 +661,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             type: 'document',
             documentGuid: document.documentGuid ?? null,
             documentId: document.documentId ?? 0,
-            groupId: this.getGroupId(document),
-            groupLabel: this.getGroupLabel(document),
             fileName:
               document.fileName ??
               document.documentFileName ??
               `Document ${
                 document.documentGuid ?? document.documentId ?? ''
               }`.trim(),
+            displayLabel: this.buildDocumentLabel(document),
             mimeType: document.mimeType,
             externalStatus: document.externalStatus,
             externalAbstractionStatus: document.externalAbstractionStatus,
@@ -718,11 +705,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
       url: artifact.url,
-      groupId: this.getGroupId(document),
-      groupLabel: this.getGroupLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,
       artifactId: artifact.artifactId,
       fileName: this.buildArtifactLabel(artifact),
+      displayLabel: `\u00A0\u00A0\u00A0${this.buildArtifactLabel(artifact)}`,
       artifactType: artifact.artifactType,
       attachmentTypeId: artifact.attachmentTypeId,
       mimeType: artifact.mimeType,
@@ -768,43 +754,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     return /\.(json|txt|md)$/i.test(document.fileName);
   }
 
-  private groupDocumentOptions(
-    options: DocumentOption[]
-  ): DocumentOptionGroup[] {
-    const grouped = new Map<string, DocumentOptionGroup>();
-
-    options.forEach((option) => {
-      const existingGroup = grouped.get(option.groupId);
-      if (existingGroup) {
-        existingGroup.items.push(option);
-        return;
-      }
-
-      grouped.set(option.groupId, {
-        key: option.groupLabel,
-        items: [option],
-      });
-    });
-
-    return Array.from(grouped.values());
-  }
-
-  private getGroupId(document: AiAbstractionDocument): string {
-    return (
-      document.documentGuid?.trim() ||
-      String(document.documentId ?? '') ||
-      'document-unavailable'
-    );
-  }
-
-  private getGroupLabel(document: AiAbstractionDocument): string {
-    return (
-      document.fileName?.trim() ||
-      document.documentFileName?.trim() ||
-      `Document ${
-        document.documentGuid ?? document.documentId ?? 'Unavailable'
-      }`
-    );
+  private buildDocumentLabel(document: AiAbstractionDocument): string {
+    return `Document:${document.documentGuid ?? document.documentId ?? 'Unavailable'}`;
   }
 
   private populateFromAiOutput(data: IAIOutput): void {

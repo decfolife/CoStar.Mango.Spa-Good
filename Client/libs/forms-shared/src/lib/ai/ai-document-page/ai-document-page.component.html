@@ -17,26 +17,16 @@
         inputId="ai-document-page-document-select"
         placeholder="Select a document"
         [useSelectBox]="true"
-        [grouped]="true"
-        [useCustomGroupTemplate]="true"
         [allowSearch]="true"
         [showClearButton]="false"
-        [dataSource]="groupedDocumentOptions"
-        [displayExpr]="'fileName'"
+        [dataSource]="documentOptions"
+        [displayExpr]="'displayLabel'"
         [valueExpr]="'key'"
         [selectBoxValue]="selectedDocumentKey"
         [dropDownContainerCustomClass]="'ai-document-page-dropdown'"
-        [searchExpr]="['fileName', 'groupLabel', 'artifactType']"
+        [searchExpr]="['displayLabel', 'fileName', 'artifactType']"
         (selectedItems)="onDocumentDropdownChange($event)"
-      >
-        <ng-template #customHeaderTemplate let-fieldData="fieldData">
-          <div class="ai-document-page__group-header">
-            <span class="ai-document-page__group-title">
-              {{ fieldData?.key }}
-            </span>
-          </div>
-        </ng-template>
-      </crem-dropdown>
+      ></crem-dropdown>
       <div
         *ngIf="selectedDocument"
         class="ai-document-page__document-summary"

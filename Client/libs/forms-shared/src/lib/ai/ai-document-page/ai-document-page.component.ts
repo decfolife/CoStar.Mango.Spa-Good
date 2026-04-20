@@ -15,11 +15,10 @@ interface DocumentOption {
   documentGuid: string | null;
   documentId: number;
   url?: string;
-  groupId: string;
-  groupLabel: string;
   artifactGuid?: string | null;
   artifactId?: number;
   fileName: string;
+  displayLabel: string;
   artifactType?: string;
   attachmentTypeId?: number;
   mimeType?: string;
@@ -30,11 +29,6 @@ interface DocumentOption {
   externalAiOutputJson?: string;
 }
 
-interface DocumentOptionGroup {
-  key: string;
-  items: DocumentOption[];
-}
-
 @Component({
   selector: 'mango-ai-document-page',
   templateUrl: './ai-document-page.component.html',
@@ -42,7 +36,6 @@ interface DocumentOptionGroup {
 })
 export class AiDocumentPageComponent implements OnInit, OnDestroy {
   documentOptions: DocumentOption[] = [];
-  groupedDocumentOptions: DocumentOptionGroup[] = [];
   selectedDocumentKey: string | null = null;
   documentSource: DocumentSource | null = null;
   documentFileName: string | null = null;
@@ -147,7 +140,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.documentSource = null;
     this.documentFileName = null;
     this.documentOptions = [];
-    this.groupedDocumentOptions = [];
     this.selectedDocumentKey = null;
 
     this.aiLeaseService
@@ -157,7 +149,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
         next: (documents) => {
           const options = this.mapDocuments(documents);
           this.documentOptions = options;
-          this.groupedDocumentOptions = this.groupDocumentOptions(options);
 
           if (!options.length) {
             this.errorMessage =
@@ -283,14 +274,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
               type: 'document',
               documentGuid: document.documentGuid ?? null,
               documentId: document.documentId ?? 0,
-              groupId: this.getGroupId(document),
-              groupLabel: this.getGroupLabel(document),
               fileName:
                 document.fileName ??
                 document.documentFileName ??
                 `Document ${
                   document.documentGuid ?? document.documentId ?? ''
                 }`.trim(),
+              displayLabel: this.buildDocumentLabel(document),
               mimeType: document.mimeType,
               externalStatus: document.externalStatus,
               externalAbstractionStatus: document.externalAbstractionStatus,
@@ -332,11 +322,10 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
       url: artifact.url,
-      groupId: this.getGroupId(document),
-      groupLabel: this.getGroupLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,
       artifactId: artifact.artifactId,
       fileName: this.buildArtifactLabel(artifact),
+      displayLabel: `\u00A0\u00A0\u00A0${this.buildArtifactLabel(artifact)}`,
       artifactType: artifact.artifactType,
       attachmentTypeId: artifact.attachmentTypeId,
       mimeType: artifact.mimeType,
@@ -391,43 +380,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.onDocumentSelectionChange(selectedDocument.key);
   }
 
-  private groupDocumentOptions(
-    options: DocumentOption[]
-  ): DocumentOptionGroup[] {
-    const grouped = new Map<string, DocumentOptionGroup>();
-
-    options.forEach((option) => {
-      const existingGroup = grouped.get(option.groupId);
-      if (existingGroup) {
-        existingGroup.items.push(option);
-        return;
-      }
-
-      grouped.set(option.groupId, {
-        key: option.groupLabel,
-        items: [option],
-      });
-    });
-
-    return Array.from(grouped.values());
-  }
-
-  private getGroupId(document: AiAbstractionDocument): string {
-    return (
-      document.documentGuid?.trim() ||
-      String(document.documentId ?? '') ||
-      'document-unavailable'
-    );
-  }
-
-  private getGroupLabel(document: AiAbstractionDocument): string {
-    return (
-      document.fileName?.trim() ||
-      document.documentFileName?.trim() ||
-      `Document ${
-        document.documentGuid ?? document.documentId ?? 'Unavailable'
-      }`
-    );
+  private buildDocumentLabel(document: AiAbstractionDocument): string {
+    return `Document:${document.documentGuid ?? document.documentId ?? 'Unavailable'}`;
   }
 
   private prettifyJson(value?: string | null): string | null {
