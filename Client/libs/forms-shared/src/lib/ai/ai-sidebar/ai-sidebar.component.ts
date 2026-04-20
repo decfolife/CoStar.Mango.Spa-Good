@@ -478,7 +478,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.isDocumentLoading = true;
 
     if (this.shouldRenderAsText(document) && document.contentText) {
-      this.documentSource = null;
+      this.documentSource = this.buildViewerTextFile(document, document.contentText);
       this.documentLoadError = null;
       this.isDocumentLoading = false;
       return;
@@ -499,7 +499,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (text) => {
             document.contentText = text;
-            this.documentSource = null;
+            this.documentSource = this.buildViewerTextFile(document, text);
             this.documentLoadError = null;
             this.isDocumentLoading = false;
           },
@@ -629,6 +629,38 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     } catch {
       return value;
     }
+  }
+
+  private buildViewerTextFile(
+    document: DocumentOption,
+    content: string
+  ): File {
+    const normalizedContent = this.normalizeViewerText(document, content);
+    const mimeType = this.isJsonDocument(document)
+      ? 'application/json'
+      : document.mimeType || 'text/plain';
+
+    return new File([normalizedContent], document.fileName, {
+      type: mimeType,
+    });
+  }
+
+  private normalizeViewerText(
+    document: DocumentOption,
+    content: string
+  ): string {
+    return this.isJsonDocument(document)
+      ? this.prettifyJson(content) ?? content
+      : content;
+  }
+
+  private isJsonDocument(document: DocumentOption): boolean {
+    const mimeType = document.mimeType?.toLowerCase() ?? '';
+    return (
+      document.attachmentTypeId === 70 ||
+      mimeType.includes('json') ||
+      /\.json$/i.test(document.fileName)
+    );
   }
 
   private mapDocumentOptions(
