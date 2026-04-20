@@ -201,6 +201,12 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.documentSource = null;
+          const fallbackArtifact = this.findTextFallbackOption(document);
+          if (fallbackArtifact) {
+            this.loadDocumentFile(fallbackArtifact);
+            return;
+          }
+
           this.errorMessage = 'Failed to load the selected document.';
           this.isLoading = false;
         },
@@ -304,7 +310,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   private mapPipelineArtifact(
     document: AiAbstractionDocument
   ): DocumentOption | null {
-    if (!document.externalAiOutputJson?.trim()) {
+    const pipelineContent = this.getPipelineArtifactContent(document);
+    if (!pipelineContent) {
       return null;
     }
 
@@ -333,12 +340,50 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       fileName: `${documentName} - Pipeline Output`,
       artifactType: 'Pipeline Output',
       mimeType: 'application/json',
-      contentText: document.externalAiOutputJson,
+      contentText: pipelineContent,
       externalStatus: document.externalStatus,
       externalAbstractionStatus: document.externalAbstractionStatus,
       externalStatusDetail: document.externalStatusDetail,
       externalAiOutputJson: document.externalAiOutputJson,
     };
+  }
+
+  private getPipelineArtifactContent(
+    document: AiAbstractionDocument
+  ): string | null {
+    if (document.externalAiOutputJson?.trim()) {
+      return document.externalAiOutputJson;
+    }
+
+    const statusDetail = document.externalStatusDetail?.trim();
+    if (!statusDetail) {
+      return null;
+    }
+
+    const previewIndex = statusDetail.indexOf('Preview=');
+    if (previewIndex < 0) {
+      return null;
+    }
+
+    const previewText = statusDetail.slice(previewIndex + 'Preview='.length).trim();
+    return previewText || null;
+  }
+
+  private findTextFallbackOption(
+    document: DocumentOption
+  ): DocumentOption | null {
+    return (
+      this.documentOptions.find(
+        (option) =>
+          option.key !== document.key &&
+          option.type === 'artifact' &&
+          !!option.contentText &&
+          (
+            (document.documentGuid && option.documentGuid === document.documentGuid) ||
+            (!!document.documentId && option.documentId === document.documentId)
+          )
+      ) ?? null
+    );
   }
 
   private prettifyJson(value?: string | null): string | null {
