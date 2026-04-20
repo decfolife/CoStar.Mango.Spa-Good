@@ -505,13 +505,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (document.url) {
-      this.documentSource = { url: document.url };
-      this.documentLoadError = null;
-      this.isDocumentLoading = false;
-      return;
-    }
-
     this.aiLeaseService
       .getAbstractionDocumentFile({
         documentGuid: document.documentGuid ?? undefined,

@@ -225,13 +225,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (document.url) {
-      this.documentSource = { url: document.url };
-      this.errorMessage = null;
-      this.isLoading = false;
-      return;
-    }
-
     this.aiLeaseService
       .getAbstractionDocumentFile({
         documentGuid: document.documentGuid ?? undefined,
