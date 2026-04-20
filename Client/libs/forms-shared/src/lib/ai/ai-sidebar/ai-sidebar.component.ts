@@ -720,6 +720,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
+      url: artifact.url,
       requestId: this.getRequestId(document),
       requestLabel: this.getRequestLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,

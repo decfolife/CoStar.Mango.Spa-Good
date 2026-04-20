@@ -14,6 +14,7 @@ interface DocumentOption {
   type: 'document' | 'artifact';
   documentGuid: string | null;
   documentId: number;
+  url?: string;
   requestId: string;
   requestLabel: string;
   artifactGuid?: string | null;
@@ -196,6 +197,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (document.url) {
+      this.documentSource = { url: document.url };
+      this.errorMessage = null;
+      this.isLoading = false;
+      return;
+    }
+
     this.aiLeaseService
       .getAbstractionDocumentFile({
         documentGuid: document.documentGuid ?? undefined,
@@ -296,6 +304,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
+      url: artifact.url,
       requestId: this.getRequestId(document),
       requestLabel: this.getRequestLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,

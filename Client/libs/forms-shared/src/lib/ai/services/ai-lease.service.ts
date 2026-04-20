@@ -115,9 +115,11 @@ export interface AiAbstractionDocumentArtifact {
   artifactGuid?: string;
   displayName?: string;
   artifactType?: string;
+  fileSizeBytes?: number;
   mimeType?: string;
   attachmentTypeId?: number;
   contentText?: string;
+  url?: string;
 }
 
 @Injectable({ providedIn: 'root' })
