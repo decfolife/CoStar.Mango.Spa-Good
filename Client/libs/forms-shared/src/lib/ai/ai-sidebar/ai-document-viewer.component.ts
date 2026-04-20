@@ -133,6 +133,10 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
     this.root = null;
   }
 
+  get src(): DocumentSource | null {
+    return this._src;
+  }
+
   get textModeContent(): string | null {
     return this._src ? null : this._textContent ?? null;
   }
