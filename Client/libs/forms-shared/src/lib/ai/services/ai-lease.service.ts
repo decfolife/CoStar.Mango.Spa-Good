@@ -118,6 +118,63 @@ export interface AiAbstractionDocumentArtifact {
   contentText?: string;
 }
 
+export interface AiFieldDefinition {
+  aiFieldDefinitionId: number;
+  fieldKey: string;
+  displayName: string;
+  dataType?: string;
+  jsonPath?: string;
+  isActive: boolean;
+  createdBy: number;
+  createdDate: string;
+  lastModifiedBy: number;
+  lastModifiedDate: string;
+}
+
+export interface AiFieldMapping {
+  aiFieldMappingId: number;
+  aiFormId: number;
+  formId: number;
+  aiFieldDefinitionId: number;
+  fieldKey: string;
+  displayName: string;
+  formItemId: number;
+  transformType?: string;
+  isActive: boolean;
+  createdBy: number;
+  createdDate: string;
+  lastModifiedBy: number;
+  lastModifiedDate: string;
+}
+
+export interface GetAiFieldMappingsResponse {
+  leaseTemplateId?: number;
+  aiFormId: number;
+  formId: number;
+  definitions: AiFieldDefinition[];
+  mappings: AiFieldMapping[];
+}
+
+export interface SaveAiFieldMappingItem {
+  fieldKey: string;
+  formItemId: number;
+  transformType?: string;
+  isActive?: boolean;
+}
+
+export interface SaveAiFieldMappingsRequest {
+  aiFormId: number;
+  formId: number;
+  mappings: SaveAiFieldMappingItem[];
+}
+
+export interface CopyAiFieldMappingsRequest {
+  sourceAiFormId: number;
+  sourceFormId: number;
+  targetAiFormId: number;
+  targetFormId: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AiLeaseService {
   private readonly apiUrl = UtilitiesService.getBaseApiUrl(
@@ -328,6 +385,52 @@ export class AiLeaseService {
         params: { aiAbstractionId, formId, objectTypeId },
       })
       .pipe(map((res) => res.data as { fields: any[]; sections: any[] }));
+  }
+
+  getAiFieldMappings(
+    aiFormId: number,
+    formId: number
+  ): Observable<GetAiFieldMappingsResponse> {
+    return this.http
+      .get<ApiResponse>(`${this.apiUrl}AiAbstractions/GetAiFieldMappings`, {
+        params: { aiFormId, formId },
+      })
+      .pipe(map((res) => res.data as GetAiFieldMappingsResponse));
+  }
+
+  getAiFieldMappingsByTemplate(
+    leaseTemplateId: number
+  ): Observable<GetAiFieldMappingsResponse> {
+    return this.http
+      .get<ApiResponse>(
+        `${this.apiUrl}AiAbstractions/GetAiFieldMappingsByTemplate`,
+        {
+          params: { leaseTemplateId },
+        }
+      )
+      .pipe(map((res) => res.data as GetAiFieldMappingsResponse));
+  }
+
+  saveAiFieldMappings(
+    request: SaveAiFieldMappingsRequest
+  ): Observable<void> {
+    return this.http
+      .post<ApiResponse>(
+        `${this.apiUrl}AiAbstractions/SaveAiFieldMappings`,
+        request
+      )
+      .pipe(map(() => void 0));
+  }
+
+  copyAiFieldMappings(
+    request: CopyAiFieldMappingsRequest
+  ): Observable<{ copiedCount: number }> {
+    return this.http
+      .post<ApiResponse>(
+        `${this.apiUrl}AiAbstractions/CopyAiFieldMappings`,
+        request
+      )
+      .pipe(map((res) => res.data as { copiedCount: number }));
   }
 
   getDocumentHighlights(documentGuid: string): Observable<HighlightRange[]> {

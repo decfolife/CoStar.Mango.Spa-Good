@@ -1,6 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DataService } from '@mango/core-shared';
 import {
@@ -13,6 +17,7 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { AddLeaseModalComponent } from '../add-lease-modal/add-lease-modal.component';
+import { AiFieldMappingsDialogComponent } from './ai-field-mappings-dialog.component';
 
 @Component({
   selector: 'mango-add-ai-lease-modal',
@@ -61,6 +66,7 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
     dataService: DataService,
     public toastService: CremToastService,
     facade: MangoAppFacade,
+    private readonly matDialog: MatDialog,
     private readonly aiLeaseService: AiLeaseService,
     @Inject(MAT_DIALOG_DATA)
     public override data: {
@@ -154,6 +160,41 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
     this.addLeaseFormGroup
       .get('leaseDocument')
       ?.setValue(this.selectedFiles.length ? this.selectedFiles : null);
+  }
+
+  openFieldMappingsDialog(): void {
+    if (!this.selectedTemplate) {
+      this.toastService.show(
+        'Select a lease template before configuring AI field mappings.',
+        '',
+        ToastState.WARNING,
+        {
+          position: 'bottom right',
+          maxWidth: '350px',
+        }
+      );
+      return;
+    }
+
+    this.matDialog.open(AiFieldMappingsDialogComponent, {
+      width: '960px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      disableClose: false,
+      data: {
+        templateId: Number(this.selectedTemplate),
+        templateName: this.getSelectedTemplateName(),
+        templateOptions: this.leaseTemplateItems ?? [],
+      },
+    });
+  }
+
+  getSelectedTemplateName(): string {
+    return (
+      this.leaseTemplateItems?.find(
+        (item) => item.objectTypeTypeID === this.selectedTemplate
+      )?.objectTypeTypeName ?? 'Selected Template'
+    );
   }
 
   /** Launch: post to AI abstractions API, then navigate to the abstraction form. */

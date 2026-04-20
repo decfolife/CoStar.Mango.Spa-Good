@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import {
   ButtonModule,
@@ -22,13 +23,16 @@ import {
 } from 'devextreme-angular';
 import { AddLeaseModalModule } from '../add-lease-modal/add-lease-modal.module';
 import { AddAiLeaseModalComponent } from './add-ai-lease-modal.component';
+import { AiFieldMappingsDialogComponent } from './ai-field-mappings-dialog.component';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     ReactiveFormsModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatIconModule,
     ButtonModule,
     ModalModule,
@@ -44,7 +48,7 @@ import { AddAiLeaseModalComponent } from './add-ai-lease-modal.component';
     DxLoadPanelModule,
     AddLeaseModalModule,
   ],
-  declarations: [AddAiLeaseModalComponent],
+  declarations: [AddAiLeaseModalComponent, AiFieldMappingsDialogComponent],
   exports: [AddAiLeaseModalComponent],
 })
 export class AddAiLeaseModalModule {}

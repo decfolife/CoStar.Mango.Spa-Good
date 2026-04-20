@@ -113,3 +113,15 @@
     }
   }
 }
+
+.ai-template-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+
+  &__hint {
+    font-size: 12px;
+    color: #5f6368;
+  }
+}

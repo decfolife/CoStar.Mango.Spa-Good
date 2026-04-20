@@ -148,6 +148,18 @@
             required="true"
             [initialSelectedValue]="selectedLeaseTemplate"
           ></crem-dropdown>
+          <div class="ai-template-actions">
+            <crem-button
+              type="secondary"
+              (click)="openFieldMappingsDialog()"
+              [disabled]="!selectedTemplate"
+            >
+              Configure AI Field Mappings
+            </crem-button>
+            <span class="ai-template-actions__hint">
+              Saves the AI-to-form field mappings for the selected template.
+            </span>
+          </div>
         </crem-form-item>
 
         <crem-form-item id="aet-measurement-container">

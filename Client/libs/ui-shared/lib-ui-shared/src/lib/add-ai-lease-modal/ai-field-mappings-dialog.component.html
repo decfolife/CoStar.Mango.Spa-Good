@@ -1,0 +1,101 @@
+<div class="ai-field-mappings">
+  <div class="ai-field-mappings__header">
+    <div>
+      <h2 class="ai-field-mappings__title">AI Field Mappings</h2>
+      <p class="ai-field-mappings__subtitle">
+        {{ data.templateName }}
+      </p>
+    </div>
+    <button
+      type="button"
+      class="ai-field-mappings__close"
+      (click)="dialogRef.close()"
+      aria-label="Close"
+    >
+      x
+    </button>
+  </div>
+
+  <div *ngIf="mappingContext" class="ai-field-mappings__summary">
+    <span>Form ID {{ mappingContext.formId }}</span>
+    <span>{{ mappingRows.length }} AI fields</span>
+    <span>
+      {{
+        mappingRows.filter((row) => !!row.formItemId).length
+      }}
+      mapped
+    </span>
+  </div>
+
+  <div class="ai-field-mappings__copy">
+    <label for="copySourceTemplate">Copy from template</label>
+    <select
+      id="copySourceTemplate"
+      [(ngModel)]="sourceTemplateId"
+      [disabled]="isLoading || isCopying"
+    >
+      <option [ngValue]="null">Select template</option>
+      <option
+        *ngFor="let option of availableSourceTemplates"
+        [ngValue]="option.objectTypeTypeID"
+      >
+        {{ option.objectTypeTypeName }}
+      </option>
+    </select>
+
+    <crem-button
+      type="secondary"
+      (click)="copyMappings()"
+      [disabled]="!sourceTemplateId || isLoading || isCopying"
+    >
+      {{ isCopying ? 'Copying...' : 'Copy Mappings' }}
+    </crem-button>
+  </div>
+
+  <div *ngIf="isLoading" class="ai-field-mappings__state">
+    Loading field mappings...
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage" class="ai-field-mappings__state ai-field-mappings__state--error">
+    {{ errorMessage }}
+  </div>
+
+  <div
+    *ngIf="!isLoading && !errorMessage"
+    class="ai-field-mappings__table"
+  >
+    <div class="ai-field-mappings__table-header">
+      <span>AI Field</span>
+      <span>Mapped Form Field</span>
+    </div>
+
+    <div
+      *ngFor="let row of mappingRows; trackBy: trackByFieldKey"
+      class="ai-field-mappings__row"
+    >
+      <div class="ai-field-mappings__field-name">{{ row.displayName }}</div>
+      <select [(ngModel)]="row.formItemId">
+        <option [ngValue]="null">Not mapped</option>
+        <option
+          *ngFor="let option of fieldOptions"
+          [ngValue]="option.formItemId"
+        >
+          {{ option.displayName }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="ai-field-mappings__footer">
+    <crem-button type="secondary" (click)="dialogRef.close()">
+      Cancel
+    </crem-button>
+    <crem-button
+      type="primary"
+      (click)="save()"
+      [disabled]="isLoading || !!errorMessage || isSaving"
+    >
+      {{ isSaving ? 'Saving...' : 'Save Mappings' }}
+    </crem-button>
+  </div>
+</div>
