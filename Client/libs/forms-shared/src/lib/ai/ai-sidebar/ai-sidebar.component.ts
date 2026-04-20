@@ -45,8 +45,8 @@ interface DocumentOption {
   type: 'document' | 'artifact';
   documentGuid: string | null;
   documentId: number;
-  requestId: string;
-  requestLabel: string;
+  groupId: string;
+  groupLabel: string;
   url?: string;
   artifactGuid?: string | null;
   artifactId?: number;
@@ -680,8 +680,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             type: 'document',
             documentGuid: document.documentGuid ?? null,
             documentId: document.documentId ?? 0,
-            requestId: this.getRequestId(document),
-            requestLabel: this.getRequestLabel(document),
+            groupId: this.getGroupId(document),
+            groupLabel: this.getGroupLabel(document),
             fileName:
               document.fileName ??
               document.documentFileName ??
@@ -721,8 +721,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
       url: artifact.url,
-      requestId: this.getRequestId(document),
-      requestLabel: this.getRequestLabel(document),
+      groupId: this.getGroupId(document),
+      groupLabel: this.getGroupLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,
       artifactId: artifact.artifactId,
       fileName: this.buildArtifactLabel(artifact),
@@ -769,8 +769,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
-      requestId: this.getRequestId(document),
-      requestLabel: this.getRequestLabel(document),
+      groupId: this.getGroupId(document),
+      groupLabel: this.getGroupLabel(document),
       artifactGuid: pipelineArtifactGuid,
       fileName: 'Pipeline Output',
       artifactType: 'Pipeline Output',
@@ -827,14 +827,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     const grouped = new Map<string, DocumentOptionGroup>();
 
     options.forEach((option) => {
-      const existingGroup = grouped.get(option.requestId);
+      const existingGroup = grouped.get(option.groupId);
       if (existingGroup) {
         existingGroup.items.push(option);
         return;
       }
 
-      grouped.set(option.requestId, {
-        key: option.requestLabel,
+      grouped.set(option.groupId, {
+        key: option.groupLabel,
         items: [option],
       });
     });
@@ -842,18 +842,20 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     return Array.from(grouped.values());
   }
 
-  private getRequestId(document: AiAbstractionDocument): string {
-    return document.externalRequestId?.trim() || 'request-unavailable';
+  private getGroupId(document: AiAbstractionDocument): string {
+    return (
+      document.documentGuid?.trim() ||
+      String(document.documentId ?? '') ||
+      'document-unavailable'
+    );
   }
 
-  private getRequestLabel(document: AiAbstractionDocument): string {
-    const requestId = document.externalRequestId?.trim();
-
-    if (requestId) {
-      return `Request ${requestId}`;
-    }
-
-    return 'Request Unavailable';
+  private getGroupLabel(document: AiAbstractionDocument): string {
+    return (
+      document.fileName?.trim() ||
+      document.documentFileName?.trim() ||
+      `Document ${document.documentGuid ?? document.documentId ?? 'Unavailable'}`
+    );
   }
 
   private parseContext(contextJson?: string | null): any | null {

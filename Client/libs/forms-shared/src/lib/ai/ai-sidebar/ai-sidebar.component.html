@@ -80,7 +80,7 @@
             [valueExpr]="'key'"
             [selectBoxValue]="selectedDocumentKey"
             [dropDownContainerCustomClass]="'ai-sidebar__document-dropdown'"
-            [searchExpr]="['fileName', 'requestLabel', 'artifactType']"
+            [searchExpr]="['fileName', 'groupLabel', 'artifactType']"
             (selectedItems)="onDocumentDropdownChange($event)"
           >
             <ng-template #customHeaderTemplate let-fieldData="fieldData">
