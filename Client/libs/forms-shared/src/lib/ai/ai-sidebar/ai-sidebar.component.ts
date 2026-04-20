@@ -45,6 +45,8 @@ interface DocumentOption {
   type: 'document' | 'artifact';
   documentGuid: string | null;
   documentId: number;
+  requestId: string;
+  requestLabel: string;
   url?: string;
   artifactGuid?: string | null;
   artifactId?: number;
@@ -56,6 +58,11 @@ interface DocumentOption {
   externalAbstractionStatus?: string;
   externalStatusDetail?: string;
   externalAiOutputJson?: string;
+}
+
+interface DocumentOptionGroup {
+  key: string;
+  items: DocumentOption[];
 }
 
 @Component({
@@ -78,6 +85,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentFileName: string | null = null;
   documentLoadError: string | null = null;
   documentOptions: DocumentOption[] = [];
+  groupedDocumentOptions: DocumentOptionGroup[] = [];
   selectedDocumentKey: string | null = null;
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
@@ -209,6 +217,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.documentFileName = null;
             this.documentLoadError = null;
             this.documentOptions = [];
+            this.groupedDocumentOptions = [];
             this.selectedDocumentKey = null;
             this.isDocumentLoading = false;
             this.documentSearchQuery = null;
@@ -238,6 +247,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentFileName = null;
           this.documentLoadError = null;
           this.documentOptions = [];
+          this.groupedDocumentOptions = [];
           this.selectedDocumentKey = null;
           this.isDocumentLoading = false;
           this.currentAiAbstractionId = null;
@@ -270,6 +280,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   get selectedDocumentContent(): string | null {
     return this.prettifyJson(this.selectedDocument?.contentText);
+  }
+
+  isSelectedDocument(document: DocumentOption): boolean {
+    return document.key === this.selectedDocumentKey;
+  }
+
+  getDocumentKindLabel(document: DocumentOption): string {
+    if (document.type === 'document') {
+      return 'Document';
+    }
+
+    return document.artifactType?.trim() || 'Artifact';
   }
 
   toggleSection(section: SidebarSection): void {
@@ -305,6 +327,15 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
 
     this.loadDocumentFile(document);
+  }
+
+  onDocumentDropdownChange(selection: DocumentOption[]): void {
+    const selectedDocument = selection?.[0];
+    if (!selectedDocument) {
+      return;
+    }
+
+    this.onDocumentSelectionChange(selectedDocument.key);
   }
 
   openDocumentInNewWindow(): void {
@@ -389,6 +420,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentSource = null;
     this.documentFileName = null;
     this.documentOptions = [];
+    this.groupedDocumentOptions = [];
     this.selectedDocumentKey = null;
     this.isDocumentLoading = true;
 
@@ -418,6 +450,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         next: (detail) => {
           const fallbackOptions = this.buildFallbackDocumentOptions(detail);
           this.documentOptions = fallbackOptions;
+          this.groupedDocumentOptions = this.groupDocumentOptions(fallbackOptions);
           this.isDocumentLoading = false;
 
           if (!fallbackOptions.length) {
@@ -433,6 +466,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentSource = null;
           this.documentFileName = null;
           this.documentOptions = [];
+          this.groupedDocumentOptions = [];
           this.loadedDocumentContextId = null;
           this.documentLoadError = 'Failed to load document metadata.';
           this.isDocumentLoading = false;
@@ -451,6 +485,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       }, []) ?? [];
 
     this.documentOptions = validDocuments;
+    this.groupedDocumentOptions = this.groupDocumentOptions(validDocuments);
 
     if (!validDocuments.length) {
       this.isDocumentLoading = false;
@@ -649,6 +684,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             type: 'document',
             documentGuid: document.documentGuid ?? null,
             documentId: document.documentId ?? 0,
+            requestId: this.getRequestId(document),
+            requestLabel: this.getRequestLabel(document),
             fileName:
               document.fileName ??
               document.documentFileName ??
@@ -687,6 +724,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
+      requestId: this.getRequestId(document),
+      requestLabel: this.getRequestLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,
       artifactId: artifact.artifactId,
       fileName: this.buildArtifactLabel(document, artifact),
@@ -745,6 +784,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
+      requestId: this.getRequestId(document),
+      requestLabel: this.getRequestLabel(document),
       artifactGuid: pipelineArtifactGuid,
       fileName: `${documentName} - Pipeline Output`,
       artifactType: 'Pipeline Output',
@@ -793,6 +834,54 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           )
       ) ?? null
     );
+  }
+
+  private groupDocumentOptions(
+    options: DocumentOption[]
+  ): DocumentOptionGroup[] {
+    const grouped = new Map<string, DocumentOptionGroup>();
+
+    options.forEach((option) => {
+      const existingGroup = grouped.get(option.requestId);
+      if (existingGroup) {
+        existingGroup.items.push(option);
+        return;
+      }
+
+      grouped.set(option.requestId, {
+        key: option.requestLabel,
+        items: [option],
+      });
+    });
+
+    return Array.from(grouped.values());
+  }
+
+  private getRequestId(document: AiAbstractionDocument): string {
+    return (
+      document.externalRequestId?.trim() ||
+      document.externalReferenceId?.trim() ||
+      document.documentGuid?.trim() ||
+      String(document.documentId ?? 'unknown-request')
+    );
+  }
+
+  private getRequestLabel(document: AiAbstractionDocument): string {
+    const requestId =
+      document.externalRequestId?.trim() ||
+      document.externalReferenceId?.trim();
+
+    if (requestId) {
+      return `Request ${requestId}`;
+    }
+
+    const documentName =
+      document.fileName?.trim() || document.documentFileName?.trim();
+    if (documentName) {
+      return documentName;
+    }
+
+    return `Request ${document.documentGuid ?? document.documentId ?? 'Unknown'}`;
   }
 
   private parseContext(contextJson?: string | null): any | null {

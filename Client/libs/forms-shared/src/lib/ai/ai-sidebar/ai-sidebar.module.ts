@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { DxDataGridModule } from 'devextreme-angular';
-import { SkeletonModule } from '@mango/ui-shared/lib-ui-elements';
+import { DropdownModule, SkeletonModule } from '@mango/ui-shared/lib-ui-elements';
 import { AiSidebarComponent } from './ai-sidebar.component';
 import { AiDocumentViewerComponent } from './ai-document-viewer.component';
 
@@ -16,6 +16,7 @@ import { AiDocumentViewerComponent } from './ai-document-viewer.component';
     MatIconModule,
     MatButtonModule,
     DxDataGridModule,
+    DropdownModule,
     SkeletonModule,
   ],
   exports: [AiSidebarComponent, AiDocumentViewerComponent],
