@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, from, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { Api, ApiResponse } from '@mango/data-models/lib-data-models';
 import { UtilitiesService } from '@mango/core-shared';
 import { IAIOutput } from '../models/ai-output.model';
@@ -122,8 +122,23 @@ export interface AiAbstractionDocumentArtifact {
   url?: string;
 }
 
+interface PipelineArtifactCandidate {
+  attachmentTypeId: number;
+  artifactId?: number;
+  artifactGuid?: string;
+  artifactType?: string;
+  contentText?: string;
+  externalReferenceId?: string;
+  fileName: string;
+  mimeType?: string;
+  requestId?: string;
+  sourceFileName?: string;
+  url?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AiLeaseService {
+  private readonly requestedExternalAttachmentTypeIds = new Set([20, 70]);
   private readonly apiUrl = UtilitiesService.getBaseApiUrl(
     Api.formWizard,
     'http://localhost:5000'
@@ -204,7 +219,9 @@ export class AiLeaseService {
       .pipe(map((res) => (res.data as AiAbstractionDetail) ?? null));
   }
 
-  getAbstractionListByBuilding(buildingId: number): Observable<AiAbstractionDetail[]> {
+  getAbstractionListByBuilding(
+    buildingId: number
+  ): Observable<AiAbstractionDetail[]> {
     return this.http
       .get<ApiResponse>(
         `${this.apiUrl}AiAbstractions/GetAiAbstractionsByBuilding`,
@@ -234,6 +251,31 @@ export class AiLeaseService {
       .pipe(map((res) => (res.data as AiAbstractionDocument[]) ?? []));
   }
 
+  getAbstractionDocumentsWithPipelineArtifacts(
+    aiAbstractionId: number
+  ): Observable<AiAbstractionDocument[]> {
+    return forkJoin({
+      documents: this.getAbstractionDocuments(aiAbstractionId),
+      detail: this.getAbstractionById(aiAbstractionId).pipe(
+        catchError(() => of(null))
+      ),
+    }).pipe(
+      switchMap(({ documents, detail }) => {
+        const externalJobId = detail?.externalJobId?.trim();
+        if (!externalJobId) {
+          return of(documents);
+        }
+
+        return this.getLeaseAbstractionPipelineJobDetails(externalJobId).pipe(
+          map((jobDetails) =>
+            this.mergePipelineArtifactsIntoDocuments(documents, jobDetails)
+          ),
+          catchError(() => of(documents))
+        );
+      })
+    );
+  }
+
   getAbstractionDocumentUrl(document: AiAbstractionDocument): string | null {
     const explicitUrl = document.url ?? document.documentUrl ?? null;
     if (explicitUrl) {
@@ -253,7 +295,9 @@ export class AiLeaseService {
     return `${this.apiUrl}AiAbstractions/GetAiAbstractionDocumentFile?documentGuid=${documentGuid}`;
   }
 
-  getAbstractionDocumentBlob(document: AiAbstractionDocument): Observable<Blob> {
+  getAbstractionDocumentBlob(
+    document: AiAbstractionDocument
+  ): Observable<Blob> {
     const documentUrl = this.getAbstractionDocumentUrl(document);
     return this.http.get(documentUrl!, {
       responseType: 'blob',
@@ -263,7 +307,17 @@ export class AiLeaseService {
     });
   }
 
-  getAbstractionDocumentFile(document: AiAbstractionDocument): Observable<File> {
+  getAbstractionDocumentText(
+    document: AiAbstractionDocument
+  ): Observable<string> {
+    return this.getAbstractionDocumentBlob(document).pipe(
+      switchMap((blob) => from(blob.text()))
+    );
+  }
+
+  getAbstractionDocumentFile(
+    document: AiAbstractionDocument
+  ): Observable<File> {
     const fileName =
       document.fileName ??
       document.documentFileName ??
@@ -352,12 +406,17 @@ export class AiLeaseService {
     bookmarks: HighlightRange[]
   ): Observable<void> {
     // Strip non-serialisable DOM node references before sending
-    const payload = bookmarks.map(({ startContainer, endContainer, ...rest }) => rest);
+    const payload = bookmarks.map(
+      ({ startContainer, endContainer, ...rest }) => rest
+    );
     return this.http
-      .post<ApiResponse>(`${this.apiUrl}AiAbstractions/SaveDocumentHighlights`, {
-        documentGuid,
-        highlightsJson: JSON.stringify(payload),
-      })
+      .post<ApiResponse>(
+        `${this.apiUrl}AiAbstractions/SaveDocumentHighlights`,
+        {
+          documentGuid,
+          highlightsJson: JSON.stringify(payload),
+        }
+      )
       .pipe(map(() => void 0));
   }
 
@@ -384,5 +443,294 @@ export class AiLeaseService {
         }))
       )
     );
+  }
+
+  private mergePipelineArtifactsIntoDocuments(
+    documents: AiAbstractionDocument[],
+    jobDetails: unknown
+  ): AiAbstractionDocument[] {
+    const mergedDocuments = documents.map((document) => ({
+      ...document,
+      artifacts: [...(document.artifacts ?? [])],
+    }));
+
+    const extractedArtifacts = this.extractPipelineArtifacts(jobDetails);
+    if (!extractedArtifacts.length) {
+      return mergedDocuments;
+    }
+
+    extractedArtifacts.forEach((artifact) => {
+      const targetDocument = this.findArtifactTargetDocument(
+        mergedDocuments,
+        artifact
+      );
+
+      const mappedArtifact: AiAbstractionDocumentArtifact = {
+        artifactId: artifact.artifactId,
+        artifactGuid: artifact.artifactGuid,
+        attachmentTypeId: artifact.attachmentTypeId,
+        artifactType:
+          artifact.artifactType ??
+          this.getAttachmentTypeLabel(artifact.attachmentTypeId),
+        displayName: artifact.fileName,
+        mimeType: artifact.mimeType,
+        contentText: artifact.contentText,
+        url: artifact.url,
+      };
+
+      if (targetDocument) {
+        if (!this.documentAlreadyHasArtifact(targetDocument, mappedArtifact)) {
+          targetDocument.artifacts = [
+            ...(targetDocument.artifacts ?? []),
+            mappedArtifact,
+          ];
+        }
+        return;
+      }
+
+      mergedDocuments.push({
+        documentId: 0,
+        externalReferenceId: artifact.externalReferenceId,
+        fileName:
+          artifact.sourceFileName ??
+          `Request ${
+            artifact.requestId ?? artifact.externalReferenceId ?? 'Attachment'
+          }`,
+        artifacts: [mappedArtifact],
+      });
+    });
+
+    return mergedDocuments;
+  }
+
+  private extractPipelineArtifacts(
+    value: unknown,
+    context: Partial<PipelineArtifactCandidate> = {}
+  ): PipelineArtifactCandidate[] {
+    if (!value) {
+      return [];
+    }
+
+    if (Array.isArray(value)) {
+      return value.reduce<PipelineArtifactCandidate[]>(
+        (allArtifacts, item) => [
+          ...allArtifacts,
+          ...this.extractPipelineArtifacts(item, context),
+        ],
+        []
+      );
+    }
+
+    if (typeof value !== 'object') {
+      return [];
+    }
+
+    const record = value as Record<string, unknown>;
+    const nextContext: Partial<PipelineArtifactCandidate> = {
+      externalReferenceId:
+        this.readString(record, [
+          'externalReferenceId',
+          'externalRefId',
+          'sourceExternalIdentifier',
+        ]) ?? context.externalReferenceId,
+      requestId:
+        this.readString(record, ['requestId', 'requestGuid']) ??
+        context.requestId,
+      sourceFileName:
+        this.readString(record, [
+          'sourceFileName',
+          'documentFileName',
+          'fileName',
+          'filename',
+          'name',
+        ]) ?? context.sourceFileName,
+    };
+
+    const directArtifact = this.tryMapPipelineArtifact(record, nextContext);
+    const nestedArtifacts = Object.values(record).reduce<
+      PipelineArtifactCandidate[]
+    >(
+      (allArtifacts, child) => [
+        ...allArtifacts,
+        ...this.extractPipelineArtifacts(child, nextContext),
+      ],
+      []
+    );
+
+    const allArtifacts = directArtifact
+      ? [directArtifact, ...nestedArtifacts]
+      : nestedArtifacts;
+    const seen = new Set<string>();
+
+    return allArtifacts.filter((artifact) => {
+      const key = [
+        artifact.requestId ?? '',
+        artifact.externalReferenceId ?? '',
+        artifact.attachmentTypeId,
+        artifact.artifactGuid ?? '',
+        artifact.url ?? '',
+        artifact.fileName,
+      ].join('|');
+
+      if (seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    });
+  }
+
+  private tryMapPipelineArtifact(
+    record: Record<string, unknown>,
+    context: Partial<PipelineArtifactCandidate>
+  ): PipelineArtifactCandidate | null {
+    const attachmentTypeId = this.readNumber(record, [
+      'attachmentTypeId',
+      'typeId',
+    ]);
+    if (
+      attachmentTypeId == null ||
+      !this.requestedExternalAttachmentTypeIds.has(attachmentTypeId)
+    ) {
+      return null;
+    }
+
+    return {
+      attachmentTypeId,
+      artifactId: this.readNumber(record, ['artifactId', 'attachmentId']),
+      artifactGuid:
+        this.readString(record, ['artifactGuid', 'attachmentGuid']) ??
+        undefined,
+      artifactType:
+        this.readString(record, ['artifactType', 'attachmentTypeName']) ??
+        this.getAttachmentTypeLabel(attachmentTypeId),
+      contentText:
+        this.readString(record, ['contentText', 'text', 'content']) ??
+        undefined,
+      externalReferenceId: context.externalReferenceId,
+      fileName:
+        this.readString(record, [
+          'fileName',
+          'filename',
+          'displayName',
+          'name',
+        ]) ?? this.getDefaultAttachmentFileName(attachmentTypeId),
+      mimeType:
+        this.readString(record, ['mimeType', 'contentType']) ??
+        this.getDefaultAttachmentMimeType(attachmentTypeId),
+      requestId: context.requestId,
+      sourceFileName: context.sourceFileName,
+      url:
+        this.readString(record, ['url', 'downloadUrl', 'fileUrl']) ?? undefined,
+    };
+  }
+
+  private findArtifactTargetDocument(
+    documents: AiAbstractionDocument[],
+    artifact: PipelineArtifactCandidate
+  ): AiAbstractionDocument | null {
+    const byExternalReference =
+      artifact.externalReferenceId &&
+      documents.find(
+        (document) =>
+          document.externalReferenceId?.trim() === artifact.externalReferenceId
+      );
+    if (byExternalReference) {
+      return byExternalReference;
+    }
+
+    const byFileName =
+      artifact.sourceFileName &&
+      documents.find((document) =>
+        [document.fileName, document.documentFileName]
+          .filter(Boolean)
+          .some((name) => name?.trim() === artifact.sourceFileName)
+      );
+    if (byFileName) {
+      return byFileName;
+    }
+
+    return documents.length === 1 ? documents[0] : null;
+  }
+
+  private documentAlreadyHasArtifact(
+    document: AiAbstractionDocument,
+    artifact: AiAbstractionDocumentArtifact
+  ): boolean {
+    return (document.artifacts ?? []).some(
+      (existing) =>
+        existing.attachmentTypeId === artifact.attachmentTypeId &&
+        (existing.displayName?.trim() || '') ===
+          (artifact.displayName?.trim() || '')
+    );
+  }
+
+  private readNumber(
+    record: Record<string, unknown>,
+    keys: string[]
+  ): number | undefined {
+    for (const key of keys) {
+      const value = record[key];
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        return value;
+      }
+      if (
+        typeof value === 'string' &&
+        value.trim() &&
+        !Number.isNaN(Number(value))
+      ) {
+        return Number(value);
+      }
+    }
+
+    return undefined;
+  }
+
+  private readString(
+    record: Record<string, unknown>,
+    keys: string[]
+  ): string | undefined {
+    for (const key of keys) {
+      const value = record[key];
+      if (typeof value === 'string' && value.trim()) {
+        return value.trim();
+      }
+    }
+
+    return undefined;
+  }
+
+  private getAttachmentTypeLabel(attachmentTypeId: number): string {
+    switch (attachmentTypeId) {
+      case 20:
+        return 'OCR_LIGHTWEIGHT_TEXT';
+      case 70:
+        return 'VALIDATION_RESULT_JSON';
+      default:
+        return `Attachment ${attachmentTypeId}`;
+    }
+  }
+
+  private getDefaultAttachmentFileName(attachmentTypeId: number): string {
+    switch (attachmentTypeId) {
+      case 20:
+        return 'ocr.txt';
+      case 70:
+        return 'checks.json';
+      default:
+        return `attachment-${attachmentTypeId}`;
+    }
+  }
+
+  private getDefaultAttachmentMimeType(attachmentTypeId: number): string {
+    switch (attachmentTypeId) {
+      case 20:
+        return 'text/plain';
+      case 70:
+        return 'application/json';
+      default:
+        return 'application/octet-stream';
+    }
   }
 }

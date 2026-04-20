@@ -21,6 +21,7 @@ interface DocumentOption {
   artifactId?: number;
   fileName: string;
   artifactType?: string;
+  attachmentTypeId?: number;
   mimeType?: string;
   contentText?: string;
   externalStatus?: string;
@@ -52,7 +53,10 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
 
   private aiAbstractionId: number | null = null;
   private readonly destroy$ = new Subject<void>();
-  private readonly bookmarkSave$ = new Subject<{ documentGuid: string; bookmarks: HighlightRange[] }>();
+  private readonly bookmarkSave$ = new Subject<{
+    documentGuid: string;
+    bookmarks: HighlightRange[];
+  }>();
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -64,15 +68,17 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(1500),
         switchMap(({ documentGuid, bookmarks }) =>
-          this.aiLeaseService.saveDocumentHighlights(documentGuid, bookmarks).pipe(
-            catchError((error) => {
-              console.error('Failed to save document highlights', {
-                documentGuid,
-                error,
-              });
-              return EMPTY;
-            })
-          )
+          this.aiLeaseService
+            .saveDocumentHighlights(documentGuid, bookmarks)
+            .pipe(
+              catchError((error) => {
+                console.error('Failed to save document highlights', {
+                  documentGuid,
+                  error,
+                });
+                return EMPTY;
+              })
+            )
         ),
         takeUntil(this.destroy$)
       )
@@ -124,7 +130,10 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   onBookmarksChange(bookmarks: HighlightRange[]): void {
     this._viewerHasUserChanges = true;
     this.currentBookmarks = bookmarks;
-    if (this.selectedDocument?.type === 'document' && this.selectedDocument.documentGuid) {
+    if (
+      this.selectedDocument?.type === 'document' &&
+      this.selectedDocument.documentGuid
+    ) {
       this.bookmarkSave$.next({
         documentGuid: this.selectedDocument.documentGuid,
         bookmarks,
@@ -142,7 +151,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.selectedDocumentKey = null;
 
     this.aiLeaseService
-      .getAbstractionDocuments(aiAbstractionId)
+      .getAbstractionDocumentsWithPipelineArtifacts(aiAbstractionId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (documents) => {
@@ -151,7 +160,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
           this.groupedDocumentOptions = this.groupDocumentOptions(options);
 
           if (!options.length) {
-            this.errorMessage = 'No documents were found for this AI abstraction.';
+            this.errorMessage =
+              'No documents were found for this AI abstraction.';
             this.isLoading = false;
             return;
           }
@@ -167,8 +177,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
               requestedArtifactGuid
                 ? item.artifactGuid === requestedArtifactGuid
                 : item.documentGuid === requestedDocumentGuid
-            ) ??
-            options[0];
+            ) ?? options[0];
 
           this.loadDocumentFile(initialDocument);
         },
@@ -187,6 +196,34 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this._viewerHasUserChanges = false;
     this.errorMessage = null;
     this.isLoading = true;
+
+    if (this.shouldRenderAsText(document) && !document.contentText) {
+      this.aiLeaseService
+        .getAbstractionDocumentText({
+          documentGuid: document.documentGuid ?? undefined,
+          documentId: document.documentId,
+          artifactGuid: document.artifactGuid ?? undefined,
+          artifactId: document.artifactId,
+          fileName: document.fileName,
+          mimeType: document.mimeType,
+          url: document.url,
+        })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (text) => {
+            document.contentText = text;
+            this.documentSource = null;
+            this.errorMessage = null;
+            this.isLoading = false;
+          },
+          error: () => {
+            this.documentSource = null;
+            this.errorMessage = 'Failed to load the selected document.';
+            this.isLoading = false;
+          },
+        });
+      return;
+    }
 
     if (document.url) {
       this.documentSource = { url: document.url };
@@ -231,7 +268,9 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
           if (this._viewerHasUserChanges) return;
           this.currentBookmarks = savedBookmarks;
         },
-        error: () => { /* non-critical */ },
+        error: () => {
+          /* non-critical */
+        },
       });
   }
 
@@ -249,7 +288,9 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
               fileName:
                 document.fileName ??
                 document.documentFileName ??
-                `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim(),
+                `Document ${
+                  document.documentGuid ?? document.documentId ?? ''
+                }`.trim(),
               mimeType: document.mimeType,
               externalStatus: document.externalStatus,
               externalAbstractionStatus: document.externalAbstractionStatus,
@@ -274,7 +315,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     document: AiAbstractionDocument,
     artifact: AiAbstractionDocumentArtifact
   ): DocumentOption | null {
-    const artifactKey = artifact.artifactGuid ?? String(artifact.artifactId ?? '');
+    const artifactKey =
+      artifact.artifactGuid?.trim() ||
+      (artifact.artifactId != null ? String(artifact.artifactId) : '') ||
+      artifact.url?.trim() ||
+      artifact.displayName?.trim() ||
+      artifact.artifactType?.trim() ||
+      '';
     if (!artifactKey) {
       return null;
     }
@@ -291,6 +338,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       artifactId: artifact.artifactId,
       fileName: this.buildArtifactLabel(artifact),
       artifactType: artifact.artifactType,
+      attachmentTypeId: artifact.attachmentTypeId,
       mimeType: artifact.mimeType,
       contentText: artifact.contentText,
       externalStatus: document.externalStatus,
@@ -307,6 +355,31 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       'Artifact';
 
     return artifactName;
+  }
+
+  private shouldRenderAsText(document: DocumentOption): boolean {
+    if (document.type !== 'artifact') {
+      return false;
+    }
+
+    if (document.contentText?.trim()) {
+      return true;
+    }
+
+    if (document.attachmentTypeId === 20 || document.attachmentTypeId === 70) {
+      return true;
+    }
+
+    const mimeType = document.mimeType?.toLowerCase() ?? '';
+    if (
+      mimeType.includes('json') ||
+      mimeType.startsWith('text/') ||
+      mimeType.includes('markdown')
+    ) {
+      return true;
+    }
+
+    return /\.(json|txt|md)$/i.test(document.fileName);
   }
 
   onDocumentDropdownChange(selection: DocumentOption[]): void {
@@ -351,7 +424,9 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     return (
       document.fileName?.trim() ||
       document.documentFileName?.trim() ||
-      `Document ${document.documentGuid ?? document.documentId ?? 'Unavailable'}`
+      `Document ${
+        document.documentGuid ?? document.documentId ?? 'Unavailable'
+      }`
     );
   }
 

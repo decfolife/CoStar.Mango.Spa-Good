@@ -51,6 +51,7 @@ interface DocumentOption {
   artifactId?: number;
   fileName: string;
   artifactType?: string;
+  attachmentTypeId?: number;
   mimeType?: string;
   contentText?: string;
   externalStatus?: string;
@@ -95,7 +96,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   private _viewerHasUserChanges = false;
   private loadedDocumentContextId: number | null = null;
   private handledDocumentRequestId = 0;
-  private readonly bookmarkSave$ = new Subject<{ documentGuid: string; bookmarks: HighlightRange[] }>();
+  private readonly bookmarkSave$ = new Subject<{
+    documentGuid: string;
+    bookmarks: HighlightRange[];
+  }>();
 
   private isDragging = false;
   private dragStartX = 0;
@@ -162,15 +166,17 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(1500),
         switchMap(({ documentGuid, bookmarks }) =>
-          this.aiLeaseService.saveDocumentHighlights(documentGuid, bookmarks).pipe(
-            catchError((error) => {
-              console.error('Failed to save document highlights', {
-                documentGuid,
-                error,
-              });
-              return EMPTY;
-            })
-          )
+          this.aiLeaseService
+            .saveDocumentHighlights(documentGuid, bookmarks)
+            .pipe(
+              catchError((error) => {
+                console.error('Failed to save document highlights', {
+                  documentGuid,
+                  error,
+                });
+                return EMPTY;
+              })
+            )
         ),
         takeUntil(this.destroy$)
       )
@@ -190,7 +196,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         distinctUntilChanged(
-          ([prevState, prevParams, prevParamMap], [nextState, nextParams, nextParamMap]) =>
+          (
+            [prevState, prevParams, prevParamMap],
+            [nextState, nextParams, nextParamMap]
+          ) =>
             prevState.isOpen === nextState.isOpen &&
             prevState.leaseId === nextState.leaseId &&
             prevState.documentRequestId === nextState.documentRequestId &&
@@ -225,7 +234,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
           if (state.documentRequestId !== this.handledDocumentRequestId) {
             this.handledDocumentRequestId = state.documentRequestId;
-            this.documentSearchQuery = state.documentSearchQuery?.trim() || null;
+            this.documentSearchQuery =
+              state.documentSearchQuery?.trim() || null;
             this.activeTabIndex = 0;
           }
 
@@ -333,9 +343,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     const tree = this.router.createUrlTree(
       ['/crem/portfolio/ai-abstractions/document', this.currentAiAbstractionId],
       {
-        queryParams: this.selectedDocument?.type === 'artifact'
-          ? { artifactGuid: this.selectedDocument.artifactGuid }
-          : this.selectedDocument?.documentGuid
+        queryParams:
+          this.selectedDocument?.type === 'artifact'
+            ? { artifactGuid: this.selectedDocument.artifactGuid }
+            : this.selectedDocument?.documentGuid
             ? { documentGuid: this.selectedDocument.documentGuid }
             : {},
       }
@@ -412,7 +423,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.isDocumentLoading = true;
 
     this.aiLeaseService
-      .getAbstractionDocuments(aiAbstractionId)
+      .getAbstractionDocumentsWithPipelineArtifacts(aiAbstractionId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (documents) => {
@@ -446,7 +457,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     if (!validDocuments.length) {
       this.isDocumentLoading = false;
       this.loadedDocumentContextId = null;
-      this.documentLoadError = 'No documents were found for this AI abstraction.';
+      this.documentLoadError =
+        'No documents were found for this AI abstraction.';
       return false;
     }
 
@@ -464,6 +476,34 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.currentBookmarks = [];
     this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
+
+    if (this.shouldRenderAsText(document) && !document.contentText) {
+      this.aiLeaseService
+        .getAbstractionDocumentText({
+          documentGuid: document.documentGuid ?? undefined,
+          documentId: document.documentId,
+          artifactGuid: document.artifactGuid ?? undefined,
+          artifactId: document.artifactId,
+          fileName: document.fileName,
+          mimeType: document.mimeType,
+          url: document.url,
+        })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (text) => {
+            document.contentText = text;
+            this.documentSource = null;
+            this.documentLoadError = null;
+            this.isDocumentLoading = false;
+          },
+          error: () => {
+            this.documentSource = null;
+            this.documentLoadError = 'Failed to load document file.';
+            this.isDocumentLoading = false;
+          },
+        });
+      return;
+    }
 
     if (document.url) {
       this.documentSource = { url: document.url };
@@ -502,7 +542,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   onBookmarksChange(bookmarks: HighlightRange[]): void {
     this._viewerHasUserChanges = true;
     this.currentBookmarks = bookmarks;
-    if (this.selectedDocument?.type === 'document' && this.selectedDocument.documentGuid) {
+    if (
+      this.selectedDocument?.type === 'document' &&
+      this.selectedDocument.documentGuid
+    ) {
       this.bookmarkSave$.next({
         documentGuid: this.selectedDocument.documentGuid,
         bookmarks,
@@ -521,7 +564,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           if (this._viewerHasUserChanges) return;
           this.currentBookmarks = savedBookmarks;
         },
-        error: () => { /* non-critical */ },
+        error: () => {
+          /* non-critical */
+        },
       });
   }
 
@@ -571,7 +616,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  private mapDocumentOptions(document: AiAbstractionDocument): DocumentOption[] {
+  private mapDocumentOptions(
+    document: AiAbstractionDocument
+  ): DocumentOption[] {
     const baseDocument: DocumentOption[] = document.documentGuid
       ? [
           {
@@ -584,7 +631,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             fileName:
               document.fileName ??
               document.documentFileName ??
-              `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim(),
+              `Document ${
+                document.documentGuid ?? document.documentId ?? ''
+              }`.trim(),
             mimeType: document.mimeType,
             externalStatus: document.externalStatus,
             externalAbstractionStatus: document.externalAbstractionStatus,
@@ -605,7 +654,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     document: AiAbstractionDocument,
     artifact: AiAbstractionDocumentArtifact
   ): DocumentOption | null {
-    const artifactKey = artifact.artifactGuid ?? String(artifact.artifactId ?? '');
+    const artifactKey =
+      artifact.artifactGuid?.trim() ||
+      (artifact.artifactId != null ? String(artifact.artifactId) : '') ||
+      artifact.url?.trim() ||
+      artifact.displayName?.trim() ||
+      artifact.artifactType?.trim() ||
+      '';
     if (!artifactKey) {
       return null;
     }
@@ -622,6 +677,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       artifactId: artifact.artifactId,
       fileName: this.buildArtifactLabel(artifact),
       artifactType: artifact.artifactType,
+      attachmentTypeId: artifact.attachmentTypeId,
       mimeType: artifact.mimeType,
       contentText: artifact.contentText,
       externalStatus: document.externalStatus,
@@ -638,6 +694,31 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       'Artifact';
 
     return artifactName;
+  }
+
+  private shouldRenderAsText(document: DocumentOption): boolean {
+    if (document.type !== 'artifact') {
+      return false;
+    }
+
+    if (document.contentText?.trim()) {
+      return true;
+    }
+
+    if (document.attachmentTypeId === 20 || document.attachmentTypeId === 70) {
+      return true;
+    }
+
+    const mimeType = document.mimeType?.toLowerCase() ?? '';
+    if (
+      mimeType.includes('json') ||
+      mimeType.startsWith('text/') ||
+      mimeType.includes('markdown')
+    ) {
+      return true;
+    }
+
+    return /\.(json|txt|md)$/i.test(document.fileName);
   }
 
   private groupDocumentOptions(
@@ -673,7 +754,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     return (
       document.fileName?.trim() ||
       document.documentFileName?.trim() ||
-      `Document ${document.documentGuid ?? document.documentId ?? 'Unavailable'}`
+      `Document ${
+        document.documentGuid ?? document.documentId ?? 'Unavailable'
+      }`
     );
   }
 
