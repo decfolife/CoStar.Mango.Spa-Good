@@ -67,17 +67,19 @@ export class NavigationEffect {
               response,
               moduleId,
               currentSubApp,
+              url,
             }))
           );
         }
       ),
-      map(({ response, moduleId, currentSubApp }) => {
+      map(({ response, moduleId, currentSubApp, url }) => {
         const navLinksFetched =
           !(moduleId === 6 && currentSubApp === MangoSubApps.ADMIN) &&
           response !== null;
         const navigationLinks = this.addAiLeasesNavLink(
           !!response ? response.data : [],
-          moduleId
+          moduleId,
+          url
         );
         const activeLink = navigationLinks[0]?.name || null;
 
@@ -96,7 +98,8 @@ export class NavigationEffect {
   // from CREM while the feature is being developed and not yet released.
   private addAiLeasesNavLink(
     navigationLinks: SharedLeftNavLink[],
-    moduleId: number
+    moduleId: number,
+    currentUrl?: string | null
   ): SharedLeftNavLink[] {
     if (moduleId !== 1 || !Array.isArray(navigationLinks)) {
       return navigationLinks;
@@ -119,13 +122,16 @@ export class NavigationEffect {
     }
 
     const leasesLink = navigationLinks[leasesIndex];
+    const isAiLeasesActive =
+      !!currentUrl &&
+      currentUrl.toLowerCase().includes('/crem/portfolio/ai-abstractions');
     const aiLeasesLink: SharedLeftNavLink = {
       ...leasesLink,
       id: undefined,
       name: 'AI Leases',
       dynamicName: 'AI Leases',
       categoryHasFlyOutMenu: false,
-      categoryIsCurrentlyActiveLink: false,
+      categoryIsCurrentlyActiveLink: isAiLeasesActive,
       categoryLinkUrl: leasesLink.categoryLinkUrl,
       categorySpaUrl: leasesLink.categorySpaUrl,
       categorySpaQueryParameters: leasesLink.categorySpaQueryParameters,
@@ -134,7 +140,7 @@ export class NavigationEffect {
       usesNgRouting: true,
       spaUrl: '/crem/portfolio/ai-abstractions',
       spaQueryParameters: undefined,
-      isCurrentlyActiveLink: false,
+      isCurrentlyActiveLink: isAiLeasesActive,
       subChildLevel: leasesLink.subChildLevel,
       subChildLevelNavLinks: leasesLink.subChildLevelNavLinks,
     };
