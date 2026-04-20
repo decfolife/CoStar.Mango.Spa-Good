@@ -432,7 +432,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     documents: AiAbstractionDocument[] | null | undefined
   ): boolean {
     const validDocuments =
-      documents?.flatMap((document) => this.mapDocumentOptions(document)) ?? [];
+      documents?.reduce<DocumentOption[]>((allOptions, document) => {
+        allOptions.push(...this.mapDocumentOptions(document));
+        return allOptions;
+      }, []) ?? [];
 
     this.documentOptions = validDocuments;
 
