@@ -47,6 +47,7 @@
 
 .ai-document-page__controls {
   min-width: 320px;
+  max-width: 560px;
 }
 
 .ai-document-page__document-summary {
@@ -87,14 +88,26 @@
   margin-bottom: 6px;
 }
 
-.ai-document-page__select {
-  width: 100%;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  color: #111827;
-  font-size: 14px;
-  padding: 10px 12px;
+.ai-document-page__group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 8px;
+}
+
+.ai-document-page__group-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #d8e1ec;
+}
+
+.ai-document-page__group-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #53657b;
 }
 
 .ai-document-page__state {
@@ -171,11 +184,36 @@
     padding: 16px 20px;
   }
 
+  .ai-document-page__controls {
+    min-width: 0;
+    max-width: none;
+  }
+
   .ai-document-page__state,
   .ai-document-page__viewer {
     margin-left: 0;
     margin-right: 0;
     padding-left: 20px;
     padding-right: 20px;
+  }
+}
+
+:host ::ng-deep .ai-document-page-dropdown {
+  .dx-list-group-header {
+    background: #f8fbff;
+    border-top: 1px solid #e2e8f0;
+    padding: 0;
+  }
+
+  .dx-list-group:first-child .dx-list-group-header {
+    border-top: 0;
+  }
+
+  .dx-list-group-body {
+    background: #fff;
+  }
+
+  .dx-list-item-content {
+    padding: 10px 14px;
   }
 }

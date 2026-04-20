@@ -6,6 +6,7 @@ import { AiLeaseFormModule } from './ai-lease-form/ai-lease-form.module';
 import { AiSidebarModule } from './ai-sidebar/ai-sidebar.module';
 import { AiDocumentPageComponent } from './ai-document-page/ai-document-page.component';
 import { AddAiLeaseModalModule } from 'libs/ui-shared/lib-ui-shared/src/lib/add-ai-lease-modal/add-ai-lease-modal.module';
+import { DropdownModule } from '@mango/ui-shared/lib-ui-elements';
 
 @NgModule({
   declarations: [AiDocumentPageComponent],
@@ -16,6 +17,7 @@ import { AddAiLeaseModalModule } from 'libs/ui-shared/lib-ui-shared/src/lib/add-
     AiLeaseFormModule,
     AiSidebarModule,
     AddAiLeaseModalModule,
+    DropdownModule,
   ],
 })
 export class AiModule {}

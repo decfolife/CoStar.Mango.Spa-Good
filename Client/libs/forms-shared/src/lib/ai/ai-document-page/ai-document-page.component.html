@@ -6,19 +6,37 @@
     </div>
 
     <div class="ai-document-page__controls" *ngIf="documentOptions.length">
-      <select
-        id="ai-document-page-select"
-        class="ai-document-page__select"
-        [value]="selectedDocumentKey ?? ''"
-        (change)="onDocumentSelectionChange($any($event.target).value)"
+      <label
+        class="ai-document-page__label"
+        for="ai-document-page-document-select"
       >
-        <option
-          *ngFor="let document of documentOptions"
-          [value]="document.key"
-        >
-          {{ document.fileName }}
-        </option>
-      </select>
+        Request Documents
+      </label>
+      <crem-dropdown
+        id="ai-document-page-document-select"
+        inputId="ai-document-page-document-select"
+        placeholder="Select a document"
+        [useSelectBox]="true"
+        [grouped]="true"
+        [useCustomGroupTemplate]="true"
+        [allowSearch]="true"
+        [showClearButton]="false"
+        [dataSource]="groupedDocumentOptions"
+        [displayExpr]="'fileName'"
+        [valueExpr]="'key'"
+        [selectBoxValue]="selectedDocumentKey"
+        [dropDownContainerCustomClass]="'ai-document-page-dropdown'"
+        [searchExpr]="['fileName', 'requestLabel', 'artifactType']"
+        (selectedItems)="onDocumentDropdownChange($event)"
+      >
+        <ng-template #customHeaderTemplate let-fieldData="fieldData">
+          <div class="ai-document-page__group-header">
+            <span class="ai-document-page__group-title">
+              {{ fieldData?.key }}
+            </span>
+          </div>
+        </ng-template>
+      </crem-dropdown>
       <div
         *ngIf="selectedDocument"
         class="ai-document-page__document-summary"
@@ -39,12 +57,6 @@
             Abstraction Status:
             {{ selectedDocument.externalAbstractionStatus || 'Unavailable' }}
           </span>
-        </div>
-        <div
-          *ngIf="selectedDocument.externalStatusDetail"
-          class="ai-document-page__document-detail"
-        >
-          {{ selectedDocument.externalStatusDetail }}
         </div>
       </div>
     </div>

@@ -14,6 +14,8 @@ interface DocumentOption {
   type: 'document' | 'artifact';
   documentGuid: string | null;
   documentId: number;
+  requestId: string;
+  requestLabel: string;
   artifactGuid?: string | null;
   artifactId?: number;
   fileName: string;
@@ -26,6 +28,11 @@ interface DocumentOption {
   externalAiOutputJson?: string;
 }
 
+interface DocumentOptionGroup {
+  key: string;
+  items: DocumentOption[];
+}
+
 @Component({
   selector: 'mango-ai-document-page',
   templateUrl: './ai-document-page.component.html',
@@ -33,6 +40,7 @@ interface DocumentOption {
 })
 export class AiDocumentPageComponent implements OnInit, OnDestroy {
   documentOptions: DocumentOption[] = [];
+  groupedDocumentOptions: DocumentOptionGroup[] = [];
   selectedDocumentKey: string | null = null;
   documentSource: DocumentSource | null = null;
   documentFileName: string | null = null;
@@ -129,6 +137,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.documentSource = null;
     this.documentFileName = null;
     this.documentOptions = [];
+    this.groupedDocumentOptions = [];
     this.selectedDocumentKey = null;
 
     this.aiLeaseService
@@ -138,6 +147,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
         next: (documents) => {
           const options = this.mapDocuments(documents);
           this.documentOptions = options;
+          this.groupedDocumentOptions = this.groupDocumentOptions(options);
 
           if (!options.length) {
             this.errorMessage = 'No documents were found for this AI abstraction.';
@@ -235,6 +245,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
               type: 'document',
               documentGuid: document.documentGuid ?? null,
               documentId: document.documentId ?? 0,
+              requestId: this.getRequestId(document),
+              requestLabel: this.getRequestLabel(document),
               fileName:
                 document.fileName ??
                 document.documentFileName ??
@@ -278,6 +290,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
+      requestId: this.getRequestId(document),
+      requestLabel: this.getRequestLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,
       artifactId: artifact.artifactId,
       fileName: this.buildArtifactLabel(document, artifact),
@@ -336,6 +350,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
+      requestId: this.getRequestId(document),
+      requestLabel: this.getRequestLabel(document),
       artifactGuid: pipelineArtifactGuid,
       fileName: `${documentName} - Pipeline Output`,
       artifactType: 'Pipeline Output',
@@ -384,6 +400,63 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
           )
       ) ?? null
     );
+  }
+
+  onDocumentDropdownChange(selection: DocumentOption[]): void {
+    const selectedDocument = selection?.[0];
+    if (!selectedDocument) {
+      return;
+    }
+
+    this.onDocumentSelectionChange(selectedDocument.key);
+  }
+
+  private groupDocumentOptions(
+    options: DocumentOption[]
+  ): DocumentOptionGroup[] {
+    const grouped = new Map<string, DocumentOptionGroup>();
+
+    options.forEach((option) => {
+      const existingGroup = grouped.get(option.requestId);
+      if (existingGroup) {
+        existingGroup.items.push(option);
+        return;
+      }
+
+      grouped.set(option.requestId, {
+        key: option.requestLabel,
+        items: [option],
+      });
+    });
+
+    return Array.from(grouped.values());
+  }
+
+  private getRequestId(document: AiAbstractionDocument): string {
+    return (
+      document.externalRequestId?.trim() ||
+      document.externalReferenceId?.trim() ||
+      document.documentGuid?.trim() ||
+      String(document.documentId ?? 'unknown-request')
+    );
+  }
+
+  private getRequestLabel(document: AiAbstractionDocument): string {
+    const requestId =
+      document.externalRequestId?.trim() ||
+      document.externalReferenceId?.trim();
+
+    if (requestId) {
+      return `Request ${requestId}`;
+    }
+
+    const documentName =
+      document.fileName?.trim() || document.documentFileName?.trim();
+    if (documentName) {
+      return documentName;
+    }
+
+    return `Request ${document.documentGuid ?? document.documentId ?? 'Unknown'}`;
   }
 
   private prettifyJson(value?: string | null): string | null {
