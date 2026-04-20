@@ -9,6 +9,7 @@ import {
   SkeletonModule,
 } from '@mango/ui-shared/lib-ui-elements';
 import { ExportDevexDatagridService } from '@mango/core-shared';
+import { MatDialogModule } from '@angular/material/dialog';
 import { AiListPageComponent } from './ai-list-page.component';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { AiListPageComponent } from './ai-list-page.component';
     ButtonModule,
     DropdownModule,
     SkeletonModule,
+    MatDialogModule,
   ],
   providers: [ExportDevexDatagridService],
   exports: [AiListPageComponent],

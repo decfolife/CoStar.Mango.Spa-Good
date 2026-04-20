@@ -4,6 +4,11 @@
       "Read(//Users/michaelcurtis/developer/rem-document-viewer/**)",
       "Read(//Users/michaelcurtis/developer/formsengine/**)",
       "Bash(npm ls:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/michaelcurtis/developer/formsengine/FormsEngine.Application/Ai",
+      "/Users/michaelcurtis/developer/formsengine/FormsEngine.Application/Forms/RenderForm/Queries/GetParentLink",
+      "/Users/michaelcurtis/developer/formsengine"
     ]
   }
 }

@@ -13,6 +13,7 @@ import { ObjectType } from '@mango/data-models/lib-data-models';
 import { ObjectTypeType } from '@mango/data-models/lib-data-models';
 import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { BreadCrumb } from '@mango/data-models/lib-data-models';
+import { ObjectParentLinker } from '../../model/dynamic-forms.interface';
 
 @Component({
   selector: 'mango-ai-lease-form',
@@ -264,19 +265,17 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
           detail?.buildingId ?? 0,
           detail?.buildingId ? ObjectType.BUILDING : 0
         ).pipe(catchError(() => of({ data: {} }))),
-        buildingForm:
-          detail?.buildingId
-            ? this.dynamicFormsService
-                .getFormForObjectTypeType(ObjectTypeType.Building)
-                .pipe(catchError(() => of({ data: null })))
-            : of({ data: null }),
+        parentLink: detail?.buildingId
+          ? this.dynamicFormsService
+              .getParentLink(detail.buildingId, ObjectType.BUILDING)
+              .pipe(catchError(() => of({ data: null })))
+          : of({ data: null }),
       })
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: ({ mappedForm, dropdownValues, buildingForm }) => {
+          next: ({ mappedForm, dropdownValues, parentLink }) => {
             this.parentBuildingLink = this.buildParentBuildingLink(
-              detail,
-              buildingForm?.data
+              parentLink?.data ?? null
             );
             this.sections = this.groupIntoSections(
               mappedForm.fields,
@@ -371,6 +370,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     return sections
       .slice()
       .sort((a, b) => a.formSectionSortOrder - b.formSectionSortOrder)
+      .filter((section) => !this.isParentLinkSection(section))
       .map((section) => {
         const normalizedColumns = this.normalizeSectionColumns(section.formSectionColumns);
         const sectionFields = fields
@@ -427,6 +427,9 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       dropdownValuesByFormItemId[String(field.formItemID)] ?? []
     );
 
+    const detailValue = this.resolveDetailValue(field, detail);
+    const resolvedValue = field.formItemAnswer ?? detailValue?.id ?? null;
+
     return {
       key: String(field.formItemID),
       label:
@@ -435,7 +438,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         field.formItemFriendlyName ||
         field.formItemName,
       type: this.resolveAiFieldType(field),
-      value: field.formItemAnswer ?? null,
+      value: resolvedValue,
       dropdownId: field.dropdownID || undefined,
       requestTypeId: field.requestTypeID || undefined,
       dropdownItems: dropdownItems.length ? dropdownItems : undefined,
@@ -450,7 +453,7 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       formItemFieldWidth: field.formItemFieldWidth ?? undefined,
       formItemFieldHeight: field.formItemFieldHeight ?? undefined,
       radioOptions: this.parseFormItemParameters(field.formItemParameters),
-      displayValue: this.resolveFieldDisplayValue(field, detail),
+      displayValue: detailValue?.displayName,
       isAiOutputField:
         field.formItemAnswer !== null &&
         field.formItemAnswer !== undefined &&
@@ -533,6 +536,10 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     return Math.min(Math.floor(parsedColumns), 4);
   }
 
+  private isParentLinkSection(section: any): boolean {
+    return this.normalizeCandidate(section?.formSectionName) === 'leaseparentlink';
+  }
+
   private isParentLinkField(field: any): boolean {
     const candidates = [
       field?.formItemSystemName,
@@ -542,26 +549,25 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       field?.formItemSectionDetail?.formItemLabel,
     ]
       .filter(Boolean)
-      .map((value: string) => value.toLowerCase());
+      .map((value: string) => this.normalizeCandidate(value));
 
-    return candidates.includes('lease_parentlink');
+    return candidates.includes('leaseparentlink');
   }
 
   private buildParentBuildingLink(
-    detail: any,
-    buildingFormId: number | null | undefined
+    parentLink: ObjectParentLinker | null | undefined
   ): { label: string; queryParams: Record<string, number> } | null {
-    if (!detail?.buildingId || !detail?.buildingName || !buildingFormId) {
+    if (!parentLink?.formId || !parentLink?.objectId || !parentLink?.labelText) {
       return null;
     }
 
     return {
-      label: `Building: ${detail.buildingName}`,
+      label: parentLink.labelText,
       queryParams: {
-        fid: Number(buildingFormId),
-        oid: Number(detail.buildingId),
+        fid: Number(parentLink.formId),
+        oid: Number(parentLink.objectId),
         otid: ObjectType.BUILDING,
-        ottid: ObjectTypeType.Building,
+        ottid: Number(parentLink.objectTypeTypeId ?? ObjectTypeType.Building),
       },
     };
   }
@@ -642,10 +648,11 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
     return options.length ? options : undefined;
   }
 
-  private resolveFieldDisplayValue(field: any, detail?: any): string | undefined {
-    if (!detail) {
-      return undefined;
-    }
+  private resolveDetailValue(
+    field: any,
+    detail?: any
+  ): { id: any; displayName: string } | undefined {
+    if (!detail) return undefined;
 
     const candidates = [
       field?.formItemSystemName,
@@ -655,25 +662,31 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       field?.formItemSectionDetail?.formItemLabel,
     ]
       .filter(Boolean)
-      .map((value: string) => value.toLowerCase());
+      .map((value: string) => this.normalizeCandidate(value));
 
     if (
-      candidates.some((value) =>
-        ['portfolio', 'portfolioid', 'mastergroup', 'company', 'companyid'].includes(value)
-      )
+      candidates.some((v) =>
+        ['portfolio', 'portfolioid', 'mastergroup', 'mastergrouppid', 'company', 'companyid', 'portfolioname'].includes(v)
+      ) && detail.portfolioId && detail.portfolioName
     ) {
-      return detail?.portfolioName ?? undefined;
+      return { id: detail.portfolioId, displayName: detail.portfolioName };
     }
 
     if (
-      candidates.some((value) =>
-        ['building', 'buildingid', 'parentbuildingid', 'buildingname'].includes(value)
-      )
+      candidates.some((v) =>
+        ['building', 'buildingid', 'buildingname', 'parentbuildingid', 'propertyname', 'property'].includes(v)
+      ) && detail.buildingId && detail.buildingName
     ) {
-      return detail?.buildingName ?? undefined;
+      return { id: detail.buildingId, displayName: detail.buildingName };
     }
 
     return undefined;
+  }
+
+  private normalizeCandidate(value: string | null | undefined): string {
+    return String(value ?? '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
   }
 
   // ─── Form Group Builder ──────────────────────────────────────────────────────
@@ -702,22 +715,44 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       return this.toBoolean(field.value);
     }
 
+    if (field.type === 'dropdown') {
+      return this.resolveDropdownId(field, field.value);
+    }
+
     if (field.type === 'multiselect') {
-      if (Array.isArray(field.value)) {
-        return field.value;
-      }
+      const rawValues = Array.isArray(field.value)
+        ? field.value
+        : typeof field.value === 'string' && field.value.trim().length
+          ? field.value.split(',').map((v) => v.trim()).filter(Boolean)
+          : [];
 
-      if (typeof field.value === 'string' && field.value.trim().length) {
-        return field.value
-          .split(',')
-          .map((value) => value.trim())
-          .filter(Boolean);
-      }
-
-      return [];
+      return rawValues.map((v) => this.resolveDropdownId(field, v) ?? v);
     }
 
     return field.value ?? null;
+  }
+
+  private resolveDropdownId(field: AiFormField, value: any): any {
+    if (value == null || !field.dropdownItems?.length) {
+      return value ?? null;
+    }
+
+    const valueExpr = field.valueExpr ?? 'id';
+    const displayExpr = field.displayExpr ?? 'name';
+
+    // Already matches a known ID — no resolution needed
+    const byId = field.dropdownItems.find(
+      (item) => String((item as any)[valueExpr]) === String(value)
+    );
+    if (byId) return (byId as any)[valueExpr];
+
+    // Match by display name (case-insensitive) — AI returns text, we need the ID
+    const byName = field.dropdownItems.find(
+      (item) =>
+        String((item as any)[displayExpr]).toLowerCase() ===
+        String(value).toLowerCase()
+    );
+    return byName ? (byName as any)[valueExpr] : value;
   }
 
   private toBoolean(value: any): boolean {

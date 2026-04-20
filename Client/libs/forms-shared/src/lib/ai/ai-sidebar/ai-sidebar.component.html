@@ -69,12 +69,12 @@
           <select
             id="ai-document-select"
             class="ai-sidebar__document-select"
-            [value]="selectedDocumentId ?? ''"
+            [value]="selectedDocumentKey ?? ''"
             (change)="onDocumentSelectionChange($any($event.target).value)"
           >
             <option
               *ngFor="let document of documentOptions"
-              [value]="document.documentId"
+              [value]="document.key"
             >
               {{ document.fileName }}
             </option>
@@ -90,6 +90,31 @@
           <mat-icon>open_in_new</mat-icon>
         </button>
       </div>
+      <div *ngIf="selectedDocument" class="ai-sidebar__document-summary">
+        <div class="ai-sidebar__document-meta">
+          <span
+            *ngIf="selectedDocument.artifactType"
+            class="ai-sidebar__document-chip"
+          >
+            Type:
+            {{ selectedDocument.artifactType }}
+          </span>
+          <span class="ai-sidebar__document-chip">
+            File Status:
+            {{ selectedDocument.externalStatus || 'Unavailable' }}
+          </span>
+          <span class="ai-sidebar__document-chip">
+            Abstraction Status:
+            {{ selectedDocument.externalAbstractionStatus || 'Unavailable' }}
+          </span>
+        </div>
+        <div
+          *ngIf="selectedDocument.externalStatusDetail"
+          class="ai-sidebar__document-detail"
+        >
+          {{ selectedDocument.externalStatusDetail }}
+        </div>
+      </div>
     </div>
     <div *ngIf="isDocumentLoading" class="ai-sidebar__document-loading">
       Loading document...
@@ -97,7 +122,10 @@
     <mango-ai-document-viewer
       [src]="documentSource"
       [filename]="documentFileName || undefined"
+      [textContent]="selectedDocumentContent || undefined"
       [searchQuery]="documentSearchQuery || undefined"
+      [initialBookmarks]="currentBookmarks"
+      (bookmarksChange)="onBookmarksChange($event)"
     ></mango-ai-document-viewer>
     <div *ngIf="documentLoadError" class="ai-sidebar__document-note">
       {{ documentLoadError }}

@@ -8,13 +8,21 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Subject } from 'rxjs';
-import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { combineLatest, EMPTY, Subject } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  takeUntil,
+} from 'rxjs/operators';
+import type { HighlightRange } from 'document-viewer-sdk';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
 import {
   AiAbstractionDetail,
   AiAbstractionDocument,
+  AiAbstractionDocumentArtifact,
   AiLeaseService,
 } from '../services/ai-lease.service';
 import { AiSidebarService } from './ai-sidebar.service';
@@ -33,9 +41,20 @@ interface SidebarSection {
 }
 
 interface DocumentOption {
+  key: string;
+  type: 'document' | 'artifact';
+  documentGuid: string | null;
   documentId: number;
+  artifactGuid?: string | null;
+  artifactId?: number;
   fileName: string;
+  artifactType?: string;
   mimeType?: string;
+  contentText?: string;
+  externalStatus?: string;
+  externalAbstractionStatus?: string;
+  externalStatusDetail?: string;
+  externalAiOutputJson?: string;
 }
 
 @Component({
@@ -58,12 +77,17 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentFileName: string | null = null;
   documentLoadError: string | null = null;
   documentOptions: DocumentOption[] = [];
-  selectedDocumentId: number | null = null;
+  selectedDocumentKey: string | null = null;
   isDocumentLoading = false;
   currentAiAbstractionId: number | null = null;
   documentSearchQuery: string | null = null;
+  /** Saved highlights passed to [initialBookmarks] — set once per document load. */
+  currentBookmarks: HighlightRange[] = [];
+  /** True once the user adds a highlight; prevents loadHighlights from overwriting. */
+  private _viewerHasUserChanges = false;
   private loadedDocumentContextId: number | null = null;
   private handledDocumentRequestId = 0;
+  private readonly bookmarkSave$ = new Subject<{ documentGuid: string; bookmarks: HighlightRange[] }>();
 
   private isDragging = false;
   private dragStartX = 0;
@@ -125,6 +149,25 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Debounce highlight saves — user might be adding several in quick succession
+    this.bookmarkSave$
+      .pipe(
+        debounceTime(1500),
+        switchMap(({ documentGuid, bookmarks }) =>
+          this.aiLeaseService.saveDocumentHighlights(documentGuid, bookmarks).pipe(
+            catchError((error) => {
+              console.error('Failed to save document highlights', {
+                documentGuid,
+                error,
+              });
+              return EMPTY;
+            })
+          )
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
+
     // Repaint grids whenever the sidebar's width changes (drag or open/close transition)
     this.resizeObserver = new ResizeObserver(() => {
       this.dataGrids?.forEach((grid) => grid.instance?.repaint());
@@ -158,7 +201,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.documentFileName = null;
             this.documentLoadError = null;
             this.documentOptions = [];
-            this.selectedDocumentId = null;
+            this.selectedDocumentKey = null;
             this.isDocumentLoading = false;
             this.documentSearchQuery = null;
             this.loadedDocumentContextId = null;
@@ -187,7 +230,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentFileName = null;
           this.documentLoadError = null;
           this.documentOptions = [];
-          this.selectedDocumentId = null;
+          this.selectedDocumentKey = null;
           this.isDocumentLoading = false;
           this.currentAiAbstractionId = null;
           this.documentSearchQuery = null;
@@ -207,6 +250,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.aiSidebarService.close();
+  }
+
+  get selectedDocument(): DocumentOption | null {
+    return (
+      this.documentOptions.find(
+        (item) => item.key === this.selectedDocumentKey
+      ) ?? null
+    );
+  }
+
+  get selectedDocumentContent(): string | null {
+    return this.prettifyJson(this.selectedDocument?.contentText);
   }
 
   toggleSection(section: SidebarSection): void {
@@ -229,14 +284,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDocumentSelectionChange(documentId: string): void {
-    const resolvedDocumentId = Number(documentId);
-    if (!resolvedDocumentId || resolvedDocumentId === this.selectedDocumentId) {
+  onDocumentSelectionChange(documentKey: string): void {
+    if (!documentKey || documentKey === this.selectedDocumentKey) {
       return;
     }
 
     const document = this.documentOptions.find(
-      (item) => item.documentId === resolvedDocumentId
+      (item) => item.key === documentKey
     );
     if (!document) {
       return;
@@ -253,9 +307,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     const tree = this.router.createUrlTree(
       ['/crem/portfolio/ai-abstractions/document', this.currentAiAbstractionId],
       {
-        queryParams: this.selectedDocumentId
-          ? { documentId: this.selectedDocumentId }
-          : {},
+        queryParams: this.selectedDocument?.type === 'artifact'
+          ? { artifactGuid: this.selectedDocument.artifactGuid }
+          : this.selectedDocument?.documentGuid
+            ? { documentGuid: this.selectedDocument.documentGuid }
+            : {},
       }
     );
 
@@ -325,7 +381,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentSource = null;
     this.documentFileName = null;
     this.documentOptions = [];
-    this.selectedDocumentId = null;
+    this.selectedDocumentKey = null;
     this.isDocumentLoading = true;
 
     this.aiLeaseService
@@ -376,16 +432,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     documents: AiAbstractionDocument[] | null | undefined
   ): boolean {
     const validDocuments =
-      documents
-        ?.map((document) => ({
-          documentId: document.documentId ?? 0,
-          fileName:
-            document.fileName ??
-            document.documentFileName ??
-            `Document ${document.documentId ?? ''}`.trim(),
-          mimeType: document.mimeType,
-        }))
-        .filter((document) => document.documentId > 0) ?? [];
+      documents?.flatMap((document) => this.mapDocumentOptions(document)) ?? [];
 
     this.documentOptions = validDocuments;
 
@@ -402,14 +449,22 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private loadDocumentFile(document: DocumentOption): void {
-    this.selectedDocumentId = document.documentId;
+    this.selectedDocumentKey = document.key;
     this.documentFileName = document.fileName;
     this.documentLoadError = null;
     this.documentSource = null;
+    this.currentBookmarks = [];
+    this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
+
+    if (document.type === 'artifact') {
+      this.isDocumentLoading = false;
+      return;
+    }
 
     this.aiLeaseService
       .getAbstractionDocumentFile({
+        documentGuid: document.documentGuid ?? undefined,
         documentId: document.documentId,
         fileName: document.fileName,
         mimeType: document.mimeType,
@@ -420,12 +475,41 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.documentSource = file;
           this.documentLoadError = null;
           this.isDocumentLoading = false;
+          if (document.documentGuid) {
+            this.loadHighlights(document.documentGuid);
+          }
         },
         error: () => {
           this.documentSource = null;
           this.documentLoadError = 'Failed to load document file.';
           this.isDocumentLoading = false;
         },
+      });
+  }
+
+  onBookmarksChange(bookmarks: HighlightRange[]): void {
+    this._viewerHasUserChanges = true;
+    this.currentBookmarks = bookmarks;
+    if (this.selectedDocument?.type === 'document' && this.selectedDocument.documentGuid) {
+      this.bookmarkSave$.next({
+        documentGuid: this.selectedDocument.documentGuid,
+        bookmarks,
+      });
+    }
+  }
+
+  private loadHighlights(documentGuid: string): void {
+    this.aiLeaseService
+      .getDocumentHighlights(documentGuid)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (savedBookmarks) => {
+          // If the user already highlighted before the response arrived, don't
+          // overwrite their work — the SDK's internal state already has their changes.
+          if (this._viewerHasUserChanges) return;
+          this.currentBookmarks = savedBookmarks;
+        },
+        error: () => { /* non-critical */ },
       });
   }
 
@@ -457,7 +541,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       if (!this.documentSource) {
         const selectedDocument =
           this.documentOptions.find(
-            (document) => document.documentId === this.selectedDocumentId
+            (document) => document.key === this.selectedDocumentKey
           ) ?? this.documentOptions[0];
 
         if (selectedDocument) {
@@ -492,6 +576,133 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     } catch {
       return null;
     }
+  }
+
+  private prettifyJson(value?: string | null): string | null {
+    if (!value?.trim()) {
+      return null;
+    }
+
+    try {
+      return JSON.stringify(JSON.parse(value), null, 2);
+    } catch {
+      return value;
+    }
+  }
+
+  private mapDocumentOptions(document: AiAbstractionDocument): DocumentOption[] {
+    const baseDocument: DocumentOption[] = document.documentGuid
+      ? [
+          {
+            key: `document:${document.documentGuid}`,
+            type: 'document',
+            documentGuid: document.documentGuid ?? null,
+            documentId: document.documentId ?? 0,
+            fileName:
+              document.fileName ??
+              document.documentFileName ??
+              `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim(),
+            mimeType: document.mimeType,
+            externalStatus: document.externalStatus,
+            externalAbstractionStatus: document.externalAbstractionStatus,
+            externalStatusDetail: document.externalStatusDetail,
+            externalAiOutputJson: document.externalAiOutputJson,
+          },
+        ]
+      : [];
+
+    const artifacts = (document.artifacts ?? [])
+      .map((artifact) => this.mapArtifact(document, artifact))
+      .filter((artifact): artifact is DocumentOption => Boolean(artifact));
+
+    const pipelineArtifact = this.mapPipelineArtifact(document);
+
+    return pipelineArtifact
+      ? [...baseDocument, pipelineArtifact, ...artifacts]
+      : [...baseDocument, ...artifacts];
+  }
+
+  private mapArtifact(
+    document: AiAbstractionDocument,
+    artifact: AiAbstractionDocumentArtifact
+  ): DocumentOption | null {
+    const artifactKey = artifact.artifactGuid ?? String(artifact.artifactId ?? '');
+    if (!artifactKey) {
+      return null;
+    }
+
+    return {
+      key: `artifact:${artifactKey}`,
+      type: 'artifact',
+      documentGuid: document.documentGuid ?? null,
+      documentId: document.documentId ?? 0,
+      artifactGuid: artifact.artifactGuid ?? null,
+      artifactId: artifact.artifactId,
+      fileName: this.buildArtifactLabel(document, artifact),
+      artifactType: artifact.artifactType,
+      mimeType: artifact.mimeType,
+      contentText: artifact.contentText,
+      externalStatus: document.externalStatus,
+      externalAbstractionStatus: document.externalAbstractionStatus,
+      externalStatusDetail: document.externalStatusDetail,
+      externalAiOutputJson: document.externalAiOutputJson,
+    };
+  }
+
+  private buildArtifactLabel(
+    document: AiAbstractionDocument,
+    artifact: AiAbstractionDocumentArtifact
+  ): string {
+    const documentName =
+      document.fileName ??
+      document.documentFileName ??
+      `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim();
+    const artifactName =
+      artifact.displayName?.trim() ||
+      artifact.artifactType?.trim() ||
+      'Artifact';
+
+    return `${documentName} - ${artifactName}`;
+  }
+
+  private mapPipelineArtifact(
+    document: AiAbstractionDocument
+  ): DocumentOption | null {
+    if (!document.externalAiOutputJson?.trim()) {
+      return null;
+    }
+
+    const pipelineArtifactGuid =
+      document.documentGuid
+        ? `pipeline-output:${document.documentGuid}`
+        : document.documentId
+          ? `pipeline-output:${document.documentId}`
+          : null;
+
+    if (!pipelineArtifactGuid) {
+      return null;
+    }
+
+    const documentName =
+      document.fileName ??
+      document.documentFileName ??
+      `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim();
+
+    return {
+      key: `artifact:${pipelineArtifactGuid}`,
+      type: 'artifact',
+      documentGuid: document.documentGuid ?? null,
+      documentId: document.documentId ?? 0,
+      artifactGuid: pipelineArtifactGuid,
+      fileName: `${documentName} - Pipeline Output`,
+      artifactType: 'Pipeline Output',
+      mimeType: 'application/json',
+      contentText: document.externalAiOutputJson,
+      externalStatus: document.externalStatus,
+      externalAbstractionStatus: document.externalAbstractionStatus,
+      externalStatusDetail: document.externalStatusDetail,
+      externalAiOutputJson: document.externalAiOutputJson,
+    };
   }
 
   private populateFromAiOutput(data: IAIOutput): void {

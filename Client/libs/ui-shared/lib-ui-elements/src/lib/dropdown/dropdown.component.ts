@@ -660,8 +660,10 @@ export class DropdownComponent
       (this.dataSource?._items || this.dataSource || []).forEach((data) => {
         if (data?.[this.valueExpr] === value) {
           this.selectedDisplay = [data?.[this.resolveSelectedDisplaySource()]];
-
           this.selections = [data?.[this.keyExpr || this.valueExpr]];
+          if (this.useSelectBox) {
+            this.selectBoxValue = value;
+          }
         }
       });
     } else if (this.selectMode == 'multiple') {

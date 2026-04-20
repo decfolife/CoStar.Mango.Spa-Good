@@ -75,7 +75,10 @@ export class NavigationEffect {
         const navLinksFetched =
           !(moduleId === 6 && currentSubApp === MangoSubApps.ADMIN) &&
           response !== null;
-        const navigationLinks = !!response ? response.data : [];
+        const navigationLinks = this.addAiLeasesNavLink(
+          !!response ? response.data : [],
+          moduleId
+        );
         const activeLink = navigationLinks[0]?.name || null;
 
         return AppActions.loadLeftNavLinksSuccess({
@@ -86,6 +89,62 @@ export class NavigationEffect {
       })
     )
   );
+
+  // temporary method to add AI Leases link under Leases in 
+  // the left nav until it's available from the backend. 
+  // This is needed to support navigation to AI Leases page 
+  // from CREM while the feature is being developed and not yet released.
+  private addAiLeasesNavLink(
+    navigationLinks: SharedLeftNavLink[],
+    moduleId: number
+  ): SharedLeftNavLink[] {
+    if (moduleId !== 1 || !Array.isArray(navigationLinks)) {
+      return navigationLinks;
+    }
+
+    const isAiLeasesRoute =
+      typeof window !== 'undefined' &&
+      window.location.pathname.includes('/crem/portfolio/ai-abstractions');
+
+    return navigationLinks.map((link) => {
+      if (link.name !== 'Leases') {
+        return link;
+      }
+
+      const existingChildren = Array.isArray(link.subChildLevelNavLinks)
+        ? [...link.subChildLevelNavLinks]
+        : [];
+
+      if (existingChildren.some((child) => child.name === 'AI Leases')) {
+        return link;
+      }
+
+      const aiLeasesLink: SharedLeftNavLink = {
+        ...link,
+        id: undefined,
+        name: 'AI Leases',
+        dynamicName: 'AI Leases',
+        categoryHasFlyOutMenu: false,
+        categoryIsCurrentlyActiveLink: false,
+        categoryLinkUrl: '',
+        categorySpaUrl: '',
+        categorySpaQueryParameters: undefined,
+        sortOrder: (existingChildren[existingChildren.length - 1]?.sortOrder ?? link.sortOrder) + 1,
+        linkUrl: '/crem/portfolio/ai-abstractions',
+        usesNgRouting: true,
+        spaUrl: '/crem/portfolio/ai-abstractions',
+        spaQueryParameters: undefined,
+        isCurrentlyActiveLink: isAiLeasesRoute,
+        subChildLevel: (link.subChildLevel ?? 0) + 1,
+        subChildLevelNavLinks: [],
+      };
+
+      return {
+        ...link,
+        subChildLevelNavLinks: [...existingChildren, aiLeasesLink],
+      };
+    });
+  }
 
   navigateLeftNavMenu$ = createEffect(
     () =>

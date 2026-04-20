@@ -4,10 +4,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
-  OnChanges,
+  NgZone,
   OnDestroy,
-  SimpleChanges,
+  Output,
   ViewChild,
 } from '@angular/core';
 import * as React from 'react';
@@ -15,6 +16,7 @@ import { createRoot, Root } from 'react-dom/client';
 import {
   DocumentViewer,
   type DocumentSource,
+  type HighlightRange,
   type ToolbarConfig,
 } from 'document-viewer-sdk';
 
@@ -24,56 +26,104 @@ import {
   styleUrls: ['./ai-document-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AiDocumentViewerComponent
-  implements AfterViewInit, OnChanges, OnDestroy
-{
+export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   @ViewChild('host')
   set hostRef(value: ElementRef<HTMLDivElement> | undefined) {
-    if (value?.nativeElement === this._hostRef?.nativeElement) {
-      return;
-    }
-
+    if (value?.nativeElement === this._hostRef?.nativeElement) return;
     this.root?.unmount();
     this.root = null;
     this._hostRef = value;
-
     if (value && !this.root) {
       this.root = createRoot(value.nativeElement);
       this.renderReactTree();
     }
   }
 
-  @Input() src: DocumentSource | null = null;
-  @Input() filename?: string;
-  @Input() searchQuery?: string;
+  @Input() set src(value: DocumentSource | null) {
+    this._src = value;
+    this.renderReactTree();
+  }
 
+  @Input() set filename(value: string | undefined) {
+    this._filename = value;
+    this.renderReactTree();
+  }
+
+  @Input() set textContent(value: string | undefined) {
+    this._textContent = value?.trim() ? value : undefined;
+    this.renderReactTree();
+  }
+
+  @Input() set searchQuery(value: string | undefined) {
+    this._searchQuery = value;
+    this.renderReactTree();
+  }
+
+  /**
+   * Saved highlights to restore when the document first loads.
+   * Passed once after loadHighlights() resolves — the SDK seeds its own internal
+   * state from this and manages highlights from there on.  Angular never updates
+   * this after user interaction, so there is no controlled-mode re-render loop.
+   */
+  @Input() set initialBookmarks(value: HighlightRange[]) {
+    this._initialBookmarks = value ?? [];
+    this.renderReactTree();
+  }
+
+  /** Fires whenever the user adds, removes or clears a highlight. */
+  @Output() bookmarksChange = new EventEmitter<HighlightRange[]>();
+
+  private _src: DocumentSource | null = null;
+  private _filename?: string;
+  private _textContent?: string;
+  private _searchQuery?: string;
+  private _initialBookmarks: HighlightRange[] = [];
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
   viewerError: string | null = null;
   isLoaded = false;
 
-  readonly toolbar: ToolbarConfig = {
-    navigation: true,
-    zoomOut: true,
-    zoomSelect: true,
-    zoomIn: true,
-    rotate: true,
-    download: true,
-    print: true,
-    search: true,
-  };
+  private get toolbar(): ToolbarConfig {
+    return {
+      navigation: true,
+      zoomOut: true,
+      zoomSelect: true,
+      zoomIn: true,
+      rotate: true,
+      download: false,
+      print: true,
+      search: true,
+      rightSlot: this._searchQuery?.trim()
+        ? React.createElement(
+            'span',
+            {
+              style: {
+                fontSize: '12px',
+                padding: '2px 8px',
+                borderRadius: '4px',
+                background: '#fef08a',
+                color: '#713f12',
+                whiteSpace: 'nowrap',
+                maxWidth: '200px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              },
+              title: `Searching: ${this._searchQuery}`,
+            },
+            `"${this._searchQuery}"`
+          )
+        : undefined,
+    };
+  }
 
-  constructor(private readonly cdr: ChangeDetectorRef) {}
+  constructor(
+    private readonly cdr: ChangeDetectorRef,
+    private readonly ngZone: NgZone,
+  ) {}
 
   ngAfterViewInit(): void {
     if (this._hostRef && !this.root) {
       this.root = createRoot(this._hostRef.nativeElement);
-      this.renderReactTree();
-    }
-  }
-
-  ngOnChanges(_changes: SimpleChanges): void {
-    if (this.root) {
       this.renderReactTree();
     }
   }
@@ -83,25 +133,43 @@ export class AiDocumentViewerComponent
     this.root = null;
   }
 
+  get textModeContent(): string | null {
+    return this._src ? null : this._textContent ?? null;
+  }
+
   private renderReactTree(): void {
-    if (!this.root || !this.src) {
+    if (!this.root) {
       this.viewerError = null;
       this.isLoaded = false;
       this.cdr.markForCheck();
       return;
     }
 
-    this.viewerError = null;
-    this.isLoaded = false;
-    this.cdr.markForCheck();
+    if (!this._src) {
+      this.root.unmount();
+      this.root = createRoot(this._hostRef!.nativeElement);
+      this.viewerError = null;
+      this.isLoaded = Boolean(this._textContent);
+      this.cdr.markForCheck();
+      return;
+    }
 
     this.root.render(
       React.createElement(DocumentViewer, {
-        src: this.src,
-        filename: this.filename,
+        src: this._src,
+        filename: this._filename,
         toolbar: this.toolbar,
         darkMode: false,
-        searchQuery: this.searchQuery,
+        searchQuery: this._searchQuery,
+        // Pass as initialBookmarks (SDK-internal uncontrolled state).
+        // bookmarks prop is intentionally NOT passed — that would enable
+        // controlled mode which causes the React 18 concurrent-mode race.
+        initialBookmarks: this._initialBookmarks,
+        onBookmarksChange: (bookmarks: HighlightRange[]) => {
+          // React callbacks run outside Angular's zone — run() ensures
+          // RxJS schedulers (debounceTime) and HttpClient fire correctly.
+          this.ngZone.run(() => this.bookmarksChange.emit(bookmarks));
+        },
         onLoad: () => {
           this.viewerError = null;
           this.isLoaded = true;
@@ -114,14 +182,14 @@ export class AiDocumentViewerComponent
             'The document viewer failed to load this file.';
           this.isLoaded = false;
           console.error('AI document viewer load error', {
-            filename: this.filename,
-            src: this.src,
+            filename: this._filename,
+            src: this._src,
             error: err,
           });
           this.cdr.markForCheck();
         },
         style: { height: '100%', width: '100%' },
-      })
+      } as any)
     );
   }
 }

@@ -9,16 +9,44 @@
       <select
         id="ai-document-page-select"
         class="ai-document-page__select"
-        [value]="selectedDocumentId ?? ''"
+        [value]="selectedDocumentKey ?? ''"
         (change)="onDocumentSelectionChange($any($event.target).value)"
       >
         <option
           *ngFor="let document of documentOptions"
-          [value]="document.documentId"
+          [value]="document.key"
         >
           {{ document.fileName }}
         </option>
       </select>
+      <div
+        *ngIf="selectedDocument"
+        class="ai-document-page__document-summary"
+      >
+        <div class="ai-document-page__document-meta">
+          <span
+            *ngIf="selectedDocument.artifactType"
+            class="ai-document-page__document-chip"
+          >
+            Type:
+            {{ selectedDocument.artifactType }}
+          </span>
+          <span class="ai-document-page__document-chip">
+            File Status:
+            {{ selectedDocument.externalStatus || 'Unavailable' }}
+          </span>
+          <span class="ai-document-page__document-chip">
+            Abstraction Status:
+            {{ selectedDocument.externalAbstractionStatus || 'Unavailable' }}
+          </span>
+        </div>
+        <div
+          *ngIf="selectedDocument.externalStatusDetail"
+          class="ai-document-page__document-detail"
+        >
+          {{ selectedDocument.externalStatusDetail }}
+        </div>
+      </div>
     </div>
   </header>
 
@@ -34,6 +62,9 @@
     <mango-ai-document-viewer
       [src]="documentSource"
       [filename]="documentFileName || undefined"
+      [textContent]="selectedDocumentContent || undefined"
+      [initialBookmarks]="currentBookmarks"
+      (bookmarksChange)="onBookmarksChange($event)"
     ></mango-ai-document-viewer>
   </div>
 </div>

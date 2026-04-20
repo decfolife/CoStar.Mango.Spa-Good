@@ -3,18 +3,6 @@
   flex-direction: column;
   height: 100%;
 
-  &__error {
-    margin: 16px 16px 0;
-    padding: 16px;
-    background-color: #fdecea;
-    border-radius: 4px;
-    color: #c62828;
-
-    p {
-      margin: 0;
-    }
-  }
-
   &__search {
     min-width: 240px;
   }
@@ -145,6 +133,23 @@
     border-radius: 50%;
     animation: ai-list-spin 0.8s linear infinite;
     flex: 0 0 auto;
+  }
+
+  .status-action-link {
+    border: 0;
+    background: transparent;
+    color: #b42318;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0;
+    text-decoration: underline;
+
+    &:disabled {
+      color: #98a2b3;
+      cursor: default;
+      text-decoration: none;
+    }
   }
 }
 

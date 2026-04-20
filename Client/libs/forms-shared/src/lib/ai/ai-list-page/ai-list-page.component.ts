@@ -2,10 +2,15 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, timer } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
+import { ToastState } from '@mango/data-models/lib-data-models';
+import { CremToastService } from '@mango/ui-shared/lib-ui-elements';
 import { AiLeaseListItem } from '../models/ai-form.model';
 import { AiLeaseService } from '../services/ai-lease.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ExportDevexDatagridService } from '@mango/core-shared';
+import { MatDialog } from '@angular/material/dialog';
+import { AddAiLeaseModalComponent } from 'libs/ui-shared/lib-ui-shared/src/lib/add-ai-lease-modal/add-ai-lease-modal.component';
+import { AiMarkErrorDialogComponent } from './ai-mark-error-dialog.component';
 
 @Component({
   selector: 'mango-ai-list-page',
@@ -19,11 +24,11 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   leases: AiLeaseListItem[] = [];
   filteredLeases: AiLeaseListItem[] = [];
   isLoading = true;
-  errorMessage: string | null = null;
   createdAiAbstractionId: number | null = null;
   searchText = '';
   selectedPortfolioId: number | null = null;
   portfolioOptions: Array<{ id: number; name: string }> = [];
+  updatingStatusAiAbstractionId: number | null = null;
 
   private readonly destroy$ = new Subject<void>();
   private readonly stopPolling$ = new Subject<void>();
@@ -31,8 +36,10 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   constructor(
     private readonly aiLeaseService: AiLeaseService,
     private readonly exportToExcelService: ExportDevexDatagridService,
+    private readonly toastService: CremToastService,
     private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -59,8 +66,9 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     const formId = event?.data?.formId;
 
     if (!formId) {
-      this.errorMessage =
-        'Missing required formId to open AI abstraction details.';
+      this.notifyErrorMessage(
+        'Missing required formId to open AI abstraction details.'
+      );
       return;
     }
 
@@ -109,11 +117,98 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     );
   }
 
+  openNewAbstractionModal(): void {
+    this.dialog.open(AddAiLeaseModalComponent, {
+      disableClose: true,
+      width: '70vw',
+      minWidth: '320px',
+      maxWidth: '1100px',
+      minHeight: '420px',
+      maxHeight: '90vh',
+      data: {
+        objectTypeId: 4,
+        objectId: 0,
+        objectName: '',
+      },
+    });
+  }
+
+  markAsError(lease: AiLeaseListItem, event?: Event): void {
+    event?.stopPropagation();
+
+    if (!lease?.id || !this.isProcessing(lease.status)) {
+      return;
+    }
+
+    if (this.updatingStatusAiAbstractionId === lease.id) {
+      return;
+    }
+
+    this.dialog
+      .open(AiMarkErrorDialogComponent, {
+        width: '560px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          aiAbstractionId: lease.id,
+          tenantName: lease.aiTenant,
+          buildingName: lease.buildingName,
+          currentStatus: lease.status,
+        },
+      })
+      .afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((reason: string | null | undefined) => {
+        if (reason == null) {
+          return;
+        }
+
+        this.updatingStatusAiAbstractionId = lease.id;
+
+        this.aiLeaseService
+          .updateAiAbstractionStatus({
+            aiAbstractionId: lease.id,
+            status: 'Error',
+            errorMessage: reason,
+          })
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.updatingStatusAiAbstractionId = null;
+              this.stopPolling$.next();
+              this.toastService.show(
+                'AI abstraction was marked as Error.',
+                'Success',
+                ToastState.SUCCESS,
+                {
+                  position: 'bottom right',
+                  maxWidth: '350px',
+                }
+              );
+              this.loadLeases();
+            },
+            error: () => {
+              this.updatingStatusAiAbstractionId = null;
+              this.notifyErrorMessage(
+                'Failed to update AI abstraction status. Please try again.'
+              );
+            },
+          });
+      });
+  }
+
+  formatDateTime(value: string | null | undefined): string {
+    if (!value) return '—';
+    const normalized = /[Zz]$|[+-]\d{2}:\d{2}$/.test(value) ? value : value + 'Z';
+    const date = new Date(normalized);
+    if (Number.isNaN(date.getTime())) return '—';
+    return date.toLocaleString('en-US');
+  }
+
   private loadLeases(showLoading = false): void {
     if (showLoading) {
       this.isLoading = true;
     }
-    this.errorMessage = null;
 
     this.aiLeaseService
       .getLeaseList()
@@ -130,8 +225,9 @@ export class AiListPageComponent implements OnInit, OnDestroy {
           }
         },
         error: () => {
-          this.errorMessage =
-            'Failed to load AI lease abstractions. Please try again.';
+          this.notifyErrorMessage(
+            'Failed to load AI lease abstractions. Please try again.'
+          );
           this.isLoading = false;
         },
       });
@@ -209,5 +305,12 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     return Array.from(portfolioMap.entries())
       .map(([id, name]) => ({ id, name }))
       .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  private notifyErrorMessage(errorMessage: string, title = 'Error'): void {
+    this.toastService.show(errorMessage, title, ToastState.ERROR, {
+      position: 'bottom right',
+      maxWidth: '350px',
+    });
   }
 }

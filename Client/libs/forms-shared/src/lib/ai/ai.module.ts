@@ -5,6 +5,7 @@ import { AiListPageModule } from './ai-list-page/ai-list-page.module';
 import { AiLeaseFormModule } from './ai-lease-form/ai-lease-form.module';
 import { AiSidebarModule } from './ai-sidebar/ai-sidebar.module';
 import { AiDocumentPageComponent } from './ai-document-page/ai-document-page.component';
+import { AddAiLeaseModalModule } from 'libs/ui-shared/lib-ui-shared/src/lib/add-ai-lease-modal/add-ai-lease-modal.module';
 
 @NgModule({
   declarations: [AiDocumentPageComponent],
@@ -14,6 +15,7 @@ import { AiDocumentPageComponent } from './ai-document-page/ai-document-page.com
     AiListPageModule,
     AiLeaseFormModule,
     AiSidebarModule,
+    AddAiLeaseModalModule,
   ],
 })
 export class AiModule {}
