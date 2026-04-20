@@ -102,10 +102,6 @@ export class NavigationEffect {
       return navigationLinks;
     }
 
-    const isAiLeasesRoute =
-      typeof window !== 'undefined' &&
-      window.location.pathname.includes('/crem/portfolio/ai-abstractions');
-
     return navigationLinks.map((link) => {
       if (link.name !== 'Leases') {
         return link;
@@ -134,7 +130,7 @@ export class NavigationEffect {
         usesNgRouting: true,
         spaUrl: '/crem/portfolio/ai-abstractions',
         spaQueryParameters: undefined,
-        isCurrentlyActiveLink: isAiLeasesRoute,
+        isCurrentlyActiveLink: false,
         subChildLevel: (link.subChildLevel ?? 0) + 1,
         subChildLevelNavLinks: [],
       };
