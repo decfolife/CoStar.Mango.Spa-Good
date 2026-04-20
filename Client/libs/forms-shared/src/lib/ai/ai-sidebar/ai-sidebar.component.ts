@@ -20,6 +20,7 @@ import type { HighlightRange } from 'document-viewer-sdk';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
 import {
+  AiAbstractionDetail,
   AiAbstractionDocument,
   AiAbstractionDocumentArtifact,
   AiLeaseService,
@@ -44,6 +45,7 @@ interface DocumentOption {
   type: 'document' | 'artifact';
   documentGuid: string | null;
   documentId: number;
+  url?: string;
   artifactGuid?: string | null;
   artifactId?: number;
   fileName: string;
@@ -173,24 +175,31 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     });
     this.resizeObserver.observe(this.el.nativeElement);
 
-    combineLatest([this.aiSidebarService.state$, this.route.queryParams])
+    combineLatest([
+      this.aiSidebarService.state$,
+      this.route.queryParams,
+      this.route.paramMap,
+    ])
       .pipe(
         takeUntil(this.destroy$),
         distinctUntilChanged(
-          ([prevState, prevParams], [nextState, nextParams]) =>
+          ([prevState, prevParams, prevParamMap], [nextState, nextParams, nextParamMap]) =>
             prevState.isOpen === nextState.isOpen &&
             prevState.leaseId === nextState.leaseId &&
             prevState.documentRequestId === nextState.documentRequestId &&
-            prevParams['oid'] === nextParams['oid']
+            prevParams['oid'] === nextParams['oid'] &&
+            prevParamMap.get('id') === nextParamMap.get('id')
         )
       )
-      .subscribe(([state, params]) => {
+      .subscribe(([state, params, paramMap]) => {
         this.isOpen = state.isOpen;
         this.syncGlobalSidebarState();
-        // Prefer explicit leaseId from service (AI abstraction route),
-        // fall back to ?oid= query param (dynamic form route)
+        // Prefer explicit sidebar state id, then AI abstraction route param,
+        // then dynamic form ?oid= query param.
         const oid =
-          state.leaseId ?? (params['oid'] ? Number(params['oid']) : null);
+          state.leaseId ??
+          (paramMap.get('id') ? Number(paramMap.get('id')) : null) ??
+          (params['oid'] ? Number(params['oid']) : null);
 
         if (state.isOpen && oid) {
           const abstractionChanged = this.currentAiAbstractionId !== oid;
@@ -391,11 +400,39 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           if (this.populateDocumentContextFromDocuments(aiAbstractionId, documents)) {
             return;
           }
-          this.loadedDocumentContextId = null;
-          this.documentLoadError = 'No documents were found for this AI abstraction.';
-          this.isDocumentLoading = false;
+
+          this.loadDocumentContextFallback(aiAbstractionId);
         },
         error: () => {
+          this.loadedDocumentContextId = null;
+          this.loadDocumentContextFallback(aiAbstractionId);
+        },
+      });
+  }
+
+  private loadDocumentContextFallback(aiAbstractionId: number): void {
+    this.aiLeaseService
+      .getAbstractionById(aiAbstractionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (detail) => {
+          const fallbackOptions = this.buildFallbackDocumentOptions(detail);
+          this.documentOptions = fallbackOptions;
+          this.isDocumentLoading = false;
+
+          if (!fallbackOptions.length) {
+            this.loadedDocumentContextId = null;
+            this.documentLoadError = 'Failed to load document metadata.';
+            return;
+          }
+
+          this.loadedDocumentContextId = aiAbstractionId;
+          this.loadDocumentFile(fallbackOptions[0]);
+        },
+        error: () => {
+          this.documentSource = null;
+          this.documentFileName = null;
+          this.documentOptions = [];
           this.loadedDocumentContextId = null;
           this.documentLoadError = 'Failed to load document metadata.';
           this.isDocumentLoading = false;
@@ -437,6 +474,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.isDocumentLoading = true;
 
     if (document.type === 'artifact') {
+      this.isDocumentLoading = false;
+      return;
+    }
+
+    if (document.url) {
+      this.documentSource = { url: document.url };
+      this.documentLoadError = null;
       this.isDocumentLoading = false;
       return;
     }
@@ -490,6 +534,59 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         },
         error: () => { /* non-critical */ },
       });
+  }
+
+  private buildFallbackDocumentOptions(
+    detail: AiAbstractionDetail | null
+  ): DocumentOption[] {
+    const context = this.parseContext(detail?.contextJson);
+    const contextDocuments = Array.isArray(context?.documents)
+      ? context.documents
+      : [];
+
+    const fallbackDocuments = contextDocuments
+      .map((document: any, index: number) =>
+        this.mapFallbackDocument(detail, document, index)
+      )
+      .filter((document): document is DocumentOption => Boolean(document));
+
+    if (fallbackDocuments.length) {
+      return fallbackDocuments;
+    }
+
+    const singleFallback = this.mapFallbackDocument(detail, context, 0);
+    return singleFallback ? [singleFallback] : [];
+  }
+
+  private mapFallbackDocument(
+    detail: AiAbstractionDetail | null,
+    source: any,
+    index: number
+  ): DocumentOption | null {
+    const documentUrl =
+      source?.documentUrl ??
+      source?.url ??
+      (detail as any)?.documentUrl ??
+      null;
+    const fileName =
+      source?.documentFileName ??
+      source?.fileName ??
+      (detail as any)?.documentFileName ??
+      `Document ${index + 1}`;
+
+    if (!documentUrl) {
+      return null;
+    }
+
+    return {
+      key: `fallback-document:${index}`,
+      type: 'document',
+      documentGuid: null,
+      documentId: 0,
+      url: documentUrl,
+      fileName,
+      mimeType: source?.mimeType,
+    };
   }
 
   private ensureDocumentContextLoaded(): void {
@@ -651,6 +748,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       externalStatusDetail: document.externalStatusDetail,
       externalAiOutputJson: document.externalAiOutputJson,
     };
+  }
+
+  private parseContext(contextJson?: string | null): any | null {
+    if (!contextJson) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(contextJson);
+    } catch {
+      return null;
+    }
   }
 
   private populateFromAiOutput(data: IAIOutput): void {
