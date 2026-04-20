@@ -120,6 +120,7 @@
       Loading document...
     </div>
     <mango-ai-document-viewer
+      *ngIf="documentSource || selectedDocumentContent"
       [src]="documentSource"
       [filename]="documentFileName || undefined"
       [textContent]="selectedDocumentContent || undefined"

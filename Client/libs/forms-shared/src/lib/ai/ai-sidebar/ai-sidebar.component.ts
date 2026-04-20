@@ -20,7 +20,6 @@ import type { HighlightRange } from 'document-viewer-sdk';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
 import {
-  AiAbstractionDetail,
   AiAbstractionDocument,
   AiAbstractionDocumentArtifact,
   AiLeaseService,
@@ -392,34 +391,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           if (this.populateDocumentContextFromDocuments(aiAbstractionId, documents)) {
             return;
           }
-
-          this.loadDocumentContextFallback(aiAbstractionId);
-        },
-        error: () => {
           this.loadedDocumentContextId = null;
-          this.loadDocumentContextFallback(aiAbstractionId);
-        },
-      });
-  }
-
-  private loadDocumentContextFallback(aiAbstractionId: number): void {
-    this.aiLeaseService
-      .getAbstractionById(aiAbstractionId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (detail) => {
+          this.documentLoadError = 'No documents were found for this AI abstraction.';
           this.isDocumentLoading = false;
-          this.populateDocumentContext(detail);
-          if (this.documentSource) {
-            this.loadedDocumentContextId = aiAbstractionId;
-          } else {
-            this.loadedDocumentContextId = null;
-            this.documentLoadError = 'Failed to load document metadata.';
-          }
         },
         error: () => {
-          this.documentSource = null;
-          this.documentFileName = null;
           this.loadedDocumentContextId = null;
           this.documentLoadError = 'Failed to load document metadata.';
           this.isDocumentLoading = false;
@@ -516,25 +492,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       });
   }
 
-  private populateDocumentContext(detail: AiAbstractionDetail | null): void {
-    const context = this.parseContext(detail?.contextJson);
-    const documentUrl =
-      (detail as any)?.documentUrl ??
-      context?.documentUrl ??
-      context?.documents?.[0]?.url ??
-      null;
-    const documentFileName =
-      (detail as any)?.documentFileName ??
-      context?.documentFileName ??
-      context?.documents?.[0]?.fileName ??
-      null;
-
-    this.documentSource = documentUrl
-      ? ({ url: documentUrl } as DocumentSource)
-      : null;
-    this.documentFileName = documentFileName;
-  }
-
   private ensureDocumentContextLoaded(): void {
     if (!this.currentAiAbstractionId || this.isDocumentLoading) {
       return;
@@ -567,18 +524,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   private clearGlobalSidebarState(): void {
     document.documentElement.style.setProperty('--ai-sidebar-width', '0px');
-  }
-
-  private parseContext(contextJson?: string | null): any | null {
-    if (!contextJson) {
-      return null;
-    }
-
-    try {
-      return JSON.parse(contextJson);
-    } catch {
-      return null;
-    }
   }
 
   private prettifyJson(value?: string | null): string | null {
