@@ -20,7 +20,6 @@ import type { HighlightRange } from 'document-viewer-sdk';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
 import {
-  AiAbstractionDetail,
   AiAbstractionDocument,
   AiAbstractionDocumentArtifact,
   AiLeaseService,
@@ -417,45 +416,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (documents) => {
-          if (this.populateDocumentContextFromDocuments(aiAbstractionId, documents)) {
-            return;
-          }
-
-          this.loadDocumentContextFallback(aiAbstractionId);
+          this.populateDocumentContextFromDocuments(aiAbstractionId, documents);
         },
         error: () => {
           this.loadedDocumentContextId = null;
-          this.loadDocumentContextFallback(aiAbstractionId);
-        },
-      });
-  }
-
-  private loadDocumentContextFallback(aiAbstractionId: number): void {
-    this.aiLeaseService
-      .getAbstractionById(aiAbstractionId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (detail) => {
-          const fallbackOptions = this.buildFallbackDocumentOptions(detail);
-          this.documentOptions = fallbackOptions;
-          this.groupedDocumentOptions = this.groupDocumentOptions(fallbackOptions);
-          this.isDocumentLoading = false;
-
-          if (!fallbackOptions.length) {
-            this.loadedDocumentContextId = null;
-            this.documentLoadError = 'Failed to load document metadata.';
-            return;
-          }
-
-          this.loadedDocumentContextId = aiAbstractionId;
-          this.loadDocumentFile(fallbackOptions[0]);
-        },
-        error: () => {
           this.documentSource = null;
           this.documentFileName = null;
           this.documentOptions = [];
           this.groupedDocumentOptions = [];
-          this.loadedDocumentContextId = null;
           this.documentLoadError = 'Failed to load document metadata.';
           this.isDocumentLoading = false;
         },
@@ -478,6 +446,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     if (!validDocuments.length) {
       this.isDocumentLoading = false;
       this.loadedDocumentContextId = null;
+      this.documentLoadError = 'No documents were found for this AI abstraction.';
       return false;
     }
 
@@ -495,15 +464,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.currentBookmarks = [];
     this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
-
-    if (
-      document.type === 'artifact' &&
-      (!document.artifactGuid ||
-        document.artifactGuid.startsWith('pipeline-output:'))
-    ) {
-      this.isDocumentLoading = false;
-      return;
-    }
 
     if (document.url) {
       this.documentSource = { url: document.url };
@@ -533,12 +493,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.documentSource = null;
-          const fallbackArtifact = this.findTextFallbackOption(document);
-          if (fallbackArtifact) {
-            this.loadDocumentFile(fallbackArtifact);
-            return;
-          }
-
           this.documentLoadError = 'Failed to load document file.';
           this.isDocumentLoading = false;
         },
@@ -569,61 +523,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         },
         error: () => { /* non-critical */ },
       });
-  }
-
-  private buildFallbackDocumentOptions(
-    detail: AiAbstractionDetail | null
-  ): DocumentOption[] {
-    const context = this.parseContext(detail?.contextJson);
-    const contextDocuments = Array.isArray(context?.documents)
-      ? context.documents
-      : [];
-
-    const fallbackDocuments = contextDocuments
-      .map((document: any, index: number) =>
-        this.mapFallbackDocument(detail, document, index)
-      )
-      .filter((document): document is DocumentOption => Boolean(document));
-
-    if (fallbackDocuments.length) {
-      return fallbackDocuments;
-    }
-
-    const singleFallback = this.mapFallbackDocument(detail, context, 0);
-    return singleFallback ? [singleFallback] : [];
-  }
-
-  private mapFallbackDocument(
-    detail: AiAbstractionDetail | null,
-    source: any,
-    index: number
-  ): DocumentOption | null {
-    const documentUrl =
-      source?.documentUrl ??
-      source?.url ??
-      (detail as any)?.documentUrl ??
-      null;
-    const fileName =
-      source?.documentFileName ??
-      source?.fileName ??
-      (detail as any)?.documentFileName ??
-      `Document ${index + 1}`;
-
-    if (!documentUrl) {
-      return null;
-    }
-
-    return {
-      key: `fallback-document:${index}`,
-      type: 'document',
-      documentGuid: null,
-      documentId: 0,
-      requestId: `fallback-request:${index}`,
-      requestLabel: fileName,
-      url: documentUrl,
-      fileName,
-      mimeType: source?.mimeType,
-    };
   }
 
   private ensureDocumentContextLoaded(): void {
@@ -699,11 +598,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .map((artifact) => this.mapArtifact(document, artifact))
       .filter((artifact): artifact is DocumentOption => Boolean(artifact));
 
-    const pipelineArtifact = this.mapPipelineArtifact(document);
-
-    return pipelineArtifact
-      ? [...baseDocument, pipelineArtifact, ...artifacts]
-      : [...baseDocument, ...artifacts];
+    return [...baseDocument, ...artifacts];
   }
 
   private mapArtifact(
@@ -745,82 +640,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     return artifactName;
   }
 
-  private mapPipelineArtifact(
-    document: AiAbstractionDocument
-  ): DocumentOption | null {
-    const pipelineContent = this.getPipelineArtifactContent(document);
-    if (!pipelineContent) {
-      return null;
-    }
-
-    const pipelineArtifactGuid =
-      document.documentGuid
-        ? `pipeline-output:${document.documentGuid}`
-        : document.documentId
-          ? `pipeline-output:${document.documentId}`
-          : null;
-
-    if (!pipelineArtifactGuid) {
-      return null;
-    }
-
-    return {
-      key: `artifact:${pipelineArtifactGuid}`,
-      type: 'artifact',
-      documentGuid: document.documentGuid ?? null,
-      documentId: document.documentId ?? 0,
-      groupId: this.getGroupId(document),
-      groupLabel: this.getGroupLabel(document),
-      artifactGuid: pipelineArtifactGuid,
-      fileName: 'Pipeline Output',
-      artifactType: 'Pipeline Output',
-      mimeType: 'application/json',
-      contentText: pipelineContent,
-      externalStatus: document.externalStatus,
-      externalAbstractionStatus: document.externalAbstractionStatus,
-      externalStatusDetail: document.externalStatusDetail,
-      externalAiOutputJson: document.externalAiOutputJson,
-    };
-  }
-
-  private getPipelineArtifactContent(
-    document: AiAbstractionDocument
-  ): string | null {
-    if (document.externalAiOutputJson?.trim()) {
-      return document.externalAiOutputJson;
-    }
-
-    const statusDetail = document.externalStatusDetail?.trim();
-    if (!statusDetail) {
-      return null;
-    }
-
-    const previewIndex = statusDetail.indexOf('Preview=');
-    if (previewIndex < 0) {
-      return null;
-    }
-
-    const previewText = statusDetail.slice(previewIndex + 'Preview='.length).trim();
-    return previewText || null;
-  }
-
-  private findTextFallbackOption(
-    document: DocumentOption
-  ): DocumentOption | null {
-    return (
-      this.documentOptions.find(
-        (option) =>
-          option.key !== document.key &&
-          option.type === 'artifact' &&
-          !!option.contentText &&
-          (
-            (document.documentGuid && option.documentGuid === document.documentGuid) ||
-            (!!document.documentId && option.documentId === document.documentId)
-          )
-      ) ?? null
-    );
-  }
-
   private groupDocumentOptions(
     options: DocumentOption[]
   ): DocumentOptionGroup[] {
@@ -856,18 +675,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       document.documentFileName?.trim() ||
       `Document ${document.documentGuid ?? document.documentId ?? 'Unavailable'}`
     );
-  }
-
-  private parseContext(contextJson?: string | null): any | null {
-    if (!contextJson) {
-      return null;
-    }
-
-    try {
-      return JSON.parse(contextJson);
-    } catch {
-      return null;
-    }
   }
 
   private populateFromAiOutput(data: IAIOutput): void {

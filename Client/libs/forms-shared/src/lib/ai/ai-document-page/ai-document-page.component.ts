@@ -188,15 +188,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.isLoading = true;
 
-    if (
-      document.type === 'artifact' &&
-      (!document.artifactGuid ||
-        document.artifactGuid.startsWith('pipeline-output:'))
-    ) {
-      this.isLoading = false;
-      return;
-    }
-
     if (document.url) {
       this.documentSource = { url: document.url };
       this.errorMessage = null;
@@ -225,12 +216,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.documentSource = null;
-          const fallbackArtifact = this.findTextFallbackOption(document);
-          if (fallbackArtifact) {
-            this.loadDocumentFile(fallbackArtifact);
-            return;
-          }
-
           this.errorMessage = 'Failed to load the selected document.';
           this.isLoading = false;
         },
@@ -278,12 +263,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
         .map((artifact) => this.mapArtifact(document, artifact))
         .filter((artifact): artifact is DocumentOption => Boolean(artifact));
 
-      const pipelineArtifact = this.mapPipelineArtifact(document);
-
       allOptions.push(...baseDocument);
-      if (pipelineArtifact) {
-        allOptions.push(pipelineArtifact);
-      }
       allOptions.push(...artifacts);
 
       return allOptions;
@@ -327,82 +307,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       'Artifact';
 
     return artifactName;
-  }
-
-  private mapPipelineArtifact(
-    document: AiAbstractionDocument
-  ): DocumentOption | null {
-    const pipelineContent = this.getPipelineArtifactContent(document);
-    if (!pipelineContent) {
-      return null;
-    }
-
-    const pipelineArtifactGuid =
-      document.documentGuid
-        ? `pipeline-output:${document.documentGuid}`
-        : document.documentId
-          ? `pipeline-output:${document.documentId}`
-          : null;
-
-    if (!pipelineArtifactGuid) {
-      return null;
-    }
-
-    return {
-      key: `artifact:${pipelineArtifactGuid}`,
-      type: 'artifact',
-      documentGuid: document.documentGuid ?? null,
-      documentId: document.documentId ?? 0,
-      groupId: this.getGroupId(document),
-      groupLabel: this.getGroupLabel(document),
-      artifactGuid: pipelineArtifactGuid,
-      fileName: 'Pipeline Output',
-      artifactType: 'Pipeline Output',
-      mimeType: 'application/json',
-      contentText: pipelineContent,
-      externalStatus: document.externalStatus,
-      externalAbstractionStatus: document.externalAbstractionStatus,
-      externalStatusDetail: document.externalStatusDetail,
-      externalAiOutputJson: document.externalAiOutputJson,
-    };
-  }
-
-  private getPipelineArtifactContent(
-    document: AiAbstractionDocument
-  ): string | null {
-    if (document.externalAiOutputJson?.trim()) {
-      return document.externalAiOutputJson;
-    }
-
-    const statusDetail = document.externalStatusDetail?.trim();
-    if (!statusDetail) {
-      return null;
-    }
-
-    const previewIndex = statusDetail.indexOf('Preview=');
-    if (previewIndex < 0) {
-      return null;
-    }
-
-    const previewText = statusDetail.slice(previewIndex + 'Preview='.length).trim();
-    return previewText || null;
-  }
-
-  private findTextFallbackOption(
-    document: DocumentOption
-  ): DocumentOption | null {
-    return (
-      this.documentOptions.find(
-        (option) =>
-          option.key !== document.key &&
-          option.type === 'artifact' &&
-          !!option.contentText &&
-          (
-            (document.documentGuid && option.documentGuid === document.documentGuid) ||
-            (!!document.documentId && option.documentId === document.documentId)
-          )
-      ) ?? null
-    );
   }
 
   onDocumentDropdownChange(selection: DocumentOption[]): void {
