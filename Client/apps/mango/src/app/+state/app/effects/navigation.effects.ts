@@ -103,7 +103,7 @@ export class NavigationEffect {
     }
 
     return navigationLinks.map((link) => {
-      if (link.name !== 'Leases') {
+      if (link.name !== 'Leases' && link.dynamicName !== 'Leases') {
         return link;
       }
 
