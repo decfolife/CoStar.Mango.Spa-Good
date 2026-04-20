@@ -122,39 +122,6 @@
         </div>
       </div>
     </div>
-    <div *ngIf="groupedDocumentOptions.length" class="ai-sidebar__request-panel">
-      <div class="ai-sidebar__request-panel-header">Request Files</div>
-      <div class="ai-sidebar__request-groups">
-        <section
-          *ngFor="let group of groupedDocumentOptions"
-          class="ai-sidebar__request-group"
-        >
-          <header class="ai-sidebar__request-group-header">
-            <span class="ai-sidebar__request-group-title">
-              {{ group.key }}
-            </span>
-          </header>
-          <div class="ai-sidebar__request-table">
-            <button
-              *ngFor="let document of group.items"
-              type="button"
-              class="ai-sidebar__request-row"
-              [class.ai-sidebar__request-row--active]="
-                isSelectedDocument(document)
-              "
-              (click)="onDocumentSelectionChange(document.key)"
-            >
-              <span class="ai-sidebar__request-kind">
-                {{ getDocumentKindLabel(document) }}
-              </span>
-              <span class="ai-sidebar__request-name">
-                {{ document.fileName }}
-              </span>
-            </button>
-          </div>
-        </section>
-      </div>
-    </div>
     <div *ngIf="isDocumentLoading" class="ai-sidebar__document-loading">
       Loading document...
     </div>

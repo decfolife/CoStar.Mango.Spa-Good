@@ -282,18 +282,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     return this.prettifyJson(this.selectedDocument?.contentText);
   }
 
-  isSelectedDocument(document: DocumentOption): boolean {
-    return document.key === this.selectedDocumentKey;
-  }
-
-  getDocumentKindLabel(document: DocumentOption): string {
-    if (document.type === 'document') {
-      return 'Document';
-    }
-
-    return document.artifactType?.trim() || 'Artifact';
-  }
-
   toggleSection(section: SidebarSection): void {
     section.isExpanded = !section.isExpanded;
   }
@@ -730,7 +718,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       requestLabel: this.getRequestLabel(document),
       artifactGuid: artifact.artifactGuid ?? null,
       artifactId: artifact.artifactId,
-      fileName: this.buildArtifactLabel(document, artifact),
+      fileName: this.buildArtifactLabel(artifact),
       artifactType: artifact.artifactType,
       mimeType: artifact.mimeType,
       contentText: artifact.contentText,
@@ -741,20 +729,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     };
   }
 
-  private buildArtifactLabel(
-    document: AiAbstractionDocument,
-    artifact: AiAbstractionDocumentArtifact
-  ): string {
-    const documentName =
-      document.fileName ??
-      document.documentFileName ??
-      `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim();
+  private buildArtifactLabel(artifact: AiAbstractionDocumentArtifact): string {
     const artifactName =
       artifact.displayName?.trim() ||
       artifact.artifactType?.trim() ||
       'Artifact';
 
-    return `${documentName} - ${artifactName}`;
+    return artifactName;
   }
 
   private mapPipelineArtifact(
@@ -776,11 +757,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       return null;
     }
 
-    const documentName =
-      document.fileName ??
-      document.documentFileName ??
-      `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim();
-
     return {
       key: `artifact:${pipelineArtifactGuid}`,
       type: 'artifact',
@@ -789,7 +765,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       requestId: this.getRequestId(document),
       requestLabel: this.getRequestLabel(document),
       artifactGuid: pipelineArtifactGuid,
-      fileName: `${documentName} - Pipeline Output`,
+      fileName: 'Pipeline Output',
       artifactType: 'Pipeline Output',
       mimeType: 'application/json',
       contentText: pipelineContent,
@@ -860,30 +836,17 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private getRequestId(document: AiAbstractionDocument): string {
-    return (
-      document.externalRequestId?.trim() ||
-      document.externalReferenceId?.trim() ||
-      document.documentGuid?.trim() ||
-      String(document.documentId ?? 'unknown-request')
-    );
+    return document.externalRequestId?.trim() || 'request-unavailable';
   }
 
   private getRequestLabel(document: AiAbstractionDocument): string {
-    const requestId =
-      document.externalRequestId?.trim() ||
-      document.externalReferenceId?.trim();
+    const requestId = document.externalRequestId?.trim();
 
     if (requestId) {
       return `Request ${requestId}`;
     }
 
-    const documentName =
-      document.fileName?.trim() || document.documentFileName?.trim();
-    if (documentName) {
-      return documentName;
-    }
-
-    return `Request ${document.documentGuid ?? document.documentId ?? 'Unknown'}`;
+    return 'Request Unavailable';
   }
 
   private parseContext(contextJson?: string | null): any | null {

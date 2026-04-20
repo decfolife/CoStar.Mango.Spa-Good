@@ -71,53 +71,6 @@
   </div>
 
   <div class="ai-document-page__viewer" *ngIf="!errorMessage">
-    <section
-      class="ai-document-page__artifact-panel"
-      *ngIf="groupedDocumentOptions.length"
-    >
-      <div class="ai-document-page__artifact-panel-header">
-        Request Files
-      </div>
-
-      <div class="ai-document-page__artifact-groups">
-        <section
-          *ngFor="let group of groupedDocumentOptions"
-          class="ai-document-page__artifact-group"
-        >
-          <header class="ai-document-page__artifact-group-header">
-            <span class="ai-document-page__artifact-group-title">
-              {{ group.key }}
-            </span>
-          </header>
-
-          <div class="ai-document-page__artifact-table">
-            <button
-              *ngFor="let document of group.items"
-              type="button"
-              class="ai-document-page__artifact-row"
-              [class.ai-document-page__artifact-row--active]="
-                isSelectedDocument(document)
-              "
-              (click)="onDocumentSelectionChange(document.key)"
-            >
-              <span class="ai-document-page__artifact-kind">
-                {{ getDocumentKindLabel(document) }}
-              </span>
-              <span class="ai-document-page__artifact-name">
-                {{ document.fileName }}
-              </span>
-              <span class="ai-document-page__artifact-status">
-                {{ document.externalStatus || 'Unavailable' }}
-              </span>
-              <span class="ai-document-page__artifact-status">
-                {{ document.externalAbstractionStatus || 'Unavailable' }}
-              </span>
-            </button>
-          </div>
-        </section>
-      </div>
-    </section>
-
     <mango-ai-document-viewer
       [src]="documentSource"
       [filename]="documentFileName || undefined"
