@@ -624,6 +624,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       type: 'document',
       documentGuid: null,
       documentId: 0,
+      requestId: `fallback-request:${index}`,
+      requestLabel: fileName,
       url: documentUrl,
       fileName,
       mimeType: source?.mimeType,
