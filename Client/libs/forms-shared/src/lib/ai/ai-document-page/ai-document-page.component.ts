@@ -105,6 +105,18 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     return this.prettifyJson(this.selectedDocument?.contentText);
   }
 
+  isSelectedDocument(document: DocumentOption): boolean {
+    return document.key === this.selectedDocumentKey;
+  }
+
+  getDocumentKindLabel(document: DocumentOption): string {
+    if (document.type === 'document') {
+      return 'Document';
+    }
+
+    return document.artifactType?.trim() || 'Artifact';
+  }
+
   onDocumentSelectionChange(documentKey: string): void {
     if (!documentKey || documentKey === this.selectedDocumentKey) {
       return;
