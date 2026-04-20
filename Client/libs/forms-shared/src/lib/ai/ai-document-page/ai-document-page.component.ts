@@ -221,7 +221,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   }
 
   private mapDocuments(documents: AiAbstractionDocument[]): DocumentOption[] {
-    return documents.flatMap((document) => {
+    return documents.reduce<DocumentOption[]>((allOptions, document) => {
       const baseDocument: DocumentOption[] = document.documentGuid
         ? [
             {
@@ -248,10 +248,14 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
 
       const pipelineArtifact = this.mapPipelineArtifact(document);
 
-      return pipelineArtifact
-        ? [...baseDocument, pipelineArtifact, ...artifacts]
-        : [...baseDocument, ...artifacts];
-    });
+      allOptions.push(...baseDocument);
+      if (pipelineArtifact) {
+        allOptions.push(pipelineArtifact);
+      }
+      allOptions.push(...artifacts);
+
+      return allOptions;
+    }, []);
   }
 
   private mapArtifact(
