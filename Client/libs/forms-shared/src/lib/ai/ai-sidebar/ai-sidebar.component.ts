@@ -477,6 +477,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
 
+    if (this.shouldRenderAsText(document) && document.contentText) {
+      this.documentSource = null;
+      this.documentLoadError = null;
+      this.isDocumentLoading = false;
+      return;
+    }
+
     if (this.shouldRenderAsText(document) && !document.contentText) {
       this.aiLeaseService
         .getAbstractionDocumentText({

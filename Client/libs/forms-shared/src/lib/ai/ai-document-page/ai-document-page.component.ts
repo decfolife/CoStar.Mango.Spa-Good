@@ -197,6 +197,13 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.isLoading = true;
 
+    if (this.shouldRenderAsText(document) && document.contentText) {
+      this.documentSource = null;
+      this.errorMessage = null;
+      this.isLoading = false;
+      return;
+    }
+
     if (this.shouldRenderAsText(document) && !document.contentText) {
       this.aiLeaseService
         .getAbstractionDocumentText({
