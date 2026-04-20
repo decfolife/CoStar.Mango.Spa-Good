@@ -187,7 +187,11 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.isLoading = true;
 
-    if (document.type === 'artifact') {
+    if (
+      document.type === 'artifact' &&
+      (!document.artifactGuid ||
+        document.artifactGuid.startsWith('pipeline-output:'))
+    ) {
       this.isLoading = false;
       return;
     }
@@ -196,6 +200,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       .getAbstractionDocumentFile({
         documentGuid: document.documentGuid ?? undefined,
         documentId: document.documentId,
+        artifactGuid: document.artifactGuid ?? undefined,
+        artifactId: document.artifactId,
         fileName: document.fileName,
         mimeType: document.mimeType,
       })

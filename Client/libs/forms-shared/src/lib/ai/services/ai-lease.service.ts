@@ -89,6 +89,8 @@ export interface CreateLeaseAbstractionPipelineJobResponse {
 export interface AiAbstractionDocument {
   documentId?: number;
   documentGuid?: string;
+  artifactId?: number;
+  artifactGuid?: string;
   aiAbstractionId?: number;
   fileName?: string;
   documentFileName?: string;
@@ -234,6 +236,11 @@ export class AiLeaseService {
     const explicitUrl = document.url ?? document.documentUrl ?? null;
     if (explicitUrl) {
       return explicitUrl;
+    }
+
+    const artifactGuid = document.artifactGuid;
+    if (artifactGuid) {
+      return `${this.apiUrl}AiAbstractions/GetAiAbstractionDocumentFile?artifactGuid=${artifactGuid}`;
     }
 
     const documentGuid = document.documentGuid;

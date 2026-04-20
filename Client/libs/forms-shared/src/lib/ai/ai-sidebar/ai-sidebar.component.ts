@@ -496,7 +496,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
 
-    if (document.type === 'artifact') {
+    if (
+      document.type === 'artifact' &&
+      (!document.artifactGuid ||
+        document.artifactGuid.startsWith('pipeline-output:'))
+    ) {
       this.isDocumentLoading = false;
       return;
     }
@@ -512,6 +516,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .getAbstractionDocumentFile({
         documentGuid: document.documentGuid ?? undefined,
         documentId: document.documentId,
+        artifactGuid: document.artifactGuid ?? undefined,
+        artifactId: document.artifactId,
         fileName: document.fileName,
         mimeType: document.mimeType,
       })
