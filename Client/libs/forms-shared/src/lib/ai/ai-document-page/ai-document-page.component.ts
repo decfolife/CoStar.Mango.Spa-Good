@@ -429,7 +429,22 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     }
 
     try {
-      return JSON.stringify(JSON.parse(value), null, 2);
+      let parsedValue: unknown = JSON.parse(value);
+
+      // Some saved artifacts arrive as JSON encoded inside a JSON string.
+      while (typeof parsedValue === 'string') {
+        const trimmedValue = parsedValue.trim();
+        if (
+          (!trimmedValue.startsWith('{') || !trimmedValue.endsWith('}')) &&
+          (!trimmedValue.startsWith('[') || !trimmedValue.endsWith(']'))
+        ) {
+          break;
+        }
+
+        parsedValue = JSON.parse(trimmedValue);
+      }
+
+      return JSON.stringify(parsedValue, null, 2);
     } catch {
       return value;
     }
