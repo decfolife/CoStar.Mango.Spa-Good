@@ -60,10 +60,8 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Saved highlights to restore when the document first loads.
-   * Passed once after loadHighlights() resolves — the SDK seeds its own internal
-   * state from this and manages highlights from there on.  Angular never updates
-   * this after user interaction, so there is no controlled-mode re-render loop.
+   * Saved/current highlights for the SDK's controlled bookmarks mode.
+   * The templates keep the historical input name, but the SDK prop is `bookmarks`.
    */
   @Input() set initialBookmarks(value: HighlightRange[]) {
     this._initialBookmarks = value ?? [];
@@ -165,10 +163,7 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
         toolbar: this.toolbar,
         darkMode: false,
         searchQuery: this._searchQuery,
-        // Pass as initialBookmarks (SDK-internal uncontrolled state).
-        // bookmarks prop is intentionally NOT passed — that would enable
-        // controlled mode which causes the React 18 concurrent-mode race.
-        initialBookmarks: this._initialBookmarks,
+        bookmarks: this._initialBookmarks,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
           // React callbacks run outside Angular's zone — run() ensures
           // RxJS schedulers (debounceTime) and HttpClient fire correctly.
