@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DataService } from '@mango/core-shared';
 import {
-  RequestType,
   ToastState,
   VALIDATION_ERROR,
 } from '@mango/data-models/lib-data-models';
@@ -15,14 +14,12 @@ import { FormWizardService } from '@micro-components/services/form-wizard.servic
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { AddLeaseModalComponent } from '../add-lease-modal/add-lease-modal.component';
 import { forkJoin } from 'rxjs';
-import DataSource from 'devextreme/data/data_source';
 
 interface SelectedAiLeaseFile {
   id: string;
   file: File;
   buildingId: number | null;
   buildingName: string | null;
-  buildingDataSource: any;
 }
 
 @Component({
@@ -80,7 +77,7 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
 
   constructor(
     public override dialogRef: MatDialogRef<AddAiLeaseModalComponent>,
-    private readonly aiFormWizardService: FormWizardService,
+    formWizardService: FormWizardService,
     dashboardService: DashboardService,
     router: Router,
     dataService: DataService,
@@ -99,7 +96,7 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
   ) {
     super(
       dialogRef,
-      aiFormWizardService,
+      formWizardService,
       dashboardService,
       router,
       dataService,
@@ -173,7 +170,6 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
           file,
           buildingId: this.getDefaultBuildingId(),
           buildingName: this.getDefaultBuildingName(),
-          buildingDataSource: this.createFileBuildingDataSource(),
         });
       }
     });
@@ -338,7 +334,6 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
       ...file,
       buildingId: null,
       buildingName: null,
-      buildingDataSource: this.createFileBuildingDataSource(),
     }));
   }
 
@@ -399,51 +394,5 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
 
   private getDefaultBuildingName(): string | null {
     return this.sharedBuildingName ?? this.data.objectName ?? null;
-  }
-
-  private createFileBuildingDataSource(): any {
-    if (this.hasPassedBuilding) {
-      return this.buildingsDataSource;
-    }
-
-    return new DataSource({
-      load: async (loadOptions) => {
-        try {
-          if (!this.selectedPortfolio) {
-            return { data: [], totalCount: 0 };
-          }
-
-          const pageSize = loadOptions.take || 100;
-          const page = loadOptions.skip / pageSize + 1 || 1;
-          const searchValue = loadOptions.searchValue || '';
-
-          const result = await this.aiFormWizardService
-            .getRenderSelect(
-              this.selectedPortfolio,
-              RequestType.BUILDINGS_LIST,
-              searchValue,
-              '',
-              '',
-              '',
-              page,
-              pageSize
-            )
-            .toPromise();
-
-          if (!result.success) {
-            return { data: [], totalCount: 0 };
-          }
-
-          return {
-            data: result.data.items,
-            totalCount: result.data.totalItems,
-          };
-        } catch {
-          return { data: [], totalCount: 0 };
-        }
-      },
-      paginate: true,
-      pageSize: 100,
-    });
   }
 }

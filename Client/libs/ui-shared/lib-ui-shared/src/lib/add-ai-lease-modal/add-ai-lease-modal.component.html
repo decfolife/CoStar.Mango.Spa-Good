@@ -196,7 +196,6 @@
                 valueExpr="buildingID"
                 [useSelectBox]="true"
                 [selectBoxValue]="sharedBuildingId"
-                [containerized]="false"
                 hoverText="Select Building"
                 (selectedItems)="onSharedBuildingChanged($event)"
               ></crem-dropdown>
@@ -250,7 +249,7 @@
                   }}</crem-form-label>
                   <crem-dropdown
                     [id]="'aiFileBuildingId-' + i"
-                    [dataSource]="file.buildingDataSource"
+                    [dataSource]="buildingsDataSource"
                     [allowSearch]="true"
                     [showClearButton]="true"
                     [showColumnHeader]="false"
@@ -258,7 +257,6 @@
                     valueExpr="buildingID"
                     [useSelectBox]="true"
                     [selectBoxValue]="file.buildingId"
-                    [containerized]="false"
                     hoverText="Select Building"
                     (selectedItems)="onFileBuildingChanged(file, $event)"
                   ></crem-dropdown>
