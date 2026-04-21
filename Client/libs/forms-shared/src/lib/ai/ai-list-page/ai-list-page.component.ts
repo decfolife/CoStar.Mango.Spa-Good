@@ -24,7 +24,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   leases: AiLeaseListItem[] = [];
   filteredLeases: AiLeaseListItem[] = [];
   isLoading = true;
-  createdAiAbstractionId: number | null = null;
+  createdAiAbstractionIds = new Set<number>();
   searchText = '';
   selectedPortfolioId: number | null = null;
   portfolioOptions: Array<{ id: number; name: string }> = [];
@@ -47,8 +47,15 @@ export class AiListPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (params) => {
-          this.createdAiAbstractionId =
-            Number(params.get('createdAiAbstractionId') ?? 0) || null;
+          const createdIds = (
+            params.get('createdAiAbstractionIds') ??
+            params.get('createdAiAbstractionId') ??
+            ''
+          )
+            .split(',')
+            .map((value) => Number(value.trim()))
+            .filter((value) => Number.isFinite(value) && value > 0);
+          this.createdAiAbstractionIds = new Set(createdIds);
           this.stopPolling$.next();
           this.loadLeases(true);
         },
@@ -85,7 +92,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   }
 
   isCreatedRow(row: AiLeaseListItem): boolean {
-    return !!this.createdAiAbstractionId && row.id === this.createdAiAbstractionId;
+    return this.createdAiAbstractionIds.has(row.id);
   }
 
   onSearchChanged(value: string): void {
@@ -278,7 +285,6 @@ export class AiListPageComponent implements OnInit, OnDestroy {
         lease.formName,
         lease.aiTenant,
         lease.status,
-        lease.aiLeaseEndDate,
         lease.createdDate,
         lease.lastModifiedDate,
       ];

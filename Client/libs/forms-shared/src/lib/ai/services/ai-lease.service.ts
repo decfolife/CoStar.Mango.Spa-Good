@@ -7,134 +7,15 @@ import { UtilitiesService } from '@mango/core-shared';
 import { IAIOutput } from '../models/ai-output.model';
 import { AiLeaseListItem } from '../models/ai-form.model';
 import type { HighlightRange } from 'document-viewer-sdk';
-
-export interface AiAbstractionDetail {
-  aiAbstractionId: number;
-  buildingId: number;
-  buildingName?: string;
-  formId?: number;
-  formName?: string;
-  portfolioId?: number;
-  portfolioName?: string;
-  premiseId?: number;
-  status: 'Pending' | 'Processing' | 'Complete' | 'Error' | 'Cancelled';
-  completedDate?: string;
-  errorMessage?: string;
-  contextJson?: string;
-  aiOutputJson?: string;
-  aiTenant?: string;
-  aiLeaseEndDate?: string;
-  reviewedFormData?: string;
-  externalJobId?: string;
-  externalCustomerId?: string;
-  externalJobStatus?: string;
-  externalOverallStatus?: string;
-  externalResponseJson?: string;
-  createdDate: string;
-  lastModifiedDate: string;
-}
-
-export interface CreateAiAbstractionResponse {
-  aiAbstractionId: number;
-}
-
-export interface UpdateAiAbstractionStatusRequest {
-  aiAbstractionId: number;
-  status: 'Pending' | 'Processing' | 'Complete' | 'Error' | 'Cancelled';
-  errorMessage?: string;
-}
-
-export interface LeaseAbstractionPipelineDocumentInput {
-  fileName?: string;
-  customerId?: string;
-  sourceLeaseId?: string;
-  sourceDocumentId?: string;
-  leaseType?: string;
-  requestorContactId?: string;
-  propertyId?: number;
-  docGroupId?: string;
-  sourceDocType?: string;
-  sourceDescription?: string;
-  sourceComment?: string;
-  sourceExternalIdentifier?: string;
-  sourceUploadDate?: string;
-}
-
-export interface CreateLeaseAbstractionPipelineJobRequest {
-  buildingId: number;
-  customerId: string;
-  sourceLeaseId?: string;
-  jobName?: string;
-  isDryRun?: boolean;
-  documents?: LeaseAbstractionPipelineDocumentInput[];
-  files: File[];
-}
-
-export interface LeaseAbstractionPipelineSubmittedDocument {
-  fileName: string;
-  customerId: string;
-  sourceLeaseId?: string;
-  sourceDocumentId?: string;
-  externalReferenceId: string;
-  sourceExternalIdentifier: string;
-  s3ObjectKey: string;
-}
-
-export interface CreateLeaseAbstractionPipelineJobResponse {
-  jobId: string;
-  documentCount: number;
-  documents: LeaseAbstractionPipelineSubmittedDocument[];
-}
-
-export interface AiAbstractionDocument {
-  documentId?: number;
-  documentGuid?: string;
-  artifactId?: number;
-  artifactGuid?: string;
-  aiAbstractionId?: number;
-  fileName?: string;
-  documentFileName?: string;
-  fileSizeBytes?: number;
-  mimeType?: string;
-  sortOrder?: number;
-  externalReferenceId?: string;
-  externalRequestId?: string;
-  externalSourceExternalIdentifier?: string;
-  externalS3ObjectKey?: string;
-  externalStatus?: string;
-  externalAbstractionStatus?: string;
-  externalStatusDetail?: string;
-  externalAiOutputJson?: string;
-  artifacts?: AiAbstractionDocumentArtifact[];
-  url?: string;
-  documentUrl?: string;
-}
-
-export interface AiAbstractionDocumentArtifact {
-  artifactId?: number;
-  artifactGuid?: string;
-  displayName?: string;
-  artifactType?: string;
-  fileSizeBytes?: number;
-  mimeType?: string;
-  attachmentTypeId?: number;
-  contentText?: string;
-  url?: string;
-}
-
-interface PipelineArtifactCandidate {
-  attachmentTypeId: number;
-  artifactId?: number;
-  artifactGuid?: string;
-  artifactType?: string;
-  contentText?: string;
-  externalReferenceId?: string;
-  fileName: string;
-  mimeType?: string;
-  requestId?: string;
-  sourceFileName?: string;
-  url?: string;
-}
+import type {
+  AiAbstractionDetail,
+  AiAbstractionDocument,
+  AiAbstractionDocumentArtifact,
+  CreateAiAbstractionResponse,
+  CreateAiAbstractionResponseDto,
+  PipelineArtifactCandidate,
+  UpdateAiAbstractionStatusRequest,
+} from '../models/ai-abstraction.model';
 
 @Injectable({ providedIn: 'root' })
 export class AiLeaseService {
@@ -157,46 +38,14 @@ export class AiLeaseService {
           headers: { enctype: 'multipart/form-data' },
         }
       )
-      .pipe(map((res) => res.data as CreateAiAbstractionResponse));
-  }
-
-  /**
-   * Separate path for the new lease abstraction pipeline integration.
-   * This does not replace the existing AI abstraction table-backed flow.
-   * The backend returns an external jobId rather than an aiAbstractionId.
-   */
-  createLeaseAbstractionPipelineJob(
-    request: CreateLeaseAbstractionPipelineJobRequest
-  ): Observable<CreateLeaseAbstractionPipelineJobResponse> {
-    const formData = new FormData();
-    formData.append('buildingId', String(request.buildingId));
-    formData.append('customerId', request.customerId);
-
-    if (request.sourceLeaseId) {
-      formData.append('sourceLeaseId', request.sourceLeaseId);
-    }
-    if (request.jobName) {
-      formData.append('jobName', request.jobName);
-    }
-    if (request.isDryRun != null) {
-      formData.append('isDryRun', String(request.isDryRun));
-    }
-    if (request.documents?.length) {
-      formData.append('documentsJson', JSON.stringify(request.documents));
-    }
-
-    request.files.forEach((file) => formData.append('files', file, file.name));
-
-    return this.http
-      .post<ApiResponse>(
-        `${this.apiUrl}AiAbstractions/CreateLeaseAbstractionPipelineJob`,
-        formData,
-        {
-          headers: { enctype: 'multipart/form-data' },
-        }
-      )
       .pipe(
-        map((res) => res.data as CreateLeaseAbstractionPipelineJobResponse)
+        map((res) => {
+          const data = res.data as CreateAiAbstractionResponseDto;
+          return {
+            aiAbstractionId:
+              data.aiAbstractionId ?? data.abstractionId ?? data.AbstractionId,
+          } as CreateAiAbstractionResponse;
+        })
       );
   }
 

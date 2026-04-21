@@ -3,11 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError, debounceTime, switchMap, takeUntil } from 'rxjs/operators';
 import type { DocumentSource, HighlightRange } from 'document-viewer-sdk';
-import {
+import type {
   AiAbstractionDocument,
   AiAbstractionDocumentArtifact,
-  AiLeaseService,
-} from '../services/ai-lease.service';
+} from '../models/ai-abstraction.model';
+import { AiLeaseService } from '../services/ai-lease.service';
 
 interface DocumentOption {
   key: string;

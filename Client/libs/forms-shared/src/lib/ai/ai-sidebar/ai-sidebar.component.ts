@@ -19,11 +19,11 @@ import {
 import type { HighlightRange } from 'document-viewer-sdk';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { IAIOutput } from '../models/ai-output.model';
-import {
+import type {
   AiAbstractionDocument,
   AiAbstractionDocumentArtifact,
-  AiLeaseService,
-} from '../services/ai-lease.service';
+} from '../models/ai-abstraction.model';
+import { AiLeaseService } from '../services/ai-lease.service';
 import { AiSidebarService } from './ai-sidebar.service';
 import type { DocumentSource } from 'document-viewer-sdk';
 

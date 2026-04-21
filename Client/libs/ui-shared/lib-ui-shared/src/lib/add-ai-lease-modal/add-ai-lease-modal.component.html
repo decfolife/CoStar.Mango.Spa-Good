@@ -39,92 +39,6 @@
           ></crem-dropdown>
         </crem-form-item>
 
-        <crem-form-item id="aet-building-container">
-          <crem-form-label [required]="true">{{
-            buildingObjectName
-          }}</crem-form-label>
-          <crem-dropdown
-            id="buildingId"
-            #buildingId
-            [dataSource]="buildingsDataSource"
-            [allowSearch]="true"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            [customRequireValidation]="false"
-            displayExpr="buildingName"
-            valueExpr="buildingID"
-            [useSelectBox]="true"
-            hoverText="Select Building"
-            (selectedItems)="onBuildingChanged($event)"
-            formControlName="building"
-            required="true"
-            [autoSelect]="true"
-          ></crem-dropdown>
-        </crem-form-item>
-
-        <crem-form-item id="aet-template-container" *ngIf="!hidePremise">
-          <crem-form-label [required]="true">{{
-            premiseObjectName
-          }}</crem-form-label>
-          <crem-dropdown
-            id="premiseId"
-            #premiseId
-            dropDownContainerCustomClass="premiseDropDown"
-            [dataSource]="premiseDropdownItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="premiseName"
-            valueExpr="premiseID"
-            [useSelectBox]="true"
-            hoverText="Select {{ premiseObjectName }}"
-            (selectedItems)="onPremiseValueChanged($event)"
-            [isDisabled]="loading"
-            formControlName="premise"
-            required="true"
-            [autoSelect]="true"
-          ></crem-dropdown>
-        </crem-form-item>
-
-        <crem-form-item *ngIf="addNewPremise">
-          <crem-form-label [required]="true"
-            >{{ premiseObjectName }} Name</crem-form-label
-          >
-          <crem-input
-            id="newPremiseName"
-            #newPremiseName
-            [showHint]="false"
-            [showLabel]="false"
-            [showInfo]="false"
-            [inputType]="'text'"
-            required="true"
-            formControlName="newPremiseName"
-            placeholder="Enter New {{ premiseObjectName }}"
-          ></crem-input>
-        </crem-form-item>
-
-        <crem-form-item id="aet-template-container" *ngIf="addNewPremise">
-          <crem-form-label [required]="true"
-            >{{ premiseObjectName }} Type</crem-form-label
-          >
-          <crem-dropdown
-            id="premiseTypeId"
-            #premiseTypeId
-            dropDownContainerCustomClass="premiseTypeDropDown"
-            [dataSource]="premiseTypesDropdownItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="objectTypeTypeName"
-            valueExpr="objectTypeTypeID"
-            [useSelectBox]="true"
-            hoverText="Select {{ premiseObjectName }} Type"
-            (selectedItems)="onPremiseTypeChanged($event)"
-            [isDisabled]="loading"
-            required="true"
-            formControlName="premiseType"
-            [autoSelect]="true"
-          ></crem-dropdown>
-        </crem-form-item>
-
         <!-- Tenant Legal Name, Lease Type, Begin/End Dates, and Currency Type
              are omitted — these values will be extracted from the lease PDF by the AI. -->
 
@@ -197,27 +111,6 @@
           <div></div>
         </div>
 
-        <crem-form-item id="aet-leaseInfo-container" *ngIf="addSubLeaseWizard">
-          <crem-form-label *ngIf="addSubLeaseWizard"
-            >Parent {{ leaseObjectName }}</crem-form-label
-          >
-          <crem-dropdown
-            id="parentLease"
-            #parentLease
-            dropDownContainerCustomClass="leaseParentDropDown"
-            [dataSource]="parentLeaseItems"
-            [showClearButton]="true"
-            [showColumnHeader]="false"
-            displayExpr="leaseName"
-            valueExpr="leaseAbstractID"
-            hoverText="Select Lease"
-            (selectedItems)="onParentLeaseChanged($event)"
-            [isDisabled]="loading"
-            formControlName="parentLease"
-            [initialSelectedValue]="selectedParentLease"
-          ></crem-dropdown>
-        </crem-form-item>
-
         <!-- ── AI Abstraction Fields ────────────────────────────────────── -->
 
         <div class="ai-lease-divider">
@@ -227,45 +120,150 @@
 
         <crem-form-item id="aet-ai-document-container">
           <crem-form-label [required]="true">Lease Documents</crem-form-label>
-          <div class="ai-file-upload">
-            <input
-              #fileInput
-              type="file"
-              multiple
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.odt,.ods,.odp,.jpg,.jpeg,.png,.tif,.tiff,.msg,.eml,.csv,.zip"
-              class="ai-file-upload__input"
-              (change)="onFileSelected($event)"
-            />
-            <crem-button
-              type="secondary"
-              [icon]="'faUpload'"
-              (click)="fileInput.click(); $event.preventDefault()"
+          <div class="ai-upload-panel">
+            <div class="ai-upload-panel__header">
+              <div>
+                <div class="ai-upload-panel__title">
+                  Upload one or more lease files
+                </div>
+                <div class="ai-upload-panel__subtitle">
+                  Each uploaded file will create its own AI abstraction form.
+                </div>
+              </div>
+              <div class="ai-file-upload">
+                <input
+                  #fileInput
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff"
+                  class="ai-file-upload__input"
+                  (change)="onFileSelected($event)"
+                />
+                <crem-button
+                  type="secondary"
+                  [icon]="'faUpload'"
+                  (click)="fileInput.click(); $event.preventDefault()"
+                >
+                  Add Files
+                </crem-button>
+              </div>
+            </div>
+
+            <div
+              *ngIf="selectedFiles.length > 1 && !hasPassedBuilding"
+              class="ai-upload-panel__mode"
             >
-              Add Files
-            </crem-button>
-            <span
-              *ngIf="!selectedFiles.length"
-              class="ai-file-upload__placeholder"
-            >
-              No files selected
-            </span>
-          </div>
-          <ul *ngIf="selectedFiles.length" class="ai-file-list">
-            <li
-              *ngFor="let file of selectedFiles; let i = index"
-              class="ai-file-list__item"
-            >
-              <span class="ai-file-list__name">{{ file.name }}</span>
               <button
                 type="button"
-                class="ai-file-list__remove"
-                (click)="removeFile(i)"
-                title="Remove file"
+                class="ai-upload-panel__mode-option"
+                [class.ai-upload-panel__mode-option--active]="
+                  buildingAssignmentMode === 'same'
+                "
+                (click)="setBuildingAssignmentMode('same')"
               >
-                <mat-icon>close</mat-icon>
+                Same building for all documents
               </button>
-            </li>
-          </ul>
+              <button
+                type="button"
+                class="ai-upload-panel__mode-option"
+                [class.ai-upload-panel__mode-option--active]="
+                  buildingAssignmentMode === 'per-document'
+                "
+                (click)="setBuildingAssignmentMode('per-document')"
+              >
+                Choose a building per document
+              </button>
+            </div>
+
+            <div
+              *ngIf="
+                selectedFiles.length &&
+                buildingAssignmentMode === 'same' &&
+                !hasPassedBuilding
+              "
+              class="ai-upload-panel__shared-building"
+            >
+              <crem-form-label [required]="true">{{
+                buildingObjectName
+              }}</crem-form-label>
+              <crem-dropdown
+                id="aiSharedBuildingId"
+                [dataSource]="buildingsDataSource"
+                [allowSearch]="true"
+                [showClearButton]="true"
+                [showColumnHeader]="false"
+                displayExpr="buildingName"
+                valueExpr="buildingID"
+                [useSelectBox]="true"
+                [selectBoxValue]="sharedBuildingId"
+                hoverText="Select Building"
+                (selectedItems)="onSharedBuildingChanged($event)"
+              ></crem-dropdown>
+            </div>
+
+            <div *ngIf="!selectedFiles.length" class="ai-upload-panel__empty">
+              No files selected
+            </div>
+
+            <div *ngIf="selectedFiles.length" class="ai-file-cards">
+              <div
+                *ngFor="let file of selectedFiles; let i = index; trackBy: trackSelectedFile"
+                class="ai-file-card"
+              >
+                <div class="ai-file-card__header">
+                  <div class="ai-file-card__meta">
+                    <div class="ai-file-card__name">{{ file.file.name }}</div>
+                    <div class="ai-file-card__detail">
+                      {{ file.file.size / 1024 | number : '1.0-0' }} KB
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="ai-file-list__remove"
+                    (click)="removeFile(i)"
+                    title="Remove file"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+
+                <div
+                  *ngIf="hasPassedBuilding"
+                  class="ai-file-card__assigned-building"
+                >
+                  <span class="ai-file-card__assigned-label">Building</span>
+                  <span class="ai-file-card__assigned-value">{{
+                    data.objectName
+                  }}</span>
+                </div>
+
+                <div
+                  *ngIf="
+                    !hasPassedBuilding &&
+                    buildingAssignmentMode === 'per-document'
+                  "
+                  class="ai-file-card__building"
+                >
+                  <crem-form-label [required]="true">{{
+                    buildingObjectName
+                  }}</crem-form-label>
+                  <crem-dropdown
+                    [id]="'aiFileBuildingId-' + i"
+                    [dataSource]="buildingsDataSource"
+                    [allowSearch]="true"
+                    [showClearButton]="true"
+                    [showColumnHeader]="false"
+                    displayExpr="buildingName"
+                    valueExpr="buildingID"
+                    [useSelectBox]="true"
+                    [selectBoxValue]="file.buildingId"
+                    hoverText="Select Building"
+                    (selectedItems)="onFileBuildingChanged(file, $event)"
+                  ></crem-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
         </crem-form-item>
 
         <crem-form-item id="aet-ai-amendments-container">

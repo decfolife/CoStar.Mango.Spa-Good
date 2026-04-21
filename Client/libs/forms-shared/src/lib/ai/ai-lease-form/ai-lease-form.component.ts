@@ -277,11 +277,14 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
             this.parentBuildingLink = this.buildParentBuildingLink(
               parentLink?.data ?? null
             );
-            this.sections = this.groupIntoSections(
-              mappedForm.fields,
-              mappedForm.sections,
-              dropdownValues?.data ?? {},
-              detail
+            this.sections = this.prependRentScheduleSection(
+              this.groupIntoSections(
+                mappedForm.fields,
+                mappedForm.sections,
+                dropdownValues?.data ?? {},
+                detail
+              ),
+              aiOutput
             );
             this.sectionsExpanded = this.sections.map(() => true);
             this.form = this.buildFormGroup(this.sections);
@@ -409,6 +412,37 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
         };
       })
       .filter((s) => s.fields.length > 0);
+  }
+
+  private prependRentScheduleSection(
+    sections: AiFormSection[],
+    aiOutput: IAIOutput
+  ): AiFormSection[] {
+    const scheduleItems = aiOutput.rent?.baseRentSchedule?.value ?? [];
+    const abatementItems = aiOutput.rent?.rentAbatements?.value ?? [];
+
+    if (!scheduleItems.length && !abatementItems.length) {
+      return sections;
+    }
+
+    return [
+      {
+        key: 'rent-schedule',
+        title: 'Rent Schedule',
+        fields: [],
+        columnGroups: [],
+        columns: 1,
+        rentSchedule: {
+          scheduleItems,
+          abatementItems,
+          startsFromRCD:
+            aiOutput.rent?.baseRentSchedule?.subfields?.startsFromRCD ?? false,
+          startsFromCD:
+            aiOutput.rent?.baseRentSchedule?.subfields?.startsFromCD ?? false,
+        },
+      },
+      ...sections,
+    ];
   }
 
   private toAiFormField(

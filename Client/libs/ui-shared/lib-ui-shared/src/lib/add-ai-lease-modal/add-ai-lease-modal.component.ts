@@ -13,6 +13,14 @@ import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import { FormWizardService } from '@micro-components/services/form-wizard.service';
 import { DashboardService } from '@project-dashboard/services/dashboard.service';
 import { AddLeaseModalComponent } from '../add-lease-modal/add-lease-modal.component';
+import { forkJoin } from 'rxjs';
+
+interface SelectedAiLeaseFile {
+  id: string;
+  file: File;
+  buildingId: number | null;
+  buildingName: string | null;
+}
 
 @Component({
   selector: 'mango-add-ai-lease-modal',
@@ -20,8 +28,22 @@ import { AddLeaseModalComponent } from '../add-lease-modal/add-lease-modal.compo
   styleUrls: ['./add-ai-lease-modal.component.scss'],
 })
 export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
-  selectedFiles: File[] = [];
+  selectedFiles: SelectedAiLeaseFile[] = [];
   isSubmitting = false;
+  buildingAssignmentMode: 'same' | 'per-document' = 'same';
+  sharedBuildingId: number | null = null;
+  sharedBuildingName: string | null = null;
+
+  private readonly ALLOWED_EXTENSIONS = new Set([
+    'pdf',
+    'doc',
+    'docx',
+    'jpg',
+    'jpeg',
+    'png',
+    'tif',
+    'tiff',
+  ]);
 
   // Extensions blocked for security — executable / script / system file types
   private readonly BLOCKED_EXTENSIONS = new Set([
@@ -94,6 +116,9 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
       'currencyTypeList',
       'beginDate',
       'endDate',
+      'building',
+      'premise',
+      'premiseType',
     ].forEach((field) => {
       const ctrl = this.addLeaseFormGroup.get(field);
       if (ctrl) {
@@ -111,6 +136,13 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
       'leaseDocument',
       new FormControl(null, Validators.required)
     );
+
+    this.getLeaseTemplates();
+
+    if (this.data.objectId) {
+      this.sharedBuildingId = this.data.objectId;
+      this.sharedBuildingName = this.data.objectName ?? null;
+    }
   }
 
   override buildModalTitle(): void {
@@ -125,18 +157,34 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
     const rejected: string[] = [];
     Array.from(input.files).forEach((file) => {
       const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-      if (this.BLOCKED_EXTENSIONS.has(ext)) {
+      if (
+        this.BLOCKED_EXTENSIONS.has(ext) ||
+        !this.ALLOWED_EXTENSIONS.has(ext)
+      ) {
         rejected.push(file.name);
         return;
       }
-      if (!this.selectedFiles.some((f) => f.name === file.name)) {
-        this.selectedFiles.push(file);
+      if (!this.selectedFiles.some((entry) => entry.file.name === file.name)) {
+        this.selectedFiles.push({
+          id: `${file.name}-${file.size}-${file.lastModified}`,
+          file,
+          buildingId: this.getDefaultBuildingId(),
+          buildingName: this.getDefaultBuildingName(),
+        });
       }
     });
 
+    if (this.selectedFiles.length <= 1) {
+      this.buildingAssignmentMode = 'same';
+    }
+
+    if (this.buildingAssignmentMode === 'same') {
+      this.applySharedBuildingToAllFiles();
+    }
+
     if (rejected.length) {
       this.toastService.show(
-        `File type not allowed: ${rejected.join(', ')}`,
+        `Only PDF, Word, and image files are supported: ${rejected.join(', ')}`,
         '',
         ToastState.ERROR,
         { position: 'bottom right', maxWidth: '350px' }
@@ -151,9 +199,41 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
 
   removeFile(index: number): void {
     this.selectedFiles.splice(index, 1);
+    if (this.selectedFiles.length <= 1) {
+      this.buildingAssignmentMode = 'same';
+      this.applySharedBuildingToAllFiles();
+    }
     this.addLeaseFormGroup
       .get('leaseDocument')
       ?.setValue(this.selectedFiles.length ? this.selectedFiles : null);
+  }
+
+  onSharedBuildingChanged(items: Array<{ buildingID: number; buildingName: string }>): void {
+    const building = items?.[0];
+    this.sharedBuildingId = building?.buildingID ?? null;
+    this.sharedBuildingName = building?.buildingName ?? null;
+    this.selectedBuilding = this.sharedBuildingId;
+    this.applySharedBuildingToAllFiles();
+  }
+
+  onFileBuildingChanged(
+    file: SelectedAiLeaseFile,
+    items: Array<{ buildingID: number; buildingName: string }>
+  ): void {
+    const building = items?.[0];
+    file.buildingId = building?.buildingID ?? null;
+    file.buildingName = building?.buildingName ?? null;
+  }
+
+  setBuildingAssignmentMode(mode: 'same' | 'per-document'): void {
+    this.buildingAssignmentMode = mode;
+    if (mode === 'same') {
+      this.applySharedBuildingToAllFiles();
+    }
+  }
+
+  trackSelectedFile(_index: number, file: SelectedAiLeaseFile): string {
+    return file.id;
   }
 
   /** Launch: post to AI abstractions API, then navigate to the abstraction form. */
@@ -179,62 +259,37 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
       return;
     }
 
+    if (this.selectedFiles.some((file) => !this.resolveBuildingId(file))) {
+      this.toastService.show(
+        'Select a building for each uploaded document before launching.',
+        '',
+        ToastState.ERROR,
+        {
+          position: 'bottom right',
+          maxWidth: '350px',
+        }
+      );
+      return;
+    }
+
     this.isSubmitting = true;
 
-    const formData = new FormData();
-    formData.append(
-      'buildingId',
-      String(this.selectedBuilding ?? this.data.objectId ?? 0)
-    );
-    formData.append(
-      'includesAmendments',
-      String(this.addLeaseFormGroup.get('includesAmendments')?.value ?? false)
-    );
-    formData.append(
-      'abstractionNotes',
-      this.addLeaseFormGroup.get('abstractionNotes')?.value ?? ''
-    );
-
-    if (this.selectedPortfolio != null) {
-      formData.append('portfolioId', String(this.selectedPortfolio));
-    }
-    if (this.selectedPremise != null) {
-      formData.append('premiseId', String(this.selectedPremise));
-    }
-    if (this.selectedPremiseType != null) {
-      formData.append('premiseTypeId', String(this.selectedPremiseType));
-    }
-    if (this.addNewPremise) {
-      formData.append(
-        'newPremiseName',
-        this.addLeaseFormGroup.get('newPremiseName')?.value ?? ''
-      );
-    }
-    if (this.selectedTemplate != null) {
-      formData.append('leaseTemplateId', String(this.selectedTemplate));
-    }
-    if (this.selectedAccountingType != null) {
-      formData.append('accountingType', String(this.selectedAccountingType));
-    }
-    if (this.selectedMeasurement != null) {
-      formData.append('measurementUnitId', String(this.selectedMeasurement));
-    }
-    if (this.selectedParentLease != null) {
-      formData.append('parentLeaseId', String(this.selectedParentLease));
-    }
-
-    this.selectedFiles.forEach((file) =>
-      formData.append('files', file, file.name)
-    );
-
-    this.aiLeaseService.createAbstraction(formData).subscribe({
-      next: (response) => {
+    forkJoin(
+      this.selectedFiles.map((file) =>
+        this.aiLeaseService.createAbstraction(this.buildFormData(file))
+      )
+    ).subscribe({
+      next: (responses) => {
         this.isSubmitting = false;
         this.dialogRef.close();
+        const createdIds = responses
+          .map((response) => response.aiAbstractionId)
+          .filter((id) => Number.isFinite(id));
         this.router.navigate(['/crem/portfolio/ai-abstractions'], {
           queryParams: {
-            buildingId: this.selectedBuilding ?? this.data.objectId ?? 0,
-            createdAiAbstractionId: response.aiAbstractionId,
+            ...(createdIds.length === 1
+              ? { createdAiAbstractionId: createdIds[0] }
+              : { createdAiAbstractionIds: createdIds.join(',') }),
             ...(this.data?.formId ? { formId: this.data.formId } : {}),
           },
         });
@@ -263,5 +318,81 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
 
   override saveAndNew(_e: any): void {
     this.save(_e);
+  }
+
+  override onPortFolioValueChanged(e: any) {
+    super.onPortFolioValueChanged(e);
+
+    if (this.data.objectId) {
+      return;
+    }
+
+    this.sharedBuildingId = null;
+    this.sharedBuildingName = null;
+    this.selectedBuilding = null;
+    this.selectedFiles = this.selectedFiles.map((file) => ({
+      ...file,
+      buildingId: null,
+      buildingName: null,
+    }));
+  }
+
+  private buildFormData(file: SelectedAiLeaseFile): FormData {
+    const formData = new FormData();
+    const leaseTemplateId = this.selectedTemplate ?? this.selectedLeaseTemplate;
+    const accountingType = this.selectedAccountingType;
+    const measurementUnitId =
+      this.selectedMeasurement ?? this.selectedMeasurementIndex;
+
+    formData.append('buildingId', String(this.resolveBuildingId(file)));
+    formData.append(
+      'includesAmendments',
+      String(this.addLeaseFormGroup.get('includesAmendments')?.value ?? false)
+    );
+    formData.append(
+      'abstractionNotes',
+      this.addLeaseFormGroup.get('abstractionNotes')?.value ?? ''
+    );
+
+    if (this.selectedPortfolio != null) {
+      formData.append('portfolioId', String(this.selectedPortfolio));
+    }
+    if (leaseTemplateId != null) {
+      formData.append('leaseTemplateId', String(leaseTemplateId));
+    }
+    if (accountingType != null) {
+      formData.append('accountingType', String(accountingType));
+    }
+    if (measurementUnitId != null) {
+      formData.append('measurementUnitId', String(measurementUnitId));
+    }
+
+    formData.append('files', file.file, file.file.name);
+
+    return formData;
+  }
+
+  private resolveBuildingId(file: SelectedAiLeaseFile): number | null {
+    return this.buildingAssignmentMode === 'same'
+      ? this.sharedBuildingId ?? this.data.objectId ?? null
+      : file.buildingId;
+  }
+
+  private applySharedBuildingToAllFiles(): void {
+    const buildingId = this.sharedBuildingId ?? this.data.objectId ?? null;
+    const buildingName = this.sharedBuildingName ?? this.data.objectName ?? null;
+    this.selectedFiles = this.selectedFiles.map((file) => ({
+      ...file,
+      buildingId,
+      buildingName,
+    }));
+  }
+
+  private getDefaultBuildingId(): number | null {
+    return this.sharedBuildingId ?? this.data.objectId ?? null;
+  }
+
+  private getDefaultBuildingName(): string | null {
+    return this.sharedBuildingName ?? this.data.objectName ?? null;
   }
 }
