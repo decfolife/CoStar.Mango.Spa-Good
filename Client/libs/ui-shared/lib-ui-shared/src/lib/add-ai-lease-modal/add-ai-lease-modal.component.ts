@@ -383,13 +383,13 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
 
   private resolveBuildingId(file: SelectedAiLeaseFile): number | null {
     return this.buildingAssignmentMode === 'same'
-      ? this.sharedBuildingId ?? this.data.objectId ?? null
+      ? this.sharedBuildingId ?? this.getPassedBuildingId()
       : file.buildingId;
   }
 
   private applySharedBuildingToAllFiles(): void {
-    const buildingId = this.sharedBuildingId ?? this.data.objectId ?? null;
-    const buildingName = this.sharedBuildingName ?? this.data.objectName ?? null;
+    const buildingId = this.sharedBuildingId ?? this.getPassedBuildingId();
+    const buildingName = this.sharedBuildingName ?? this.getPassedBuildingName();
     this.selectedFiles = this.selectedFiles.map((file) => ({
       ...file,
       buildingId,
@@ -398,11 +398,19 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
   }
 
   private getDefaultBuildingId(): number | null {
-    return this.sharedBuildingId ?? this.data.objectId ?? null;
+    return this.sharedBuildingId ?? this.getPassedBuildingId();
   }
 
   private getDefaultBuildingName(): string | null {
-    return this.sharedBuildingName ?? this.data.objectName ?? null;
+    return this.sharedBuildingName ?? this.getPassedBuildingName();
+  }
+
+  private getPassedBuildingId(): number | null {
+    return this.hasPassedBuilding ? this.data.objectId : null;
+  }
+
+  private getPassedBuildingName(): string | null {
+    return this.hasPassedBuilding ? (this.data.objectName ?? null) : null;
   }
 
   private preloadBuildingsForPerDocumentMode(): void {
