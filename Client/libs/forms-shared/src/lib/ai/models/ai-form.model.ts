@@ -90,6 +90,11 @@ export interface AiLeaseListItem {
   portfolioName?: string;
   premiseId?: number;
   status: string;
+  displayStatus?: string;
+  processStatus?: string;
+  processStatusDetail?: string;
+  externalJobStatus?: string;
+  externalOverallStatus?: string;
   aiTenant?: string;
   aiLeaseEndDate?: string;
   createdDate: string;

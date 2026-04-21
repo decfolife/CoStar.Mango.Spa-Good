@@ -274,24 +274,188 @@ export class AiLeaseService {
    */
   getLeaseList(): Observable<AiLeaseListItem[]> {
     return this.getAbstractionList().pipe(
-      map((items) =>
-        items.map((item) => ({
-          id: item.aiAbstractionId,
-          buildingId: item.buildingId,
-          buildingName: item.buildingName ?? undefined,
-          formId: item.formId ?? undefined,
-          formName: item.formName ?? undefined,
-          portfolioId: item.portfolioId ?? undefined,
-          portfolioName: item.portfolioName ?? undefined,
-          premiseId: item.premiseId ?? undefined,
-          status: item.status,
-          aiTenant: item.aiTenant ?? undefined,
-          aiLeaseEndDate: item.aiLeaseEndDate ?? undefined,
-          createdDate: item.createdDate,
-          lastModifiedDate: item.lastModifiedDate,
-        }))
+      switchMap((items) =>
+        this.enrichLeaseListWithDocumentStatuses(
+          items.map((item) => this.mapLeaseListItem(item))
+        )
       )
     );
+  }
+
+  private mapLeaseListItem(item: AiAbstractionDetail): AiLeaseListItem {
+    const processStatus = this.getFirstNonEmpty(
+      item.externalOverallStatus,
+      item.externalJobStatus
+    );
+
+    return {
+      id: item.aiAbstractionId,
+      buildingId: item.buildingId,
+      buildingName: item.buildingName ?? undefined,
+      formId: item.formId ?? undefined,
+      formName: item.formName ?? undefined,
+      portfolioId: item.portfolioId ?? undefined,
+      portfolioName: item.portfolioName ?? undefined,
+      premiseId: item.premiseId ?? undefined,
+      status: item.status,
+      displayStatus: this.buildDisplayStatus(item.status, processStatus),
+      processStatus: processStatus ?? undefined,
+      externalJobStatus: item.externalJobStatus ?? undefined,
+      externalOverallStatus: item.externalOverallStatus ?? undefined,
+      aiTenant: item.aiTenant ?? undefined,
+      aiLeaseEndDate: item.aiLeaseEndDate ?? undefined,
+      createdDate: item.createdDate,
+      lastModifiedDate: item.lastModifiedDate,
+    };
+  }
+
+  private enrichLeaseListWithDocumentStatuses(
+    leases: AiLeaseListItem[]
+  ): Observable<AiLeaseListItem[]> {
+    const activeLeases = leases.filter(
+      (lease) =>
+        this.isActiveAbstractionStatus(lease.status) ||
+        this.isActivePipelineStatus(lease.processStatus)
+    );
+
+    if (!activeLeases.length) {
+      return of(leases);
+    }
+
+    return forkJoin(
+      activeLeases.map((lease) =>
+        this.getAbstractionDocuments(lease.id).pipe(
+          map((documents) => ({
+            leaseId: lease.id,
+            documentStatus: this.buildDocumentProcessStatus(documents),
+          })),
+          catchError(() =>
+            of({
+              leaseId: lease.id,
+              documentStatus: null,
+            })
+          )
+        )
+      )
+    ).pipe(
+      map((statuses) => {
+        const statusesByLeaseId = new Map(
+          statuses
+            .filter((item) => item.documentStatus)
+            .map((item) => [item.leaseId, item.documentStatus!])
+        );
+
+        return leases.map((lease) => {
+          const documentStatus = statusesByLeaseId.get(lease.id);
+          if (!documentStatus) {
+            return lease;
+          }
+
+          return {
+            ...lease,
+            displayStatus: this.buildDisplayStatus(
+              lease.status,
+              documentStatus.status
+            ),
+            processStatus: documentStatus.status,
+            processStatusDetail: documentStatus.detail ?? undefined,
+          };
+        });
+      })
+    );
+  }
+
+  private buildDocumentProcessStatus(
+    documents: AiAbstractionDocument[]
+  ): { status: string; detail?: string } | null {
+    if (!documents.length) {
+      return null;
+    }
+
+    const activeDocument = documents.find((document) =>
+      this.isActivePipelineStatus(
+        this.getFirstNonEmpty(
+          document.externalAbstractionStatus,
+          document.externalStatus
+        )
+      )
+    );
+
+    const erroredDocument = documents.find((document) =>
+      this.isErrorPipelineStatus(
+        this.getFirstNonEmpty(
+          document.externalAbstractionStatus,
+          document.externalStatus
+        )
+      )
+    );
+
+    const selectedDocument = activeDocument ?? erroredDocument ?? documents[0];
+    const status = this.getFirstNonEmpty(
+      selectedDocument.externalAbstractionStatus,
+      selectedDocument.externalStatus
+    );
+
+    if (!status) {
+      return null;
+    }
+
+    return {
+      status,
+      detail: selectedDocument.externalStatusDetail ?? undefined,
+    };
+  }
+
+  private buildDisplayStatus(status: string, processStatus?: string | null): string {
+    if (this.isActiveAbstractionStatus(status) && processStatus?.trim()) {
+      return this.formatProcessStatus(processStatus);
+    }
+
+    return status;
+  }
+
+  private isActiveAbstractionStatus(status?: string | null): boolean {
+    return ['pending', 'processing'].includes(status?.trim().toLowerCase() ?? '');
+  }
+
+  private isActivePipelineStatus(status?: string | null): boolean {
+    const normalizedStatus = status?.trim().toLowerCase();
+    return Boolean(
+      normalizedStatus &&
+        ![
+          'complete',
+          'completed',
+          'success',
+          'succeeded',
+          'failed',
+          'error',
+          'cancelled',
+          'canceled',
+        ].includes(normalizedStatus)
+    );
+  }
+
+  private isErrorPipelineStatus(status?: string | null): boolean {
+    const normalizedStatus = status?.trim().toLowerCase();
+    return Boolean(
+      normalizedStatus &&
+        ['failed', 'error', 'errored'].includes(normalizedStatus)
+    );
+  }
+
+  private formatProcessStatus(status: string): string {
+    return status
+      .trim()
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  private getFirstNonEmpty(
+    ...values: Array<string | null | undefined>
+  ): string | null {
+    return values.find((value) => value?.trim())?.trim() ?? null;
   }
 
   private mergePipelineArtifactsIntoDocuments(

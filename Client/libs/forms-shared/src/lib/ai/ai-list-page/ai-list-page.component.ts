@@ -91,6 +91,32 @@ export class AiListPageComponent implements OnInit, OnDestroy {
     return ['Pending', 'Processing'].includes(status);
   }
 
+  isLeaseProcessing(lease: AiLeaseListItem): boolean {
+    return (
+      this.isProcessing(lease.status) ||
+      this.isActivePipelineStatus(lease.processStatus)
+    );
+  }
+
+  getStatusLabel(lease: AiLeaseListItem): string {
+    return lease.displayStatus || lease.status;
+  }
+
+  getStatusTitle(lease: AiLeaseListItem): string {
+    return [
+      lease.processStatusDetail,
+      lease.processStatus ? `Pipeline: ${lease.processStatus}` : null,
+      lease.externalJobStatus ? `Job: ${lease.externalJobStatus}` : null,
+      lease.externalOverallStatus ? `Overall: ${lease.externalOverallStatus}` : null,
+    ]
+      .filter(Boolean)
+      .join('\n');
+  }
+
+  canMarkAsError(lease: AiLeaseListItem): boolean {
+    return this.isProcessing(lease.status);
+  }
+
   isCreatedRow(row: AiLeaseListItem): boolean {
     return this.createdAiAbstractionIds.has(row.id);
   }
@@ -227,7 +253,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
           this.applyFilters();
           this.isLoading = false;
 
-          if (leases.some((lease) => this.isProcessing(lease.status))) {
+          if (leases.some((lease) => this.isLeaseProcessing(lease))) {
             this.startPolling();
           }
         },
@@ -253,7 +279,7 @@ export class AiListPageComponent implements OnInit, OnDestroy {
           this.leases = leases;
           this.portfolioOptions = this.buildPortfolioOptions(leases);
           this.applyFilters();
-          if (!leases.some((lease) => this.isProcessing(lease.status))) {
+          if (!leases.some((lease) => this.isLeaseProcessing(lease))) {
             this.stopPolling$.next();
           }
         },
@@ -285,6 +311,11 @@ export class AiListPageComponent implements OnInit, OnDestroy {
         lease.formName,
         lease.aiTenant,
         lease.status,
+        lease.displayStatus,
+        lease.processStatus,
+        lease.processStatusDetail,
+        lease.externalJobStatus,
+        lease.externalOverallStatus,
         lease.createdDate,
         lease.lastModifiedDate,
       ];
@@ -318,5 +349,22 @@ export class AiListPageComponent implements OnInit, OnDestroy {
       position: 'bottom right',
       maxWidth: '350px',
     });
+  }
+
+  private isActivePipelineStatus(status?: string | null): boolean {
+    const normalizedStatus = status?.trim().toLowerCase();
+    return Boolean(
+      normalizedStatus &&
+        ![
+          'complete',
+          'completed',
+          'success',
+          'succeeded',
+          'failed',
+          'error',
+          'cancelled',
+          'canceled',
+        ].includes(normalizedStatus)
+    );
   }
 }

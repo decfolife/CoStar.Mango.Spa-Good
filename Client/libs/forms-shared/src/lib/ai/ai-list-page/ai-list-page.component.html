@@ -156,19 +156,20 @@
         <span
           class="status-badge status-badge--{{ cell.data.status | lowercase }}"
           [class.status-badge--active]="isCreatedRow(cell.data)"
+          [title]="getStatusTitle(cell.data)"
         >
           <span
-            *ngIf="isProcessing(cell.data.status)"
+            *ngIf="isLeaseProcessing(cell.data)"
             class="status-spinner"
             aria-hidden="true"
           ></span>
-          {{ cell.data.status }}
+          {{ getStatusLabel(cell.data) }}
         </span>
       </div>
 
       <div *dxTemplate="let cell of 'actionsTemplate'">
         <button
-          *ngIf="isProcessing(cell.data.status)"
+          *ngIf="canMarkAsError(cell.data)"
           type="button"
           class="status-action-link"
           [disabled]="updatingStatusAiAbstractionId === cell.data.id"
