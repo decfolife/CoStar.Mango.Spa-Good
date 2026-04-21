@@ -211,12 +211,12 @@ mat-card.mat-mdc-card {
 
   .dx-datagrid-headers {
     .dx-header-row > td {
-      text-align: center !important;
+      text-align: left !important;
     }
 
     .dx-datagrid-text-content {
       width: 100%;
-      text-align: center;
+      text-align: left;
     }
   }
 }
