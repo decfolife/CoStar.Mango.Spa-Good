@@ -336,7 +336,7 @@ export const routes: Routes = [
               breadCrumb: {
                 label: 'AI Abstractions',
                 append: true,
-                activeLink: 'AI Abstractions',
+                activeLink: 'AI Leases',
               },
             },
           },
