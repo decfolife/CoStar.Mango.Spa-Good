@@ -92,6 +92,10 @@ export class AiListPageComponent implements OnInit, OnDestroy {
   }
 
   isLeaseProcessing(lease: AiLeaseListItem): boolean {
+    if (!this.isProcessing(lease.status)) {
+      return false;
+    }
+
     return (
       this.isProcessing(lease.status) ||
       this.isActivePipelineStatus(lease.processStatus)
