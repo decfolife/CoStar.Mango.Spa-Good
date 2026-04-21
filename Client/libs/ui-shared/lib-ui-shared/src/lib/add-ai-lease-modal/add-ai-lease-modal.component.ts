@@ -180,6 +180,8 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
 
     if (this.buildingAssignmentMode === 'same') {
       this.applySharedBuildingToAllFiles();
+    } else {
+      this.preloadBuildingsForPerDocumentMode();
     }
 
     if (rejected.length) {
@@ -229,7 +231,14 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
     this.buildingAssignmentMode = mode;
     if (mode === 'same') {
       this.applySharedBuildingToAllFiles();
+      return;
     }
+
+    if (this.sharedBuildingId || this.data.objectId) {
+      this.applySharedBuildingToAllFiles();
+    }
+
+    this.preloadBuildingsForPerDocumentMode();
   }
 
   trackSelectedFile(_index: number, file: SelectedAiLeaseFile): string {
@@ -394,5 +403,24 @@ export class AddAiLeaseModalComponent extends AddLeaseModalComponent {
 
   private getDefaultBuildingName(): string | null {
     return this.sharedBuildingName ?? this.data.objectName ?? null;
+  }
+
+  private preloadBuildingsForPerDocumentMode(): void {
+    if (this.hasPassedBuilding || !this.selectedPortfolio) {
+      return;
+    }
+
+    const loadPromise =
+      typeof this.buildingsDataSource?.reload === 'function'
+        ? this.buildingsDataSource.reload()
+        : typeof this.buildingsDataSource?.load === 'function'
+          ? this.buildingsDataSource.load()
+          : null;
+
+    if (loadPromise?.then) {
+      loadPromise.then(() => {
+        this.selectedFiles = this.selectedFiles.map((file) => ({ ...file }));
+      });
+    }
   }
 }
