@@ -313,9 +313,7 @@ export class AiLeaseService {
     leases: AiLeaseListItem[]
   ): Observable<AiLeaseListItem[]> {
     const activeLeases = leases.filter(
-      (lease) =>
-        this.isActiveAbstractionStatus(lease.status) &&
-        this.isActivePipelineStatus(lease.processStatus)
+      (lease) => this.isActiveAbstractionStatus(lease.status)
     );
 
     if (!activeLeases.length) {
