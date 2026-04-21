@@ -233,6 +233,8 @@
         <dx-data-grid
           class="ai-subtable"
           [dataSource]="rentSchedule.scheduleItems"
+          [width]="'100%'"
+          [columnAutoWidth]="false"
           [showBorders]="true"
           [showColumnLines]="false"
           [showRowLines]="true"
@@ -247,7 +249,7 @@
               [caption]="col.caption"
               [dataType]="col.dataType"
               [format]="col.format"
-              [width]="col.width"
+              [minWidth]="col.width"
             ></dxi-column>
           </ng-container>
         </dx-data-grid>
@@ -257,6 +259,8 @@
           <dx-data-grid
             class="ai-subtable"
             [dataSource]="rentSchedule.abatementItems"
+            [width]="'100%'"
+            [columnAutoWidth]="false"
             [showBorders]="true"
             [showColumnLines]="false"
             [showRowLines]="true"
@@ -270,7 +274,7 @@
                 [caption]="col.caption"
                 [dataType]="col.dataType"
                 [format]="col.format"
-                [width]="col.width"
+                [minWidth]="col.width"
               ></dxi-column>
             </ng-container>
           </dx-data-grid>
