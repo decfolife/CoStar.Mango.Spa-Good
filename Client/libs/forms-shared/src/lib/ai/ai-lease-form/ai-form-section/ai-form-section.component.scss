@@ -203,6 +203,12 @@ mat-card.mat-mdc-card {
 }
 
 :host ::ng-deep .ai-subtable {
+  .dx-datagrid-rowsview {
+    .dx-row > td {
+      text-align: left !important;
+    }
+  }
+
   .dx-datagrid-headers {
     .dx-header-row > td {
       text-align: center !important;
