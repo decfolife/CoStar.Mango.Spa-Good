@@ -121,16 +121,44 @@
         "
         class="ai-lease-form__pending"
       >
-        <crem-icon
-          class="ai-lease-form__pending-icon"
-          icon="faHourglass"
-        ></crem-icon>
-        <div class="ai-lease-form__pending-content">
-          <strong>Abstraction {{ abstractionStatus }}</strong>
-          <span
-            >The AI is processing your documents. This page will show the
-            results once complete.</span
-          >
+        <div class="ai-lease-form__pending-card">
+          <div class="ai-lease-form__pending-visual" aria-hidden="true">
+            <span class="ai-lease-form__pending-orbit"></span>
+            <span class="ai-lease-form__pending-core"></span>
+          </div>
+
+          <div class="ai-lease-form__pending-copy">
+            <span class="ai-lease-form__pending-eyebrow">
+              AI abstraction in progress
+            </span>
+            <h2>We’re processing this lease.</h2>
+            <p>
+              The extracted lease form will appear here as soon as enough AI
+              results are available. You can leave this page and come back from
+              AI Leases while processing continues.
+            </p>
+          </div>
+
+          <div class="ai-lease-form__pending-meta">
+            <div class="ai-lease-form__pending-status">
+              <span>Status</span>
+              <strong>{{ abstractionStatus }}</strong>
+            </div>
+            <div class="ai-lease-form__pending-status">
+              <span>Refresh</span>
+              <strong>Auto-checking</strong>
+            </div>
+          </div>
+
+          <div class="ai-lease-form__pending-steps" aria-label="Processing steps">
+            <span class="ai-lease-form__pending-step ai-lease-form__pending-step--done">
+              Submitted
+            </span>
+            <span class="ai-lease-form__pending-step ai-lease-form__pending-step--active">
+              Processing
+            </span>
+            <span class="ai-lease-form__pending-step">Ready to review</span>
+          </div>
         </div>
       </div>
 
@@ -203,6 +231,7 @@
 
   <!-- Scroll to top -->
   <crem-button
+    *ngIf="hasRenderableContent"
     [id]="'ai-form-scrollToTopBtn'"
     class="scroll-to-top-button"
     type="primary"
