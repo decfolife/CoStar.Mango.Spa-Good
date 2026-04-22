@@ -69,6 +69,7 @@
 .ai-document-page__document-summary {
   flex: 0 1 auto;
   min-width: 0;
+  align-self: stretch;
 }
 
 .ai-document-page__document-meta {
@@ -76,7 +77,7 @@
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .ai-document-page__document-chip {
