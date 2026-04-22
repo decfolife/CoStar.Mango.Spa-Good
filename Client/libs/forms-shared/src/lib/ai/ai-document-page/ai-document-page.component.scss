@@ -16,7 +16,7 @@
 
 .ai-document-page__header {
   display: grid;
-  grid-template-columns: minmax(240px, max-content) minmax(420px, 720px);
+  grid-template-columns: minmax(240px, max-content) minmax(0, 1fr);
   align-items: start;
   justify-content: space-between;
   column-gap: 24px;
@@ -56,7 +56,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
-  width: 100%;
+  width: min(720px, 100%);
   justify-self: end;
 }
 
