@@ -65,7 +65,7 @@ export class AiSidebarService {
 
   openDocumentSearch(
     leaseId: number,
-    searchQuery: string,
+    searchQuery: string | null,
     targetHighlight?: HighlightRange & { documentGuid?: string }
   ): void {
     const currentState = this.stateSubject.value;
@@ -73,7 +73,7 @@ export class AiSidebarService {
       ...currentState,
       isOpen: true,
       leaseId,
-      documentSearchQuery: searchQuery,
+      documentSearchQuery: searchQuery?.trim() || null,
       documentTargetHighlight: targetHighlight ?? null,
       documentRequestId: currentState.documentRequestId + 1,
     });

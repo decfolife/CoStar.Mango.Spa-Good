@@ -283,7 +283,7 @@ export class AiFormSectionComponent implements OnInit {
 
     this.aiSidebarService.openDocumentSearch(
       this.leaseId,
-      field.citation || searchTerm,
+      field.citationHighlight ? null : searchTerm,
       field.citationHighlight
     );
   }
