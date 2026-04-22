@@ -5,28 +5,30 @@
       <h1 class="ai-document-page__title">Document Viewer</h1>
     </div>
 
-    <div class="ai-document-page__controls">
+    <div class="ai-document-page__controls" *ngIf="documentOptions.length">
       <label
         class="ai-document-page__label"
         for="ai-document-page-document-select"
       >
         Request Documents
       </label>
-      <crem-dropdown
-        id="ai-document-page-document-select"
-        inputId="ai-document-page-document-select"
-        placeholder="Select a document"
-        [useSelectBox]="true"
-        [allowSearch]="true"
-        [showClearButton]="false"
-        [dataSource]="documentOptions"
-        [displayExpr]="'displayLabel'"
-        [valueExpr]="'key'"
-        [selectBoxValue]="selectedDocumentKey"
-        [dropDownContainerCustomClass]="'ai-document-page-dropdown'"
-        [searchExpr]="['displayLabel', 'fileName', 'artifactType']"
-        (selectedItems)="onDocumentDropdownChange($event)"
-      ></crem-dropdown>
+      <div class="ai-document-page__select">
+        <crem-dropdown
+          id="ai-document-page-document-select"
+          inputId="ai-document-page-document-select"
+          placeholder="Select a document"
+          [useSelectBox]="true"
+          [allowSearch]="true"
+          [showClearButton]="false"
+          [dataSource]="documentOptions"
+          [displayExpr]="'displayLabel'"
+          [valueExpr]="'key'"
+          [selectBoxValue]="selectedDocumentKey"
+          [dropDownContainerCustomClass]="'ai-document-page-dropdown'"
+          [searchExpr]="['displayLabel', 'fileName', 'artifactType']"
+          (selectedItems)="onDocumentDropdownChange($event)"
+        ></crem-dropdown>
+      </div>
       <div
         *ngIf="selectedDocument"
         class="ai-document-page__document-summary"
