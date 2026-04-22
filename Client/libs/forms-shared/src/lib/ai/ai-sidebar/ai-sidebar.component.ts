@@ -103,6 +103,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   readonly rentScheduleColumns = [
     {
+      dataField: 'startMonth',
+      caption: 'Start Mo.',
+    },
+    {
+      dataField: 'endMonth',
+      caption: 'End Mo.',
+    },
+    {
       dataField: 'startDate',
       caption: 'Start',
       dataType: 'date',

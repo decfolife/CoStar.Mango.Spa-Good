@@ -3,13 +3,6 @@
 <div *ngIf="!isLoading" class="ai-list-page">
   <div class="actions-container">
     <div class="menu-section">
-      <cs-search
-        class="ai-list-page__search"
-        [value]="searchText"
-        [placeholder]="'Search...'"
-        [disabled]="isLoading"
-        (changed)="onSearchChanged($event)"
-      ></cs-search>
       <crem-dropdown
         class="crem-dropdown-list-pages ai-list-page__portfolio"
         [id]="'page-header-portfolio'"
@@ -25,6 +18,13 @@
         (selectedItems)="onPortfolioChanged($event)"
       >
       </crem-dropdown>
+      <cs-search
+        class="ai-list-page__search"
+        [value]="searchText"
+        [placeholder]="'Search...'"
+        [disabled]="isLoading"
+        (changed)="onSearchChanged($event)"
+      ></cs-search>
     </div>
     <div class="menu-section btns-right">
       <crem-button

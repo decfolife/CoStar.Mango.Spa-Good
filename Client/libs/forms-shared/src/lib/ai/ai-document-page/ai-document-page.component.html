@@ -1,6 +1,6 @@
 <div class="ai-document-page">
   <header class="ai-document-page__header">
-    <div>
+    <div class="ai-document-page__heading">
       <div class="ai-document-page__eyebrow">AI Abstraction</div>
       <h1 class="ai-document-page__title">Document Viewer</h1>
     </div>
@@ -60,7 +60,10 @@
     {{ errorMessage }}
   </div>
 
-  <div class="ai-document-page__viewer" *ngIf="!errorMessage">
+  <div
+    class="ai-document-page__viewer"
+    *ngIf="!isLoading && !errorMessage && (documentSource || selectedDocumentContent)"
+  >
     <mango-ai-document-viewer
       [src]="documentSource"
       [filename]="documentFileName || undefined"
