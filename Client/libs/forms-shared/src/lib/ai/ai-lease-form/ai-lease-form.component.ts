@@ -486,6 +486,8 @@ export class AiLeaseFormComponent implements OnInit, OnDestroy {
       formItemViewOnly: Boolean(field.formItemViewOnly),
       formItemFieldWidth: field.formItemFieldWidth ?? undefined,
       formItemFieldHeight: field.formItemFieldHeight ?? undefined,
+      citation: field.citation ?? undefined,
+      citationHighlight: field.citationHighlight ?? undefined,
       radioOptions: this.parseFormItemParameters(field.formItemParameters),
       displayValue: detailValue?.displayName,
       isAiOutputField:

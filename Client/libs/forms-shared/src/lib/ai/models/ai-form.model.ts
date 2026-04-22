@@ -1,4 +1,5 @@
 import { BaseRentScheduleItem, RentAbatement } from './ai-output.model';
+import type { HighlightRange } from 'document-viewer-sdk';
 
 export type AiFieldType =
   | 'text'
@@ -33,6 +34,7 @@ export interface AiFormField {
   type: AiFieldType;
   value: any;
   citation?: string;
+  citationHighlight?: HighlightRange & { documentGuid?: string };
   // ── Dropdown config (type === 'dropdown') ────────────────────────────────
   /** Form-defined dropdown source id. Used with RenderForms/GetFormItemDropdownValues. */
   dropdownId?: number;

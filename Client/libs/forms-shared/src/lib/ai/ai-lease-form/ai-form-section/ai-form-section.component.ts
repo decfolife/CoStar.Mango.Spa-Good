@@ -281,7 +281,11 @@ export class AiFormSectionComponent implements OnInit {
       return;
     }
 
-    this.aiSidebarService.openDocumentSearch(this.leaseId, searchTerm);
+    this.aiSidebarService.openDocumentSearch(
+      this.leaseId,
+      field.citation || searchTerm,
+      field.citationHighlight
+    );
   }
 
   private loadDropdownOptions(): void {

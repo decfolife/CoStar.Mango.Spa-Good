@@ -85,6 +85,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentSearchQuery: string | null = null;
   /** Saved highlights passed to [initialBookmarks] — set once per document load. */
   currentBookmarks: HighlightRange[] = [];
+  private documentTargetHighlight: (HighlightRange & { documentGuid?: string }) | null = null;
   /** True once the user adds a highlight; prevents loadHighlights from overwriting. */
   private _viewerHasUserChanges = false;
   private loadedDocumentContextId: number | null = null;
@@ -236,6 +237,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.handledDocumentRequestId = state.documentRequestId;
             this.documentSearchQuery =
               state.documentSearchQuery?.trim() || null;
+            this.documentTargetHighlight = state.documentTargetHighlight;
             this.activeTabIndex = 0;
           }
 
@@ -260,6 +262,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.isDocumentLoading = false;
           this.currentAiAbstractionId = null;
           this.documentSearchQuery = null;
+          this.documentTargetHighlight = null;
           this.loadedDocumentContextId = null;
           this.handledDocumentRequestId = 0;
           this.activeTabIndex = 1;
@@ -459,7 +462,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
 
     this.loadedDocumentContextId = aiAbstractionId;
-    this.loadDocumentFile(validDocuments[0]);
+    const requestedDocument = this.documentTargetHighlight?.documentGuid
+      ? validDocuments.find(
+          (document) =>
+            document.documentGuid === this.documentTargetHighlight?.documentGuid
+        )
+      : null;
+
+    this.loadDocumentFile(requestedDocument ?? validDocuments[0]);
 
     return true;
   }
@@ -469,7 +479,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentFileName = document.fileName;
     this.documentLoadError = null;
     this.documentSource = null;
-    this.currentBookmarks = [];
+    this.currentBookmarks = this.getCitationBookmarksForDocument(document);
     this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
 
@@ -538,13 +548,16 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   onBookmarksChange(bookmarks: HighlightRange[]): void {
     this._viewerHasUserChanges = true;
     this.currentBookmarks = bookmarks;
+    const userBookmarks = bookmarks.filter(
+      (bookmark) => !bookmark.id?.startsWith('ai-citation-')
+    );
     if (
       this.selectedDocument?.type === 'document' &&
       this.selectedDocument.documentGuid
     ) {
       this.bookmarkSave$.next({
         documentGuid: this.selectedDocument.documentGuid,
-        bookmarks,
+        bookmarks: userBookmarks,
       });
     }
   }
@@ -558,12 +571,34 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           // If the user already highlighted before the response arrived, don't
           // overwrite their work — the SDK's internal state already has their changes.
           if (this._viewerHasUserChanges) return;
-          this.currentBookmarks = savedBookmarks;
+          this.currentBookmarks = [
+            ...savedBookmarks,
+            ...this.getCitationBookmarksForDocument(this.selectedDocument),
+          ];
         },
         error: () => {
           /* non-critical */
         },
       });
+  }
+
+  private getCitationBookmarksForDocument(
+    document: DocumentOption | null
+  ): HighlightRange[] {
+    if (!document?.documentGuid || !this.documentTargetHighlight) {
+      return [];
+    }
+
+    if (
+      this.documentTargetHighlight.documentGuid &&
+      this.documentTargetHighlight.documentGuid !== document.documentGuid
+    ) {
+      return [];
+    }
+
+    const bookmark = { ...this.documentTargetHighlight };
+    delete bookmark.documentGuid;
+    return [bookmark];
   }
 
   private ensureDocumentContextLoaded(): void {
@@ -572,6 +607,21 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
 
     if (this.loadedDocumentContextId === this.currentAiAbstractionId) {
+      const requestedDocument = this.documentTargetHighlight?.documentGuid
+        ? this.documentOptions.find(
+            (document) =>
+              document.documentGuid === this.documentTargetHighlight?.documentGuid
+          )
+        : null;
+
+      if (
+        requestedDocument &&
+        requestedDocument.key !== this.selectedDocumentKey
+      ) {
+        this.loadDocumentFile(requestedDocument);
+        return;
+      }
+
       if (!this.documentSource) {
         const selectedDocument =
           this.documentOptions.find(
@@ -581,6 +631,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         if (selectedDocument) {
           this.loadDocumentFile(selectedDocument);
         }
+      } else {
+        this.currentBookmarks = [
+          ...this.currentBookmarks.filter(
+            (bookmark) => !bookmark.id?.startsWith('ai-citation-')
+          ),
+          ...this.getCitationBookmarksForDocument(this.selectedDocument),
+        ];
       }
 
       return;

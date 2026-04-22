@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import type { HighlightRange } from 'document-viewer-sdk';
 import { IAIOutput } from '../models/ai-output.model';
 
 interface SidebarState {
@@ -8,6 +9,7 @@ interface SidebarState {
   leaseId: number | null;
   aiOutput: IAIOutput | null;
   documentSearchQuery: string | null;
+  documentTargetHighlight: (HighlightRange & { documentGuid?: string }) | null;
   documentRequestId: number;
 }
 
@@ -18,6 +20,7 @@ export class AiSidebarService {
     leaseId: null,
     aiOutput: null,
     documentSearchQuery: null,
+    documentTargetHighlight: null,
     documentRequestId: 0,
   });
   readonly state$ = this.stateSubject.asObservable();
@@ -29,6 +32,7 @@ export class AiSidebarService {
       leaseId: currentId,
       aiOutput,
       documentSearchQuery,
+      documentTargetHighlight,
       documentRequestId,
     } = this.stateSubject.value;
     this.stateSubject.next({
@@ -36,6 +40,7 @@ export class AiSidebarService {
       leaseId: leaseId !== undefined ? leaseId : currentId,
       aiOutput,
       documentSearchQuery,
+      documentTargetHighlight,
       documentRequestId,
     });
   }
@@ -45,6 +50,7 @@ export class AiSidebarService {
       leaseId: currentId,
       aiOutput,
       documentSearchQuery,
+      documentTargetHighlight,
       documentRequestId,
     } = this.stateSubject.value;
     this.stateSubject.next({
@@ -52,17 +58,23 @@ export class AiSidebarService {
       leaseId: leaseId !== undefined ? leaseId : currentId,
       aiOutput,
       documentSearchQuery,
+      documentTargetHighlight,
       documentRequestId,
     });
   }
 
-  openDocumentSearch(leaseId: number, searchQuery: string): void {
+  openDocumentSearch(
+    leaseId: number,
+    searchQuery: string,
+    targetHighlight?: HighlightRange & { documentGuid?: string }
+  ): void {
     const currentState = this.stateSubject.value;
     this.stateSubject.next({
       ...currentState,
       isOpen: true,
       leaseId,
       documentSearchQuery: searchQuery,
+      documentTargetHighlight: targetHighlight ?? null,
       documentRequestId: currentState.documentRequestId + 1,
     });
   }
@@ -82,6 +94,7 @@ export class AiSidebarService {
       leaseId: null,
       aiOutput: null,
       documentSearchQuery: null,
+      documentTargetHighlight: null,
       documentRequestId: 0,
     });
   }
