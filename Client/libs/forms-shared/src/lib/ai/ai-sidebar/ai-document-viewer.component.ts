@@ -166,9 +166,6 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
       React.createElement(DocumentViewer, {
         src: this._src,
         filename: this._filename,
-        key: `${this._filename ?? ''}:${this._initialPage ?? 1}:${
-          this._initialBookmarks?.[0]?.id ?? ''
-        }`,
         initialPage: this._initialPage,
         toolbar: this.toolbar,
         darkMode: false,
