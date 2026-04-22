@@ -44,8 +44,17 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
     this.renderReactTree();
   }
 
+  get src(): DocumentSource | null {
+    return this._src;
+  }
+
   @Input() set filename(value: string | undefined) {
     this._filename = value;
+    this.renderReactTree();
+  }
+
+  @Input() set initialPage(value: number | undefined) {
+    this._initialPage = value && value > 0 ? value : undefined;
     this.renderReactTree();
   }
 
@@ -73,6 +82,7 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
 
   private _src: DocumentSource | null = null;
   private _filename?: string;
+  private _initialPage?: number;
   private _textContent?: string;
   private _searchQuery?: string;
   private _initialBookmarks: HighlightRange[] = [];
@@ -131,10 +141,6 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
     this.root = null;
   }
 
-  get src(): DocumentSource | null {
-    return this._src;
-  }
-
   get textModeContent(): string | null {
     return this._src ? null : this._textContent ?? null;
   }
@@ -160,6 +166,10 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
       React.createElement(DocumentViewer, {
         src: this._src,
         filename: this._filename,
+        key: `${this._filename ?? ''}:${this._initialPage ?? 1}:${
+          this._initialBookmarks?.[0]?.id ?? ''
+        }`,
+        initialPage: this._initialPage,
         toolbar: this.toolbar,
         darkMode: false,
         searchQuery: this._searchQuery,

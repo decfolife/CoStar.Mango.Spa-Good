@@ -119,6 +119,7 @@
       *ngIf="documentSource || selectedDocumentContent"
       [src]="documentSource"
       [filename]="documentFileName || undefined"
+      [initialPage]="documentTargetHighlight?.pageNumber || undefined"
       [textContent]="selectedDocumentContent || undefined"
       [searchQuery]="documentSearchQuery || undefined"
       [initialBookmarks]="currentBookmarks"

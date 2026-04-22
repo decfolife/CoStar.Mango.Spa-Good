@@ -85,7 +85,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   documentSearchQuery: string | null = null;
   /** Saved highlights passed to [initialBookmarks] — set once per document load. */
   currentBookmarks: HighlightRange[] = [];
-  private documentTargetHighlight: (HighlightRange & { documentGuid?: string }) | null = null;
+  documentTargetHighlight: (HighlightRange & { documentGuid?: string }) | null = null;
   /** True once the user adds a highlight; prevents loadHighlights from overwriting. */
   private _viewerHasUserChanges = false;
   private loadedDocumentContextId: number | null = null;

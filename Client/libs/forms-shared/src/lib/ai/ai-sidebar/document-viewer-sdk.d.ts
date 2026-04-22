@@ -56,6 +56,7 @@ declare module 'document-viewer-sdk' {
   export interface DocumentViewerProps {
     src: DocumentSource;
     filename?: string;
+    initialPage?: number;
     toolbar?: boolean | ToolbarConfig;
     darkMode?: boolean;
     searchQuery?: string;
