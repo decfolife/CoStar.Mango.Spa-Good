@@ -4,8 +4,10 @@
       <div class="ai-document-page__eyebrow">AI Abstraction</div>
       <h1 class="ai-document-page__title">Document Viewer</h1>
     </div>
+  </header>
 
-    <div class="ai-document-page__controls" *ngIf="documentOptions.length">
+  <div class="ai-document-page__toolbar" *ngIf="documentOptions.length">
+    <div class="ai-document-page__controls">
       <label
         class="ai-document-page__label"
         for="ai-document-page-document-select"
@@ -50,7 +52,7 @@
         </div>
       </div>
     </div>
-  </header>
+  </div>
 
   <div *ngIf="isLoading" class="ai-document-page__state">
     Loading document...

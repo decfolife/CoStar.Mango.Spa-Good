@@ -16,20 +16,15 @@
 
 .ai-document-page__header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 12px 24px;
+  align-items: center;
+  padding: 12px 24px 8px;
   border-bottom: 1px solid #dde4ee;
   background: #ffffff;
   flex-shrink: 0;
-  position: relative;
-  z-index: 2;
 }
 
 .ai-document-page__heading {
   flex: 0 0 auto;
-  padding-top: 2px;
 }
 
 .ai-document-page__eyebrow {
@@ -48,10 +43,17 @@
   color: #17325c;
 }
 
+.ai-document-page__toolbar {
+  flex-shrink: 0;
+  padding: 10px 24px 12px;
+  border-bottom: 1px solid #dde4ee;
+  background: #ffffff;
+  position: relative;
+  z-index: 2;
+}
+
 .ai-document-page__controls {
-  flex: 1;
-  min-width: 360px;
-  max-width: 980px;
+  width: min(100%, 1040px);
 }
 
 .ai-document-page__document-summary {
@@ -62,6 +64,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
 }
 
 .ai-document-page__document-chip {
@@ -137,6 +140,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background: #f6f8fb;
 }
 
 .ai-document-page__pipeline-panel {
@@ -181,13 +185,14 @@
 
 @media (max-width: 768px) {
   .ai-document-page__header {
-    flex-direction: column;
-    gap: 12px;
-    padding: 14px 16px 12px;
+    padding: 14px 16px 8px;
+  }
+
+  .ai-document-page__toolbar {
+    padding: 10px 16px 12px;
   }
 
   .ai-document-page__controls {
-    min-width: 0;
     width: 100%;
   }
 
@@ -215,5 +220,19 @@
 
   .dx-list-item-content {
     padding: 10px 14px;
+  }
+}
+
+:host ::ng-deep .ai-document-page__controls {
+  .dx-fieldset {
+    margin: 0 !important;
+  }
+
+  .dx-field-value {
+    width: 100% !important;
+  }
+
+  .dx-dropdowneditor-input-wrapper {
+    min-height: 34px !important;
   }
 }
