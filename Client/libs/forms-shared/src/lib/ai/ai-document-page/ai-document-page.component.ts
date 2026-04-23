@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EMPTY, Subject } from 'rxjs';
-import { catchError, debounceTime, switchMap, takeUntil } from 'rxjs/operators';
+import { EMPTY, Subject, forkJoin, of } from 'rxjs';
+import { catchError, debounceTime, map, switchMap, takeUntil } from 'rxjs/operators';
 import type { DocumentSource, HighlightRange } from 'document-viewer-sdk';
 import type {
   AiAbstractionDocument,
@@ -40,6 +40,8 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   documentSource: DocumentSource | null = null;
   documentFileName: string | null = null;
   currentBookmarks: HighlightRange[] = [];
+  private citationBookmarksByDocumentGuid = new Map<string, HighlightRange[]>();
+  private savedBookmarksByDocumentGuid = new Map<string, HighlightRange[]>();
   private _viewerHasUserChanges = false;
   isLoading = false;
   errorMessage: string | null = null;
@@ -123,13 +125,16 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   onBookmarksChange(bookmarks: HighlightRange[]): void {
     this._viewerHasUserChanges = true;
     this.currentBookmarks = bookmarks;
+    const userBookmarks = bookmarks.filter(
+      (bookmark) => !bookmark.id?.startsWith('ai-citation-')
+    );
     if (
       this.selectedDocument?.type === 'document' &&
       this.selectedDocument.documentGuid
     ) {
       this.bookmarkSave$.next({
         documentGuid: this.selectedDocument.documentGuid,
-        bookmarks,
+        bookmarks: userBookmarks,
       });
     }
   }
@@ -141,12 +146,41 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.documentFileName = null;
     this.documentOptions = [];
     this.selectedDocumentKey = null;
+    this.currentBookmarks = [];
+    this.citationBookmarksByDocumentGuid.clear();
+    this.savedBookmarksByDocumentGuid.clear();
 
-    this.aiLeaseService
-      .getAbstractionDocumentsWithPipelineArtifacts(aiAbstractionId)
-      .pipe(takeUntil(this.destroy$))
+    forkJoin({
+      documents:
+        this.aiLeaseService.getAbstractionDocumentsWithPipelineArtifacts(
+          aiAbstractionId
+        ),
+      detail: this.aiLeaseService.getAbstractionById(aiAbstractionId).pipe(
+        catchError(() => of(null))
+      ),
+    })
+      .pipe(
+        switchMap(({ documents, detail }) =>
+          forkJoin({
+            documents: of(documents),
+            citationBookmarksByDocumentGuid: detail?.formId
+              ? this.aiLeaseService
+                  .getMappedFormFields(aiAbstractionId, detail.formId)
+                  .pipe(
+                    map((mappedForm) =>
+                      this.indexCitationBookmarks(mappedForm.fields ?? [])
+                    ),
+                    catchError(() => of(new Map<string, HighlightRange[]>()))
+                  )
+              : of(new Map<string, HighlightRange[]>()),
+          })
+        ),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
-        next: (documents) => {
+        next: ({ documents, citationBookmarksByDocumentGuid }) => {
+          this.citationBookmarksByDocumentGuid =
+            citationBookmarksByDocumentGuid;
           const options = this.mapDocuments(documents);
           this.documentOptions = options;
 
@@ -192,6 +226,9 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       this.documentSource = this.buildViewerTextFile(document, document.contentText);
       this.errorMessage = null;
       this.isLoading = false;
+      if (document.documentGuid) {
+        this.loadHighlights(document.documentGuid);
+      }
       return;
     }
 
@@ -213,6 +250,9 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
             this.documentSource = this.buildViewerTextFile(document, text);
             this.errorMessage = null;
             this.isLoading = false;
+            if (document.documentGuid) {
+              this.loadHighlights(document.documentGuid);
+            }
           },
           error: () => {
             this.documentSource = null;
@@ -257,12 +297,75 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (savedBookmarks) => {
           if (this._viewerHasUserChanges) return;
-          this.currentBookmarks = savedBookmarks;
+          this.savedBookmarksByDocumentGuid.set(documentGuid, savedBookmarks);
+          this.syncCurrentBookmarks(documentGuid);
         },
         error: () => {
           /* non-critical */
         },
       });
+  }
+
+  private syncCurrentBookmarks(documentGuid?: string): void {
+    if (this._viewerHasUserChanges) {
+      return;
+    }
+
+    const effectiveDocumentGuid =
+      documentGuid ?? this.selectedDocument?.documentGuid ?? null;
+    if (!effectiveDocumentGuid) {
+      this.currentBookmarks = [];
+      return;
+    }
+
+    const savedBookmarks =
+      this.savedBookmarksByDocumentGuid.get(effectiveDocumentGuid) ?? [];
+    const citationBookmarks =
+      this.citationBookmarksByDocumentGuid.get(effectiveDocumentGuid) ?? [];
+
+    const merged = new Map<string, HighlightRange>();
+    for (const bookmark of savedBookmarks) {
+      merged.set(bookmark.id, bookmark);
+    }
+    for (const bookmark of citationBookmarks) {
+      merged.set(bookmark.id, bookmark);
+    }
+
+    this.currentBookmarks = Array.from(merged.values());
+  }
+
+  private indexCitationBookmarks(
+    fields: Array<{
+      citationHighlight?: (HighlightRange & { documentGuid?: string }) | null;
+    }>
+  ): Map<string, HighlightRange[]> {
+    const bookmarksByDocumentGuid = new Map<string, HighlightRange[]>();
+
+    for (const field of fields ?? []) {
+      const rawCitation = field?.citationHighlight;
+      const documentGuid =
+        typeof rawCitation?.documentGuid === 'string'
+          ? rawCitation.documentGuid.trim()
+          : '';
+
+      if (!documentGuid) {
+        continue;
+      }
+
+      const bookmark = {
+        ...(rawCitation as HighlightRange & { documentGuid?: string }),
+      };
+      delete bookmark.documentGuid;
+      const existingBookmarks =
+        bookmarksByDocumentGuid.get(documentGuid) ?? [];
+
+      if (!existingBookmarks.some((item) => item.id === bookmark.id)) {
+        existingBookmarks.push(bookmark);
+        bookmarksByDocumentGuid.set(documentGuid, existingBookmarks);
+      }
+    }
+
+    return bookmarksByDocumentGuid;
   }
 
   private mapDocuments(documents: AiAbstractionDocument[]): DocumentOption[] {
