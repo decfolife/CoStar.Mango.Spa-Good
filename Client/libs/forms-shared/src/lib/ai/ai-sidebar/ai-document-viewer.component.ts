@@ -101,26 +101,6 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
       download: false,
       print: true,
       search: true,
-      rightSlot: this._searchQuery?.trim()
-        ? React.createElement(
-            'span',
-            {
-              style: {
-                fontSize: '12px',
-                padding: '2px 8px',
-                borderRadius: '4px',
-                background: '#fef08a',
-                color: '#713f12',
-                whiteSpace: 'nowrap',
-                maxWidth: '200px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              },
-              title: `Searching: ${this._searchQuery}`,
-            },
-            `"${this._searchQuery}"`
-          )
-        : undefined,
     };
   }
 
