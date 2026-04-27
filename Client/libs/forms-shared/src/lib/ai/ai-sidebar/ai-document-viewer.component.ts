@@ -8,9 +8,13 @@ import {
   Input,
   NgZone,
   OnDestroy,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { MangoAppFacade } from '@mangoSpa/src/app/+state/app/app.facade';
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import {
@@ -26,7 +30,8 @@ import {
   styleUrls: ['./ai-document-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
+export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
   @ViewChild('host')
   set hostRef(value: ElementRef<HTMLDivElement> | undefined) {
     if (value?.nativeElement === this._hostRef?.nativeElement) return;
@@ -86,6 +91,8 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   private _textContent?: string;
   private _searchQuery?: string;
   private _initialBookmarks: HighlightRange[] = [];
+  private _currentUser?: { firstName?: string; lastName?: string };
+  private _dateFormat: 'us' | 'eu' = 'us';
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
   viewerError: string | null = null;
@@ -107,7 +114,21 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   constructor(
     private readonly cdr: ChangeDetectorRef,
     private readonly ngZone: NgZone,
+    private readonly mangoAppFacade: MangoAppFacade,
   ) {}
+
+  ngOnInit(): void {
+    this.mangoAppFacade.contactRecord$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((contact) => {
+        this._currentUser = {
+          firstName: contact?.firstName ?? undefined,
+          lastName: contact?.lastName ?? undefined,
+        };
+        this._dateFormat = contact?.preferences?.contactDatesEU ? 'eu' : 'us';
+        this.renderReactTree();
+      });
+  }
 
   ngAfterViewInit(): void {
     if (this._hostRef && !this.root) {
@@ -117,6 +138,8 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.root?.unmount();
     this.root = null;
   }
@@ -151,6 +174,8 @@ export class AiDocumentViewerComponent implements AfterViewInit, OnDestroy {
         darkMode: false,
         searchQuery: this._searchQuery,
         bookmarks: this._initialBookmarks,
+        currentUser: this._currentUser,
+        dateFormat: this._dateFormat,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
           // React callbacks run outside Angular's zone — run() ensures
           // RxJS schedulers (debounceTime) and HttpClient fire correctly.

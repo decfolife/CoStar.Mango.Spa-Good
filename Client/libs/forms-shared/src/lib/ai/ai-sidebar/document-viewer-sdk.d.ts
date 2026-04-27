@@ -12,6 +12,12 @@ declare module 'document-viewer-sdk' {
   export interface HighlightRange {
     id: string;
     text: string;
+    /** Optional first name stamped onto a highlight by the viewer */
+    firstName?: string;
+    /** Optional last name stamped onto a highlight by the viewer */
+    lastName?: string;
+    /** ISO 8601 timestamp associated with the highlight */
+    datetime?: string;
     /** Optional username shown in the bookmarks sidebar */
     username?: string;
     /** When true, this highlight is read-only in the sidebar UI */
@@ -69,6 +75,10 @@ declare module 'document-viewer-sdk' {
     bookmarks?: HighlightRange[];
     /** Fires whenever bookmarks are added, removed, or cleared by the user. */
     onBookmarksChange?: (bookmarks: HighlightRange[]) => void;
+    /** Date display format for bookmark timestamps. */
+    dateFormat?: 'us' | 'eu';
+    /** Current user stamped onto newly created bookmarks. */
+    currentUser?: { firstName?: string; lastName?: string };
     onLoad?: (...args: any[]) => void;
     onError?: (err: { message?: string; code?: string }) => void;
   }
