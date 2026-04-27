@@ -110,7 +110,7 @@
     "devextreme": "23.2.3",
     "devextreme-angular": "23.2.3",
     "document-register-element": "^1.14.10",
-    "document-viewer-sdk": "file:libs/forms-shared/src/lib/ai/document-viewer-sdk-1.2.3.tgz",
+    "document-viewer-sdk": "file:libs/forms-shared/src/lib/ai/document-viewer-sdk-1.2.4.tgz",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "file-saver-es": "^2.0.5",
