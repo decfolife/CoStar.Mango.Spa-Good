@@ -70,6 +70,7 @@
       [src]="documentSource"
       [filename]="documentFileName || undefined"
       [textContent]="selectedDocumentContent || undefined"
+      [allowBookmarks]="selectedDocument?.attachmentTypeId !== 20"
       [initialBookmarks]="currentBookmarks"
       (bookmarksChange)="onBookmarksChange($event)"
     ></mango-ai-document-viewer>

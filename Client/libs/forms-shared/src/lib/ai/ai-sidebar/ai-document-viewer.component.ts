@@ -73,6 +73,11 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
     this.renderReactTree();
   }
 
+  @Input() set allowBookmarks(value: boolean | undefined) {
+    this._allowBookmarks = value !== false;
+    this.renderReactTree();
+  }
+
   /**
    * Saved/current highlights for the SDK's controlled bookmarks mode.
    * The templates keep the historical input name, but the SDK prop is `bookmarks`.
@@ -96,6 +101,7 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
   private _initialPage?: number;
   private _textContent?: string;
   private _searchQuery?: string;
+  private _allowBookmarks = true;
   private _initialBookmarks: HighlightRange[] = [];
   private _optimisticBookmarks: HighlightRange[] | null = null;
   private _currentUser?: {
@@ -119,6 +125,7 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
       download: false,
       print: true,
       search: true,
+      highlight: this._allowBookmarks,
     };
   }
 
@@ -183,20 +190,25 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
         src: this._src,
         filename: this._filename,
         initialPage: this._initialPage,
+        className: this._allowBookmarks ? undefined : 'ai-document-viewer--search-only',
         toolbar: this.toolbar,
         darkMode: false,
         searchQuery: this._searchQuery,
-        bookmarks: this._optimisticBookmarks ?? this._initialBookmarks,
+        bookmarks: this._allowBookmarks
+          ? this._optimisticBookmarks ?? this._initialBookmarks
+          : undefined,
         currentUser: this._currentUser,
         dateFormat: this._dateFormat,
-        onBookmarksChange: (bookmarks: HighlightRange[]) => {
-          this._optimisticBookmarks = bookmarks;
-          this.renderReactTree();
-          this.activateBookmarksTab();
-          // React callbacks run outside Angular's zone — run() ensures
-          // RxJS schedulers (debounceTime) and HttpClient fire correctly.
-          this.ngZone.run(() => this.bookmarksChange.emit(bookmarks));
-        },
+        onBookmarksChange: this._allowBookmarks
+          ? (bookmarks: HighlightRange[]) => {
+              this._optimisticBookmarks = bookmarks;
+              this.renderReactTree();
+              this.activateBookmarksTab();
+              // React callbacks run outside Angular's zone — run() ensures
+              // RxJS schedulers (debounceTime) and HttpClient fire correctly.
+              this.ngZone.run(() => this.bookmarksChange.emit(bookmarks));
+            }
+          : undefined,
         onLoad: () => {
           this.viewerError = null;
           this.isLoaded = true;

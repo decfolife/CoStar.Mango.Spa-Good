@@ -232,9 +232,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       this.documentSource = this.buildViewerTextFile(document, document.contentText);
       this.errorMessage = null;
       this.isLoading = false;
-      if (document.documentGuid) {
-        this.loadHighlights(document.documentGuid, loadToken);
-      }
       return;
     }
 
@@ -259,9 +256,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
             this.documentSource = this.buildViewerTextFile(document, text);
             this.errorMessage = null;
             this.isLoading = false;
-            if (document.documentGuid) {
-              this.loadHighlights(document.documentGuid, loadToken);
-            }
           },
           error: () => {
             if (loadToken !== this.activeDocumentLoadToken) {

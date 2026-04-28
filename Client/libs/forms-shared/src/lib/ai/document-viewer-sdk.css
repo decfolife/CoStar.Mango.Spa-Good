@@ -177,6 +177,25 @@
   display: none !important;
 }
 
+.rdv-root.ai-document-viewer--search-only,
+.rdv-root.ai-document-viewer--search-only.rdv-root--highlights-open,
+.rdv-root.ai-document-viewer--search-only.rdv-root--highlights-collapsed {
+  grid-template-columns: 1fr !important;
+}
+
+.rdv-root.ai-document-viewer--search-only > .rpdf-highlights-sidebar {
+  display: none !important;
+}
+
+.rdv-root.ai-document-viewer--search-only > .rdv-image-viewport,
+.rdv-root.ai-document-viewer--search-only > .rdv-text-viewport,
+.rdv-root.ai-document-viewer--search-only > .rdv-doc-viewport,
+.rdv-root.ai-document-viewer--search-only > .rdv-sheet-viewport,
+.rdv-root.ai-document-viewer--search-only > .rdv-pptx-viewport,
+.rdv-root.ai-document-viewer--search-only > .rdv-html-viewport {
+  grid-column: 1 !important;
+}
+
 .rpdf-text-layer--highlighting,
 .rpdf-text-layer--highlighting span,
 .rpdf-text-layer--highlighting br {

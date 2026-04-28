@@ -518,7 +518,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.documentFileName = document.fileName;
     this.documentLoadError = null;
     this.documentSource = null;
-    this.currentBookmarks = this.getCitationBookmarksForDocument(document);
+    this.currentBookmarks = this.shouldRenderAsText(document)
+      ? []
+      : this.getCitationBookmarksForDocument(document);
     this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
 

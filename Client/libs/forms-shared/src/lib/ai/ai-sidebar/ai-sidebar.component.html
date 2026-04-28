@@ -122,6 +122,7 @@
       [initialPage]="documentTargetHighlight?.pageNumber || undefined"
       [textContent]="selectedDocumentContent || undefined"
       [searchQuery]="documentSearchQuery || undefined"
+      [allowBookmarks]="selectedDocument?.attachmentTypeId !== 20"
       [initialBookmarks]="currentBookmarks"
       (bookmarksChange)="onBookmarksChange($event)"
     ></mango-ai-document-viewer>
