@@ -80,6 +80,13 @@
   box-sizing: border-box !important;
 }
 
+.rpdf-root .rpdf-sidebar-pages {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+}
+
 .rpdf-root .rpdf-sidebar-page__meta {
   display: flex !important;
   align-items: baseline !important;
@@ -91,9 +98,20 @@
   position: relative !important;
   display: block !important;
   width: 100% !important;
+  height: auto !important;
   min-height: 120px !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
+  line-height: 0 !important;
+}
+
+.rpdf-root .rpdf-sidebar-page__canvas {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: none !important;
+  line-height: 0 !important;
 }
 
 .rpdf-text-layer--highlighting,
