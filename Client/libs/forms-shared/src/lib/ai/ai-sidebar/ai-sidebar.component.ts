@@ -477,18 +477,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   private loadDocumentFile(document: DocumentOption): void {
     const loadToken = ++this.activeDocumentLoadToken;
-    console.debug('[ai-sidebar] loadDocumentFile:start', {
-      loadToken,
-      documentKey: document.key,
-      documentGuid: document.documentGuid,
-      selectedDocumentKey: this.selectedDocumentKey,
-    });
     this.selectedDocumentKey = document.key;
     this.documentFileName = document.fileName;
     this.documentLoadError = null;
     this.documentSource = null;
     this.currentBookmarks = this.getCitationBookmarksForDocument(document);
-    this.logBookmarkEvent('state:currentBookmarks:setCitationsOnly', this.currentBookmarks);
     this._viewerHasUserChanges = false;
     this.isDocumentLoading = true;
 
@@ -496,11 +489,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       if (loadToken !== this.activeDocumentLoadToken) {
         return;
       }
-      console.debug('[ai-sidebar] loadDocumentFile:text-ready', {
-        loadToken,
-        documentKey: document.key,
-        documentGuid: document.documentGuid,
-      });
       this.documentSource = this.buildViewerTextFile(document, document.contentText);
       this.documentLoadError = null;
       this.isDocumentLoading = false;
@@ -524,11 +512,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             if (loadToken !== this.activeDocumentLoadToken) {
               return;
             }
-            console.debug('[ai-sidebar] loadDocumentFile:text-fetched', {
-              loadToken,
-              documentKey: document.key,
-              documentGuid: document.documentGuid,
-            });
             document.contentText = text;
             this.documentSource = this.buildViewerTextFile(document, text);
             this.documentLoadError = null;
@@ -561,11 +544,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           if (loadToken !== this.activeDocumentLoadToken) {
             return;
           }
-          console.debug('[ai-sidebar] loadDocumentFile:file-fetched', {
-            loadToken,
-            documentKey: document.key,
-            documentGuid: document.documentGuid,
-          });
           this.documentSource = file;
           this.documentLoadError = null;
           this.isDocumentLoading = false;
@@ -587,7 +565,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   onBookmarksChange(bookmarks: HighlightRange[]): void {
     this._viewerHasUserChanges = true;
     this.currentBookmarks = bookmarks;
-    this.logBookmarkEvent('ui:onBookmarksChange', bookmarks);
     const userBookmarks = bookmarks.filter(
       (bookmark) => !bookmark.id?.startsWith('ai-citation-')
     );
@@ -614,7 +591,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           ) {
             return;
           }
-          this.logBookmarkEvent('api:loadHighlights', savedBookmarks);
           // If the user already highlighted before the response arrived, don't
           // overwrite their work — the SDK's internal state already has their changes.
           if (this._viewerHasUserChanges) return;
@@ -622,7 +598,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             ...savedBookmarks,
             ...this.getCitationBookmarksForDocument(this.selectedDocument),
           ];
-          this.logBookmarkEvent('state:currentBookmarks:setFromLoad', this.currentBookmarks);
         },
         error: () => {
           /* non-critical */
@@ -686,32 +661,12 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           ),
           ...this.getCitationBookmarksForDocument(this.selectedDocument),
         ];
-        this.logBookmarkEvent(
-          'state:currentBookmarks:ensureDocumentContextLoaded',
-          this.currentBookmarks
-        );
       }
 
       return;
     }
 
     this.loadDocumentContext(this.currentAiAbstractionId);
-  }
-
-  private logBookmarkEvent(
-    source: string,
-    bookmarks: HighlightRange[] | null | undefined
-  ): void {
-    const items = bookmarks ?? [];
-    console.debug('[ai-sidebar]', {
-      source,
-      selectedDocumentKey: this.selectedDocumentKey,
-      selectedDocumentGuid: this.selectedDocument?.documentGuid ?? null,
-      viewerHasUserChanges: this._viewerHasUserChanges,
-      bookmarkCount: items.length,
-      bookmarkIds: items.map((item) => item?.id),
-      pageNumbers: items.map((item) => item?.pageNumber),
-    });
   }
 
   private syncGlobalSidebarState(): void {

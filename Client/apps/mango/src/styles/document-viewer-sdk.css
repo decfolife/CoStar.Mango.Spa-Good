@@ -122,6 +122,29 @@
   line-height: 0 !important;
 }
 
+.rpdf-root .rpdf-highlight-item__body {
+  padding: 15px 12px 8px !important;
+}
+
+.rpdf-root .rpdf-highlight-item__headline {
+  align-items: center !important;
+  min-height: 22px !important;
+  padding-top: 2px !important;
+}
+
+.rpdf-root .rpdf-highlight-item__details {
+  padding: 2px 12px 14px !important;
+}
+
+.rpdf-root .rpdf-highlight-item__meta-row {
+  min-height: 26px !important;
+  padding-top: 4px !important;
+}
+
+.rpdf-root .rpdf-highlight-item__page {
+  line-height: 1.2 !important;
+}
+
 .rpdf-text-layer--highlighting,
 .rpdf-text-layer--highlighting span,
 .rpdf-text-layer--highlighting br {

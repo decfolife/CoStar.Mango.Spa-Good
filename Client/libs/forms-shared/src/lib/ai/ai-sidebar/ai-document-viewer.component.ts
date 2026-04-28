@@ -79,7 +79,6 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
    */
   @Input() set initialBookmarks(value: HighlightRange[]) {
     this._initialBookmarks = value ?? [];
-    this.logBookmarkEvent('input:initialBookmarks', this._initialBookmarks);
     if (
       this._optimisticBookmarks &&
       this.areBookmarkSetsEqual(this._optimisticBookmarks, this._initialBookmarks)
@@ -187,8 +186,8 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
         dateFormat: this._dateFormat,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
           this._optimisticBookmarks = bookmarks;
-          this.logBookmarkEvent('sdk:onBookmarksChange', bookmarks);
           this.renderReactTree();
+          this.activateBookmarksTab();
           // React callbacks run outside Angular's zone — run() ensures
           // RxJS schedulers (debounceTime) and HttpClient fire correctly.
           this.ngZone.run(() => this.bookmarksChange.emit(bookmarks));
@@ -240,18 +239,24 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
     return true;
   }
 
-  private logBookmarkEvent(
-    source: string,
-    bookmarks: HighlightRange[] | null | undefined
-  ): void {
-    const items = bookmarks ?? [];
-    console.debug('[ai-document-viewer]', {
-      source,
-      filename: this._filename,
-      initialPage: this._initialPage,
-      bookmarkCount: items.length,
-      bookmarkIds: items.map((item) => item?.id),
-      pageNumbers: items.map((item) => item?.pageNumber),
+  private activateBookmarksTab(): void {
+    requestAnimationFrame(() => {
+      const host = this._hostRef?.nativeElement;
+      if (!host) return;
+
+      const tabButtons = Array.from(
+        host.querySelectorAll<HTMLButtonElement>('.rpdf-highlights-sidebar__tab')
+      );
+      const bookmarksTab = tabButtons.find((button) =>
+        (button.textContent ?? '').trim().toLowerCase().includes('bookmark')
+      );
+
+      if (
+        bookmarksTab &&
+        !bookmarksTab.classList.contains('rpdf-highlights-sidebar__tab--active')
+      ) {
+        bookmarksTab.click();
+      }
     });
   }
 }

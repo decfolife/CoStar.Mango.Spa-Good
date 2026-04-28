@@ -126,7 +126,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   onBookmarksChange(bookmarks: HighlightRange[]): void {
     this._viewerHasUserChanges = true;
     this.currentBookmarks = bookmarks;
-    this.logBookmarkEvent('ui:onBookmarksChange', bookmarks);
     const userBookmarks = bookmarks.filter(
       (bookmark) => !bookmark.id?.startsWith('ai-citation-')
     );
@@ -217,17 +216,10 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
 
   private loadDocumentFile(document: DocumentOption): void {
     const loadToken = ++this.activeDocumentLoadToken;
-    console.debug('[ai-document-page] loadDocumentFile:start', {
-      loadToken,
-      documentKey: document.key,
-      documentGuid: document.documentGuid,
-      selectedDocumentKey: this.selectedDocumentKey,
-    });
     this.selectedDocumentKey = document.key;
     this.documentFileName = document.fileName;
     this.documentSource = null;
     this.currentBookmarks = [];
-    this.logBookmarkEvent('state:currentBookmarks:clearForLoad', this.currentBookmarks);
     this._viewerHasUserChanges = false;
     this.errorMessage = null;
     this.isLoading = true;
@@ -236,11 +228,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       if (loadToken !== this.activeDocumentLoadToken) {
         return;
       }
-      console.debug('[ai-document-page] loadDocumentFile:text-ready', {
-        loadToken,
-        documentKey: document.key,
-        documentGuid: document.documentGuid,
-      });
       this.documentSource = this.buildViewerTextFile(document, document.contentText);
       this.errorMessage = null;
       this.isLoading = false;
@@ -267,11 +254,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
             if (loadToken !== this.activeDocumentLoadToken) {
               return;
             }
-            console.debug('[ai-document-page] loadDocumentFile:text-fetched', {
-              loadToken,
-              documentKey: document.key,
-              documentGuid: document.documentGuid,
-            });
             document.contentText = text;
             this.documentSource = this.buildViewerTextFile(document, text);
             this.errorMessage = null;
@@ -307,11 +289,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
           if (loadToken !== this.activeDocumentLoadToken) {
             return;
           }
-          console.debug('[ai-document-page] loadDocumentFile:file-fetched', {
-            loadToken,
-            documentKey: document.key,
-            documentGuid: document.documentGuid,
-          });
           this.documentSource = file;
           this.errorMessage = null;
           this.isLoading = false;
@@ -342,7 +319,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
           ) {
             return;
           }
-          this.logBookmarkEvent('api:loadHighlights', savedBookmarks);
           if (this._viewerHasUserChanges) return;
           this.savedBookmarksByDocumentGuid.set(documentGuid, savedBookmarks);
           this.syncCurrentBookmarks(documentGuid);
@@ -379,7 +355,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     }
 
     this.currentBookmarks = Array.from(merged.values());
-    this.logBookmarkEvent('state:syncCurrentBookmarks', this.currentBookmarks);
   }
 
   private indexCitationBookmarks(
@@ -415,23 +390,6 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
 
     return bookmarksByDocumentGuid;
   }
-
-  private logBookmarkEvent(
-    source: string,
-    bookmarks: HighlightRange[] | null | undefined
-  ): void {
-    const items = bookmarks ?? [];
-    console.debug('[ai-document-page]', {
-      source,
-      selectedDocumentKey: this.selectedDocumentKey,
-      selectedDocumentGuid: this.selectedDocument?.documentGuid ?? null,
-      viewerHasUserChanges: this._viewerHasUserChanges,
-      bookmarkCount: items.length,
-      bookmarkIds: items.map((item) => item?.id),
-      pageNumbers: items.map((item) => item?.pageNumber),
-    });
-  }
-
   private mapDocuments(documents: AiAbstractionDocument[]): DocumentOption[] {
     return documents.reduce<DocumentOption[]>((allOptions, document) => {
       const baseDocument: DocumentOption[] = document.documentGuid
