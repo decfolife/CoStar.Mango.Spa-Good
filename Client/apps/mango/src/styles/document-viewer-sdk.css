@@ -19,7 +19,6 @@
 
 .rpdf-root button,
 .rdv-root button {
-  border-radius: 0;
   box-shadow: none;
 }
 
@@ -32,24 +31,60 @@
 .rpdf-root .rpdf-toolbar__btn {
   width: 32px;
   height: 32px;
+  border-radius: 4px;
+}
+
+.rpdf-root .rpdf-highlights-sidebar__tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
 }
 
 .rpdf-root .rpdf-highlights-sidebar__tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 10px;
   line-height: 1.2;
+  border-radius: 999px;
 }
 
 .rpdf-root .rpdf-highlights-sidebar__help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 4px;
+  border-radius: 4px;
 }
 
 .rpdf-root .rpdf-sidebar-page {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
   height: auto;
   padding: 10px;
+  text-align: left;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.rpdf-root .rpdf-sidebar-page__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .rpdf-root .rpdf-sidebar-page__frame {
+  position: relative;
+  width: 100%;
   min-height: 120px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .rpdf-text-layer--highlighting,
