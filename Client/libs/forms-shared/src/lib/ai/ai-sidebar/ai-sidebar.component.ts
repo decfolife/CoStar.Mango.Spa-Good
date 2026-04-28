@@ -90,6 +90,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   private _viewerHasUserChanges = false;
   private loadedDocumentContextId: number | null = null;
   private handledDocumentRequestId = 0;
+  private activeDocumentLoadToken = 0;
   private readonly bookmarkSave$ = new Subject<{
     documentGuid: string;
     bookmarks: HighlightRange[];
@@ -475,6 +476,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   private loadDocumentFile(document: DocumentOption): void {
+    const loadToken = ++this.activeDocumentLoadToken;
     this.selectedDocumentKey = document.key;
     this.documentFileName = document.fileName;
     this.documentLoadError = null;
@@ -484,6 +486,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.isDocumentLoading = true;
 
     if (this.shouldRenderAsText(document) && document.contentText) {
+      if (loadToken !== this.activeDocumentLoadToken) {
+        return;
+      }
       this.documentSource = this.buildViewerTextFile(document, document.contentText);
       this.documentLoadError = null;
       this.isDocumentLoading = false;
@@ -504,12 +509,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (text) => {
+            if (loadToken !== this.activeDocumentLoadToken) {
+              return;
+            }
             document.contentText = text;
             this.documentSource = this.buildViewerTextFile(document, text);
             this.documentLoadError = null;
             this.isDocumentLoading = false;
           },
           error: () => {
+            if (loadToken !== this.activeDocumentLoadToken) {
+              return;
+            }
             this.documentSource = null;
             this.documentLoadError = 'Failed to load document file.';
             this.isDocumentLoading = false;
@@ -530,14 +541,20 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (file) => {
+          if (loadToken !== this.activeDocumentLoadToken) {
+            return;
+          }
           this.documentSource = file;
           this.documentLoadError = null;
           this.isDocumentLoading = false;
           if (document.documentGuid) {
-            this.loadHighlights(document.documentGuid);
+            this.loadHighlights(document.documentGuid, loadToken);
           }
         },
         error: () => {
+          if (loadToken !== this.activeDocumentLoadToken) {
+            return;
+          }
           this.documentSource = null;
           this.documentLoadError = 'Failed to load document file.';
           this.isDocumentLoading = false;
@@ -562,12 +579,18 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadHighlights(documentGuid: string): void {
+  private loadHighlights(documentGuid: string, loadToken: number): void {
     this.aiLeaseService
       .getDocumentHighlights(documentGuid)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (savedBookmarks) => {
+          if (
+            loadToken !== this.activeDocumentLoadToken ||
+            this.selectedDocument?.documentGuid !== documentGuid
+          ) {
+            return;
+          }
           // If the user already highlighted before the response arrived, don't
           // overwrite their work — the SDK's internal state already has their changes.
           if (this._viewerHasUserChanges) return;

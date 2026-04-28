@@ -47,6 +47,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
 
   private aiAbstractionId: number | null = null;
+  private activeDocumentLoadToken = 0;
   private readonly destroy$ = new Subject<void>();
   private readonly bookmarkSave$ = new Subject<{
     documentGuid: string;
@@ -214,6 +215,7 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
   }
 
   private loadDocumentFile(document: DocumentOption): void {
+    const loadToken = ++this.activeDocumentLoadToken;
     this.selectedDocumentKey = document.key;
     this.documentFileName = document.fileName;
     this.documentSource = null;
@@ -223,11 +225,14 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     if (this.shouldRenderAsText(document) && document.contentText) {
+      if (loadToken !== this.activeDocumentLoadToken) {
+        return;
+      }
       this.documentSource = this.buildViewerTextFile(document, document.contentText);
       this.errorMessage = null;
       this.isLoading = false;
       if (document.documentGuid) {
-        this.loadHighlights(document.documentGuid);
+        this.loadHighlights(document.documentGuid, loadToken);
       }
       return;
     }
@@ -246,15 +251,21 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (text) => {
+            if (loadToken !== this.activeDocumentLoadToken) {
+              return;
+            }
             document.contentText = text;
             this.documentSource = this.buildViewerTextFile(document, text);
             this.errorMessage = null;
             this.isLoading = false;
             if (document.documentGuid) {
-              this.loadHighlights(document.documentGuid);
+              this.loadHighlights(document.documentGuid, loadToken);
             }
           },
           error: () => {
+            if (loadToken !== this.activeDocumentLoadToken) {
+              return;
+            }
             this.documentSource = null;
             this.errorMessage = 'Failed to load the selected document.';
             this.isLoading = false;
@@ -275,14 +286,20 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (file) => {
+          if (loadToken !== this.activeDocumentLoadToken) {
+            return;
+          }
           this.documentSource = file;
           this.errorMessage = null;
           this.isLoading = false;
           if (document.documentGuid) {
-            this.loadHighlights(document.documentGuid);
+            this.loadHighlights(document.documentGuid, loadToken);
           }
         },
         error: () => {
+          if (loadToken !== this.activeDocumentLoadToken) {
+            return;
+          }
           this.documentSource = null;
           this.errorMessage = 'Failed to load the selected document.';
           this.isLoading = false;
@@ -290,12 +307,18 @@ export class AiDocumentPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadHighlights(documentGuid: string): void {
+  private loadHighlights(documentGuid: string, loadToken: number): void {
     this.aiLeaseService
       .getDocumentHighlights(documentGuid)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (savedBookmarks) => {
+          if (
+            loadToken !== this.activeDocumentLoadToken ||
+            this.selectedDocument?.documentGuid !== documentGuid
+          ) {
+            return;
+          }
           if (this._viewerHasUserChanges) return;
           this.savedBookmarksByDocumentGuid.set(documentGuid, savedBookmarks);
           this.syncCurrentBookmarks(documentGuid);
