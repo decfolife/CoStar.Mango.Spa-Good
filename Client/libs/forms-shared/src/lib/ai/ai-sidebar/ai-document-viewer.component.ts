@@ -79,6 +79,12 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
    */
   @Input() set initialBookmarks(value: HighlightRange[]) {
     this._initialBookmarks = value ?? [];
+    if (
+      this._optimisticBookmarks &&
+      this.areBookmarkSetsEqual(this._optimisticBookmarks, this._initialBookmarks)
+    ) {
+      this._optimisticBookmarks = null;
+    }
     this.renderReactTree();
   }
 
@@ -91,6 +97,7 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
   private _textContent?: string;
   private _searchQuery?: string;
   private _initialBookmarks: HighlightRange[] = [];
+  private _optimisticBookmarks: HighlightRange[] | null = null;
   private _currentUser?: { firstName?: string; lastName?: string };
   private _dateFormat: 'us' | 'eu' = 'us';
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
@@ -159,6 +166,7 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
     if (!this._src) {
       this.root.unmount();
       this.root = createRoot(this._hostRef!.nativeElement);
+      this._optimisticBookmarks = null;
       this.viewerError = null;
       this.isLoaded = Boolean(this._textContent);
       this.cdr.markForCheck();
@@ -173,10 +181,12 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
         toolbar: this.toolbar,
         darkMode: false,
         searchQuery: this._searchQuery,
-        bookmarks: this._initialBookmarks,
+        bookmarks: this._optimisticBookmarks ?? this._initialBookmarks,
         currentUser: this._currentUser,
         dateFormat: this._dateFormat,
         onBookmarksChange: (bookmarks: HighlightRange[]) => {
+          this._optimisticBookmarks = bookmarks;
+          this.renderReactTree();
           // React callbacks run outside Angular's zone — run() ensures
           // RxJS schedulers (debounceTime) and HttpClient fire correctly.
           this.ngZone.run(() => this.bookmarksChange.emit(bookmarks));
@@ -202,5 +212,29 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
         style: { height: '100%', width: '100%' },
       } as any)
     );
+  }
+
+  private areBookmarkSetsEqual(
+    left: HighlightRange[],
+    right: HighlightRange[]
+  ): boolean {
+    if (left.length !== right.length) {
+      return false;
+    }
+
+    for (let i = 0; i < left.length; i += 1) {
+      const a = left[i];
+      const b = right[i];
+      if (
+        a?.id !== b?.id ||
+        a?.text !== b?.text ||
+        a?.comment !== b?.comment ||
+        a?.pageNumber !== b?.pageNumber
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
