@@ -45,6 +45,7 @@ interface DocumentOption {
   type: 'document' | 'artifact';
   documentGuid: string | null;
   documentId: number;
+  requestIdLabel?: string;
   url?: string;
   artifactGuid?: string | null;
   artifactId?: number;
@@ -821,6 +822,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   private mapDocumentOptions(
     document: AiAbstractionDocument
   ): DocumentOption[] {
+    const documentFileName =
+      document.fileName ??
+      document.documentFileName ??
+      `Document ${document.documentGuid ?? document.documentId ?? ''}`.trim();
+
     const baseDocument: DocumentOption[] = document.documentGuid
       ? [
           {
@@ -828,13 +834,9 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             type: 'document',
             documentGuid: document.documentGuid ?? null,
             documentId: document.documentId ?? 0,
-            fileName:
-              document.fileName ??
-              document.documentFileName ??
-              `Document ${
-                document.documentGuid ?? document.documentId ?? ''
-              }`.trim(),
-            displayLabel: this.buildDocumentLabel(document),
+            requestIdLabel: this.buildDocumentRequestLabel(document),
+            fileName: documentFileName,
+            displayLabel: documentFileName,
             mimeType: document.mimeType,
             externalStatus: document.externalStatus,
             externalAbstractionStatus: document.externalAbstractionStatus,
@@ -871,6 +873,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       type: 'artifact',
       documentGuid: document.documentGuid ?? null,
       documentId: document.documentId ?? 0,
+      requestIdLabel: this.buildDocumentRequestLabel(document),
       url: artifact.url,
       artifactGuid: artifact.artifactGuid ?? null,
       artifactId: artifact.artifactId,
@@ -921,7 +924,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     return /\.(json|txt|md)$/i.test(document.fileName);
   }
 
-  private buildDocumentLabel(document: AiAbstractionDocument): string {
+  private buildDocumentRequestLabel(document: AiAbstractionDocument): string {
     return `Document:${document.documentGuid ?? document.documentId ?? 'Unavailable'}`;
   }
 

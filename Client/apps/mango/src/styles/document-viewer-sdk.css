@@ -145,6 +145,22 @@
   line-height: 1.2 !important;
 }
 
+.rpdf-root .rpdf-highlight-item__remove {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  width: 36px !important;
+  min-width: 36px !important;
+  height: auto !important;
+  padding: 10px 0 0 !important;
+  line-height: 0 !important;
+  border-radius: 4px !important;
+}
+
+.rpdf-root .rpdf-toolbar__highlight-count + .rpdf-toolbar__btn {
+  display: none !important;
+}
+
 .rpdf-text-layer--highlighting,
 .rpdf-text-layer--highlighting span,
 .rpdf-text-layer--highlighting br {
