@@ -8,11 +8,12 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, EMPTY, Subject } from 'rxjs';
+import { combineLatest, EMPTY, Subject, forkJoin, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  map,
   switchMap,
   takeUntil,
 } from 'rxjs/operators';
@@ -86,6 +87,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   /** Saved highlights passed to [initialBookmarks] — set once per document load. */
   currentBookmarks: HighlightRange[] = [];
   documentTargetHighlight: (HighlightRange & { documentGuid?: string }) | null = null;
+  private citationBookmarksByDocumentGuid = new Map<string, HighlightRange[]>();
   /** True once the user adds a highlight; prevents loadHighlights from overwriting. */
   private _viewerHasUserChanges = false;
   private loadedDocumentContextId: number | null = null;
@@ -231,6 +233,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.selectedDocumentKey = null;
             this.isDocumentLoading = false;
             this.documentSearchQuery = null;
+            this.citationBookmarksByDocumentGuid.clear();
             this.loadedDocumentContextId = null;
           }
 
@@ -264,6 +267,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.currentAiAbstractionId = null;
           this.documentSearchQuery = null;
           this.documentTargetHighlight = null;
+          this.citationBookmarksByDocumentGuid.clear();
           this.loadedDocumentContextId = null;
           this.handledDocumentRequestId = 0;
           this.activeTabIndex = 1;
@@ -424,14 +428,46 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     this.selectedDocumentKey = null;
     this.isDocumentLoading = true;
 
-    this.aiLeaseService
-      .getAbstractionDocumentsWithPipelineArtifacts(aiAbstractionId)
+    forkJoin({
+      documents:
+        this.aiLeaseService.getAbstractionDocumentsWithPipelineArtifacts(
+          aiAbstractionId
+        ),
+      detail: this.aiLeaseService.getAbstractionById(aiAbstractionId).pipe(
+        catchError(() => of(null))
+      ),
+    })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (documents) => {
-          this.populateDocumentContextFromDocuments(aiAbstractionId, documents);
+        next: ({ documents, detail }) => {
+          const citationBookmarks$ = detail?.formId
+            ? this.aiLeaseService
+                .getMappedFormFields(aiAbstractionId, detail.formId)
+                .pipe(
+                  map((mappedForm) =>
+                    this.indexCitationBookmarks(mappedForm.fields ?? [])
+                  ),
+                  catchError(() => of(new Map<string, HighlightRange[]>()))
+                )
+            : of(new Map<string, HighlightRange[]>());
+
+          citationBookmarks$.pipe(takeUntil(this.destroy$)).subscribe({
+            next: (citationBookmarksByDocumentGuid) => {
+              this.citationBookmarksByDocumentGuid =
+                citationBookmarksByDocumentGuid;
+              this.populateDocumentContextFromDocuments(aiAbstractionId, documents);
+            },
+            error: () => {
+              this.citationBookmarksByDocumentGuid = new Map<
+                string,
+                HighlightRange[]
+              >();
+              this.populateDocumentContextFromDocuments(aiAbstractionId, documents);
+            },
+          });
         },
         error: () => {
+          this.citationBookmarksByDocumentGuid.clear();
           this.loadedDocumentContextId = null;
           this.documentSource = null;
           this.documentFileName = null;
@@ -608,20 +644,63 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   private getCitationBookmarksForDocument(
     document: DocumentOption | null
   ): HighlightRange[] {
-    if (!document?.documentGuid || !this.documentTargetHighlight) {
+    if (!document?.documentGuid) {
       return [];
+    }
+
+    const merged = new Map<string, HighlightRange>();
+    const documentCitations =
+      this.citationBookmarksByDocumentGuid.get(document.documentGuid) ?? [];
+
+    for (const bookmark of documentCitations) {
+      merged.set(bookmark.id, bookmark);
     }
 
     if (
-      this.documentTargetHighlight.documentGuid &&
-      this.documentTargetHighlight.documentGuid !== document.documentGuid
+      this.documentTargetHighlight &&
+      (!this.documentTargetHighlight.documentGuid ||
+        this.documentTargetHighlight.documentGuid === document.documentGuid)
     ) {
-      return [];
+      const bookmark = { ...this.documentTargetHighlight };
+      delete bookmark.documentGuid;
+      merged.set(bookmark.id, bookmark);
     }
 
-    const bookmark = { ...this.documentTargetHighlight };
-    delete bookmark.documentGuid;
-    return [bookmark];
+    return Array.from(merged.values());
+  }
+
+  private indexCitationBookmarks(
+    fields: Array<{
+      citationHighlight?: (HighlightRange & { documentGuid?: string }) | null;
+    }>
+  ): Map<string, HighlightRange[]> {
+    const bookmarksByDocumentGuid = new Map<string, HighlightRange[]>();
+
+    for (const field of fields ?? []) {
+      const rawCitation = field?.citationHighlight;
+      const documentGuid =
+        typeof rawCitation?.documentGuid === 'string'
+          ? rawCitation.documentGuid.trim()
+          : '';
+
+      if (!documentGuid) {
+        continue;
+      }
+
+      const bookmark = {
+        ...(rawCitation as HighlightRange & { documentGuid?: string }),
+      };
+      delete bookmark.documentGuid;
+
+      const existingBookmarks =
+        bookmarksByDocumentGuid.get(documentGuid) ?? [];
+      if (!existingBookmarks.some((item) => item.id === bookmark.id)) {
+        existingBookmarks.push(bookmark);
+        bookmarksByDocumentGuid.set(documentGuid, existingBookmarks);
+      }
+    }
+
+    return bookmarksByDocumentGuid;
   }
 
   private ensureDocumentContextLoaded(): void {
