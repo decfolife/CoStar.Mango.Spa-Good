@@ -1,5 +1,57 @@
 @import "document-viewer-sdk/dist/assets/style.css";
 
+.rpdf-root button,
+.rpdf-root input,
+.rpdf-root select,
+.rdv-root button,
+.rdv-root input,
+.rdv-root select {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: none;
+  text-align: inherit;
+  line-height: normal;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.rpdf-root button,
+.rdv-root button {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.rpdf-root canvas,
+.rdv-root canvas {
+  display: block;
+  max-width: none;
+}
+
+.rpdf-root .rpdf-toolbar__btn {
+  width: 32px;
+  height: 32px;
+}
+
+.rpdf-root .rpdf-highlights-sidebar__tab {
+  padding: 6px 10px;
+  line-height: 1.2;
+}
+
+.rpdf-root .rpdf-highlights-sidebar__help {
+  padding: 4px;
+}
+
+.rpdf-root .rpdf-sidebar-page {
+  height: auto;
+  padding: 10px;
+}
+
+.rpdf-root .rpdf-sidebar-page__frame {
+  min-height: 120px;
+}
+
 .rpdf-text-layer--highlighting,
 .rpdf-text-layer--highlighting span,
 .rpdf-text-layer--highlighting br {
