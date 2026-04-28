@@ -68,7 +68,7 @@
           "node_modules/devextreme/dist/css/dx.common.css",
           "node_modules/devextreme/dist/css/dx.light.css",
           "node_modules/devexpress-gantt/dist/dx-gantt.css",
-          "apps/mango/src/styles/document-viewer-sdk.css",
+          "libs/forms-shared/src/lib/ai/document-viewer-sdk.css",
           "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
           "node_modules/ngx-toastr/toastr.css",
           "apps/mango/src/assets/styles/costar-mango.scss",
