@@ -70,6 +70,7 @@
   flex-direction: column !important;
   align-items: stretch !important;
   justify-content: flex-start !important;
+  flex: 0 0 auto !important;
   width: 100% !important;
   height: auto !important;
   min-height: 0 !important;
@@ -78,12 +79,17 @@
   line-height: normal !important;
   border-radius: 12px !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  border: 1px solid #dfdbd4 !important;
+  gap: 8px !important;
 }
 
 .rpdf-root .rpdf-sidebar-pages {
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
+  justify-content: flex-start !important;
   gap: 12px !important;
 }
 
@@ -97,12 +103,14 @@
 .rpdf-root .rpdf-sidebar-page__frame {
   position: relative !important;
   display: block !important;
+  flex: 0 0 auto !important;
   width: 100% !important;
   height: auto !important;
   min-height: 120px !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
   line-height: 0 !important;
+  border-radius: 8px !important;
 }
 
 .rpdf-root .rpdf-sidebar-page__canvas {
