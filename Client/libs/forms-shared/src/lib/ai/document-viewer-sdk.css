@@ -28,7 +28,8 @@
   max-width: none;
 }
 
-.rpdf-root .rpdf-toolbar__btn {
+.rpdf-root .rpdf-toolbar__btn,
+.rdv-root .rpdf-toolbar__btn {
   width: 32px !important;
   height: 32px !important;
   padding: 0 !important;
@@ -36,7 +37,8 @@
   line-height: 1 !important;
 }
 
-.rpdf-root .rpdf-highlights-sidebar__tabs {
+.rpdf-root .rpdf-highlights-sidebar__tabs,
+.rdv-root .rpdf-highlights-sidebar__tabs {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -44,7 +46,8 @@
   border-radius: 999px !important;
 }
 
-.rpdf-root .rpdf-highlights-sidebar__tab {
+.rpdf-root .rpdf-highlights-sidebar__tab,
+.rdv-root .rpdf-highlights-sidebar__tab {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -55,7 +58,8 @@
   border-radius: 999px !important;
 }
 
-.rpdf-root .rpdf-highlights-sidebar__help {
+.rpdf-root .rpdf-highlights-sidebar__help,
+.rdv-root .rpdf-highlights-sidebar__help {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -65,7 +69,8 @@
   border-radius: 4px !important;
 }
 
-.rpdf-root .rpdf-sidebar-page {
+.rpdf-root .rpdf-sidebar-page,
+.rdv-root .rpdf-sidebar-page {
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
@@ -85,7 +90,8 @@
   gap: 8px !important;
 }
 
-.rpdf-root .rpdf-sidebar-pages {
+.rpdf-root .rpdf-sidebar-pages,
+.rdv-root .rpdf-sidebar-pages {
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
@@ -93,14 +99,16 @@
   gap: 12px !important;
 }
 
-.rpdf-root .rpdf-sidebar-page__meta {
+.rpdf-root .rpdf-sidebar-page__meta,
+.rdv-root .rpdf-sidebar-page__meta {
   display: flex !important;
   align-items: baseline !important;
   justify-content: space-between !important;
   gap: 8px !important;
 }
 
-.rpdf-root .rpdf-sidebar-page__frame {
+.rpdf-root .rpdf-sidebar-page__frame,
+.rdv-root .rpdf-sidebar-page__frame {
   position: relative !important;
   display: block !important;
   flex: 0 0 auto !important;
@@ -113,7 +121,8 @@
   border-radius: 8px !important;
 }
 
-.rpdf-root .rpdf-sidebar-page__canvas {
+.rpdf-root .rpdf-sidebar-page__canvas,
+.rdv-root .rpdf-sidebar-page__canvas {
   display: block !important;
   position: relative !important;
   width: 100% !important;
@@ -122,30 +131,36 @@
   line-height: 0 !important;
 }
 
-.rpdf-root .rpdf-highlight-item__body {
+.rpdf-root .rpdf-highlight-item__body,
+.rdv-root .rpdf-highlight-item__body {
   padding: 15px 12px 8px !important;
 }
 
-.rpdf-root .rpdf-highlight-item__headline {
+.rpdf-root .rpdf-highlight-item__headline,
+.rdv-root .rpdf-highlight-item__headline {
   align-items: center !important;
   min-height: 22px !important;
   padding-top: 2px !important;
 }
 
-.rpdf-root .rpdf-highlight-item__details {
+.rpdf-root .rpdf-highlight-item__details,
+.rdv-root .rpdf-highlight-item__details {
   padding: 2px 12px 14px !important;
 }
 
-.rpdf-root .rpdf-highlight-item__meta-row {
+.rpdf-root .rpdf-highlight-item__meta-row,
+.rdv-root .rpdf-highlight-item__meta-row {
   min-height: 26px !important;
   padding-top: 4px !important;
 }
 
-.rpdf-root .rpdf-highlight-item__page {
+.rpdf-root .rpdf-highlight-item__page,
+.rdv-root .rpdf-highlight-item__page {
   line-height: 1.2 !important;
 }
 
-.rpdf-root .rpdf-highlight-item__remove {
+.rpdf-root .rpdf-highlight-item__remove,
+.rdv-root .rpdf-highlight-item__remove {
   display: flex !important;
   align-items: flex-start !important;
   justify-content: center !important;
@@ -157,7 +172,8 @@
   border-radius: 4px !important;
 }
 
-.rpdf-root .rpdf-toolbar__highlight-count + .rpdf-toolbar__btn {
+.rpdf-root .rpdf-toolbar__highlight-count + .rpdf-toolbar__btn,
+.rdv-root .rpdf-toolbar__highlight-count + .rpdf-toolbar__btn {
   display: none !important;
 }
 

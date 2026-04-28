@@ -847,6 +847,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       : [];
 
     const artifacts = (document.artifacts ?? [])
+      .filter((artifact) => this.shouldIncludeArtifact(artifact))
       .map((artifact) => this.mapArtifact(document, artifact))
       .filter((artifact): artifact is DocumentOption => Boolean(artifact));
 
@@ -897,6 +898,30 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       'Artifact';
 
     return artifactName;
+  }
+
+  private shouldIncludeArtifact(
+    artifact: AiAbstractionDocumentArtifact
+  ): boolean {
+    if (artifact.attachmentTypeId === 20) {
+      return true;
+    }
+
+    const artifactLabel = [
+      artifact.displayName,
+      artifact.artifactType,
+      artifact.mimeType,
+    ]
+      .filter((value): value is string => Boolean(value?.trim()))
+      .join(' ')
+      .toLowerCase();
+
+    return (
+      artifactLabel.includes('ocr') &&
+      !artifactLabel.includes('json') &&
+      ((artifact.contentText?.trim()?.length ?? 0) > 0 ||
+        artifact.mimeType?.toLowerCase().startsWith('text/') === true)
+    );
   }
 
   private shouldRenderAsText(document: DocumentOption): boolean {

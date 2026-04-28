@@ -98,7 +98,11 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
   private _searchQuery?: string;
   private _initialBookmarks: HighlightRange[] = [];
   private _optimisticBookmarks: HighlightRange[] | null = null;
-  private _currentUser?: { firstName?: string; lastName?: string };
+  private _currentUser?: {
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+  };
   private _dateFormat: 'us' | 'eu' = 'us';
   private _hostRef: ElementRef<HTMLDivElement> | undefined;
   private root: Root | null = null;
@@ -131,6 +135,7 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
         this._currentUser = {
           firstName: contact?.firstName ?? undefined,
           lastName: contact?.lastName ?? undefined,
+          username: contact?.userName ?? undefined,
         };
         this._dateFormat = contact?.preferences?.contactDatesEU ? 'eu' : 'us';
         this.renderReactTree();

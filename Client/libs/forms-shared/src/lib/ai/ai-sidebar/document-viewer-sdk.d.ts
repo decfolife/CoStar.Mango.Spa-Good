@@ -78,7 +78,11 @@ declare module 'document-viewer-sdk' {
     /** Date display format for bookmark timestamps. */
     dateFormat?: 'us' | 'eu';
     /** Current user stamped onto newly created bookmarks. */
-    currentUser?: { firstName?: string; lastName?: string };
+    currentUser?: {
+      firstName?: string;
+      lastName?: string;
+      username?: string;
+    };
     onLoad?: (...args: any[]) => void;
     onError?: (err: { message?: string; code?: string }) => void;
   }
