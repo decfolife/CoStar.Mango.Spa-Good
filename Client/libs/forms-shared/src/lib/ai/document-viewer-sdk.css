@@ -1,10 +1,10 @@
 @import "document-viewer-sdk/dist/assets/style.css";
 
-.rpdf-root button,
-.rpdf-root input,
+.rpdf-root button:not(.rdv-comment-popup__btn),
+.rpdf-root input:not(.rdv-comment-popup__textarea),
 .rpdf-root select,
-.rdv-root button,
-.rdv-root input,
+.rdv-root button:not(.rdv-comment-popup__btn),
+.rdv-root input:not(.rdv-comment-popup__textarea),
 .rdv-root select {
   font: inherit;
   letter-spacing: inherit;
@@ -17,8 +17,8 @@
   margin: 0;
 }
 
-.rpdf-root button,
-.rdv-root button {
+.rpdf-root button:not(.rdv-comment-popup__btn),
+.rdv-root button:not(.rdv-comment-popup__btn) {
   box-shadow: none;
 }
 
