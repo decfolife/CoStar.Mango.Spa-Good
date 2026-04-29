@@ -24,12 +24,6 @@ import {
   type ToolbarConfig,
 } from 'document-viewer-sdk';
 
-interface RevealHighlightRequest {
-  id: string;
-  token: number;
-  forceBookmarks?: boolean;
-}
-
 @Component({
   selector: 'mango-ai-document-viewer',
   templateUrl: './ai-document-viewer.component.html',
@@ -84,13 +78,6 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
     this.renderReactTree();
   }
 
-  @Input() set revealHighlightRequest(
-    value: RevealHighlightRequest | undefined
-  ) {
-    this._revealHighlightRequest = value;
-    this.renderReactTree();
-  }
-
   /**
    * Saved/current highlights for the SDK's controlled bookmarks mode.
    * The templates keep the historical input name, but the SDK prop is `bookmarks`.
@@ -116,7 +103,6 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
   private _searchQuery?: string;
   private _allowBookmarks = true;
   private _initialBookmarks: HighlightRange[] = [];
-  private _revealHighlightRequest?: RevealHighlightRequest;
   private _optimisticBookmarks: HighlightRange[] | null = null;
   private _currentUser?: {
     firstName?: string;
@@ -208,7 +194,6 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
         toolbar: this.toolbar,
         darkMode: false,
         searchQuery: this._searchQuery,
-        revealHighlight: this._revealHighlightRequest,
         bookmarks: this._allowBookmarks
           ? this._optimisticBookmarks ?? this._initialBookmarks
           : undefined,

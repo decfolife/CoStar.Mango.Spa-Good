@@ -124,7 +124,6 @@
       [searchQuery]="documentSearchQuery || undefined"
       [allowBookmarks]="selectedDocument?.attachmentTypeId !== 20"
       [initialBookmarks]="currentBookmarks"
-      [revealHighlightRequest]="documentRevealHighlightRequest || undefined"
       (bookmarksChange)="onBookmarksChange($event)"
     ></mango-ai-document-viewer>
     <div *ngIf="documentLoadError" class="ai-sidebar__document-note">

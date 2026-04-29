@@ -281,16 +281,6 @@ export class AiFormSectionComponent implements OnInit {
       return;
     }
 
-    if (field.citationHighlight) {
-      console.debug('[AI citation click]', {
-        fieldLabel: field.label,
-        citationId: field.citationHighlight.id,
-        documentGuid: field.citationHighlight.documentGuid,
-        pageNumber: field.citationHighlight.pageNumber,
-        text: field.citationHighlight.text,
-      });
-    }
-
     this.aiSidebarService.openDocumentSearch(
       this.leaseId,
       field.citationHighlight ? null : searchTerm,
