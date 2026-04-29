@@ -61,6 +61,12 @@ interface DocumentOption {
   externalAiOutputJson?: string;
 }
 
+interface RevealHighlightRequest {
+  id: string;
+  token: number;
+  forceBookmarks?: boolean;
+}
+
 @Component({
   selector: 'mango-ai-sidebar',
   templateUrl: './ai-sidebar.component.html',
@@ -88,6 +94,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   /** Saved highlights passed to [initialBookmarks] — set once per document load. */
   currentBookmarks: HighlightRange[] = [];
   documentTargetHighlight: (HighlightRange & { documentGuid?: string }) | null = null;
+  documentRevealHighlightRequest: RevealHighlightRequest | null = null;
   private citationBookmarksByDocumentGuid = new Map<string, HighlightRange[]>();
   /** True once the user adds a highlight; prevents loadHighlights from overwriting. */
   private _viewerHasUserChanges = false;
@@ -236,6 +243,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.selectedDocumentKey = null;
             this.isDocumentLoading = false;
             this.documentSearchQuery = null;
+            this.documentTargetHighlight = null;
+            this.documentRevealHighlightRequest = null;
             this.citationBookmarksByDocumentGuid.clear();
             this.loadedDocumentContextId = null;
           }
@@ -245,6 +254,13 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             this.documentSearchQuery =
               state.documentSearchQuery?.trim() || null;
             this.documentTargetHighlight = state.documentTargetHighlight;
+            this.documentRevealHighlightRequest = state.documentTargetHighlight?.id
+              ? {
+                  id: state.documentTargetHighlight.id,
+                  token: state.documentRequestId,
+                  forceBookmarks: false,
+                }
+              : null;
             this.activeTabIndex = 0;
           }
 
@@ -270,6 +286,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           this.currentAiAbstractionId = null;
           this.documentSearchQuery = null;
           this.documentTargetHighlight = null;
+          this.documentRevealHighlightRequest = null;
           this.citationBookmarksByDocumentGuid.clear();
           this.loadedDocumentContextId = null;
           this.handledDocumentRequestId = 0;
