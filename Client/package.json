@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "nx",
-    "postinstall": "node ./decorate-angular-cli.js && node ./patches/apply-sdk-patches.js",
+    "postinstall": "node ./decorate-angular-cli.js",
     "nx": "node --max_old_space_size=8192 ./node_modules/nx/bin/nx.js",
     "start": "node --max_old_space_size=8192 ./node_modules/nx/bin/nx.js serve mango --configuration=fast",
     "start:local": "node --max_old_space_size=8192 ./node_modules/nx/bin/nx.js serve mango --configuration=local",
