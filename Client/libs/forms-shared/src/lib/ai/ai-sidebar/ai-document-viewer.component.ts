@@ -247,7 +247,10 @@ export class AiDocumentViewerComponent implements OnInit, AfterViewInit, OnDestr
         a?.id !== b?.id ||
         a?.text !== b?.text ||
         a?.comment !== b?.comment ||
-        a?.pageNumber !== b?.pageNumber
+        a?.pageNumber !== b?.pageNumber ||
+        a?.username !== b?.username ||
+        a?.firstName !== b?.firstName ||
+        a?.lastName !== b?.lastName
       ) {
         return false;
       }
