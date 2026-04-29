@@ -51,7 +51,7 @@
       [class.ai-sidebar__tab--active]="activeTabIndex === 1"
       (click)="onTabChange(1)"
     >
-      Ai Summary
+      AI Summary
     </button>
   </div>
 
@@ -188,7 +188,9 @@
                   title="Copy citation"
                   type="button"
                 >
-                  <mat-icon>content_copy</mat-icon>
+                  <mat-icon>{{
+                    copiedCitation === field.citation ? 'check' : 'content_copy'
+                  }}</mat-icon>
                 </button>
               </div>
             </div>

@@ -157,6 +157,8 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   ];
 
   private readonly destroy$ = new Subject<void>();
+  copiedCitation: string | null = null;
+  private copiedCitationTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly aiSidebarService: AiSidebarService,
@@ -279,6 +281,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.clearGlobalSidebarState();
     this.resizeObserver?.disconnect();
+    if (this.copiedCitationTimeoutId) {
+      clearTimeout(this.copiedCitationTimeoutId);
+      this.copiedCitationTimeoutId = null;
+    }
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -309,6 +315,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   copyCitation(text: string): void {
     navigator.clipboard?.writeText(text);
+    this.copiedCitation = text;
+    if (this.copiedCitationTimeoutId) {
+      clearTimeout(this.copiedCitationTimeoutId);
+    }
+    this.copiedCitationTimeoutId = setTimeout(() => {
+      this.copiedCitation = null;
+      this.copiedCitationTimeoutId = null;
+    }, 1500);
   }
 
   onTabChange(index: number): void {
