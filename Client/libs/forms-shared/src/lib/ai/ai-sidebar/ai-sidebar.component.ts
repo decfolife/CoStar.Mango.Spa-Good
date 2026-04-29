@@ -668,6 +668,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             ...savedBookmarks,
             ...this.getCitationBookmarksForDocument(this.selectedDocument),
           ];
+          this.logCitationRevealState('after loadHighlights merge');
         },
         error: () => {
           /* non-critical */
@@ -701,6 +702,25 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     }
 
     return Array.from(merged.values());
+  }
+
+  private logCitationRevealState(context: string): void {
+    const targetId = this.documentTargetHighlight?.id;
+    if (!targetId) {
+      return;
+    }
+
+    const bookmarkIds = this.currentBookmarks.map((bookmark) => bookmark.id);
+    console.debug(`[AI citation reveal] ${context}`, {
+      targetId,
+      selectedDocumentGuid: this.selectedDocument?.documentGuid ?? null,
+      targetDocumentGuid: this.documentTargetHighlight?.documentGuid ?? null,
+      bookmarkIds,
+      hasTarget: bookmarkIds.includes(targetId),
+      citationBookmarkIds: this.getCitationBookmarksForDocument(
+        this.selectedDocument
+      ).map((bookmark) => bookmark.id),
+    });
   }
 
   private indexCitationBookmarks(
@@ -774,6 +794,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           ),
           ...this.getCitationBookmarksForDocument(this.selectedDocument),
         ];
+        this.logCitationRevealState('after ensureDocumentContextLoaded merge');
       }
 
       return;
