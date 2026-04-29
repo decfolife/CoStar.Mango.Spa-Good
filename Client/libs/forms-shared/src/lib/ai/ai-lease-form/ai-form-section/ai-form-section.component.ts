@@ -317,7 +317,7 @@ export class AiFormSectionComponent implements OnInit {
 
   private getDocumentSearchTerm(field: AiFormField): string | null {
     const currentValue = this.getCurrentFieldValue(field);
-    if (currentValue == null || currentValue === '') {
+    if (!this.hasMeaningfulFieldValue(currentValue)) {
       return null;
     }
 
@@ -339,6 +339,22 @@ export class AiFormSectionComponent implements OnInit {
 
     const trimmed = searchTerm.trim();
     return trimmed && trimmed !== '—' ? trimmed : null;
+  }
+
+  private hasMeaningfulFieldValue(value: unknown): boolean {
+    if (value == null) {
+      return false;
+    }
+
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    return true;
   }
 
   private normalizeDropdownItems(items: any): AiDropdownItem[] {
