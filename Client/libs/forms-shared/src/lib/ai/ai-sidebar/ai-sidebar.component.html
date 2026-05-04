@@ -161,9 +161,32 @@
               {{ field.value }}
             </div>
 
+            <div
+              *ngIf="
+                field.displayAs === 'note' &&
+                field.reasoning &&
+                field.reasoning.length
+              "
+              class="ai-sidebar__expense-note"
+            >
+              <span class="ai-sidebar__expense-note-label">
+                {{ field.reasoningLabel || field.label }}
+              </span>
+              <p
+                *ngFor="let reasoning of field.reasoning"
+                class="ai-sidebar__expense-note-text"
+              >
+                {{ reasoning }}
+              </p>
+            </div>
+
             <!-- Each other expense rendered as a card -->
             <div
-              *ngIf="field.label !== 'Service Type' && field.value !== '—'"
+              *ngIf="
+                field.label !== 'Service Type' &&
+                field.displayAs !== 'note' &&
+                field.value !== '—'
+              "
               class="ai-sidebar__expense-card"
             >
               <div class="ai-sidebar__expense-card__name">
@@ -177,7 +200,7 @@
                 class="ai-sidebar__expense-card__citation"
               >
                 <span class="ai-sidebar__expense-card__citation-label"
-                  >Citation:</span
+                  >{{ field.citationLabel || 'Citation' }}:</span
                 >
                 <p class="ai-sidebar__expense-card__citation-text">
                   {{ field.citation }}
@@ -206,7 +229,29 @@
               <mat-icon class="ai-sidebar__citation-icon"
                 >format_quote</mat-icon
               >
-              <span>{{ field.citation }}</span>
+              <div class="ai-sidebar__citation-content">
+                <span class="ai-sidebar__citation-label">
+                  {{ field.citationLabel || 'Citation' }}
+                </span>
+                <span>{{ field.citation }}</span>
+              </div>
+            </div>
+            <div
+              *ngIf="field.reasoning && field.reasoning.length"
+              class="ai-sidebar__reasoning"
+            >
+              <mat-icon class="ai-sidebar__reasoning-icon">psychology</mat-icon>
+              <div class="ai-sidebar__reasoning-content">
+                <span class="ai-sidebar__reasoning-label">
+                  {{ field.reasoningLabel || 'AI Reasoning' }}
+                </span>
+                <p
+                  *ngFor="let reasoning of field.reasoning"
+                  class="ai-sidebar__reasoning-text"
+                >
+                  {{ reasoning }}
+                </p>
+              </div>
             </div>
           </div>
         </ng-template>

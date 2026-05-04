@@ -7,14 +7,15 @@ ARG DEVEXTREME_KEY
 WORKDIR /app
 COPY package*.json ./
 COPY decorate-angular-cli.js ./
+COPY libs/forms-shared/src/lib/ai/document-viewer-sdk-1.2.9.tgz libs/forms-shared/src/lib/ai/
 RUN npm set strict-ssl false
-RUN npm ci --force
+RUN npm ci --force --legacy-peer-deps
 COPY ./ /app/
 
 RUN echo "building environment=$COSTAR_ENVIRONMENT" && \
         mkdir -p ./apps/mango/src/license && \
         echo "export const licenseKey = '$DEVEXTREME_KEY'" > ./apps/mango/src/license/devextreme-license.js
-RUN npx nx run mango:build --configuration=$COSTAR_ENVIRONMENT
+RUN NODE_OPTIONS="--max-old-space-size=8192" npx nx run mango:build --configuration=$COSTAR_ENVIRONMENT
 
 # Stage 2: Serve app with nginx server
 FROM public.ecr.aws/nginx/nginx:alpine as final

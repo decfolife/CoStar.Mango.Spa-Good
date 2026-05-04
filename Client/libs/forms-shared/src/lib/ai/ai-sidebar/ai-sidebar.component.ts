@@ -32,6 +32,10 @@ interface SidebarField {
   label: string;
   value: string;
   citation?: string;
+  citationLabel?: string;
+  reasoning?: string[];
+  reasoningLabel?: string;
+  displayAs?: 'default' | 'expense' | 'note';
 }
 
 interface SidebarSection {
@@ -1054,6 +1058,17 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
               data.rent?.tenantImprovementAllowance?.value
             ),
             citation: data.rent?.tenantImprovementAllowance?.citation,
+            citationLabel: 'AI Reasoning',
+            reasoning: this.formatReasoning(
+              data.rent?.tenantImprovementAllowance?.subfields?.allowances
+                ?.map((allowance, index) =>
+                  allowance?.comment
+                    ? `[${index + 1}] ${allowance.comment}`
+                    : null
+                )
+                .filter((comment): comment is string => Boolean(comment))
+            ),
+            reasoningLabel: 'AI Citation',
           },
           {
             label: 'TI ($/SF)',
@@ -1076,37 +1091,55 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             label: 'Operating Expenses',
             value: this.formatPayor(data.expenses?.operatingExpenses?.value),
             citation: data.expenses?.operatingExpenses?.citation,
+            displayAs: 'expense',
           },
           {
             label: 'Common Area Maintenance',
             value: this.formatPayor(data.expenses?.cam?.value),
             citation: data.expenses?.cam?.citation,
+            displayAs: 'expense',
           },
           {
             label: 'Insurance',
             value: this.formatPayor(data.expenses?.insurance?.value),
+            displayAs: 'expense',
           },
           {
             label: 'Taxes',
             value: this.formatPayor(data.expenses?.taxes?.value),
+            displayAs: 'expense',
           },
           {
             label: 'Water',
             value: this.formatPayor(data.expenses?.water?.value),
+            displayAs: 'expense',
           },
-          { label: 'Gas', value: this.formatPayor(data.expenses?.gas?.value) },
+          {
+            label: 'Gas',
+            value: this.formatPayor(data.expenses?.gas?.value),
+            displayAs: 'expense',
+          },
           {
             label: 'Electricity',
             value: this.formatPayor(data.expenses?.electricity?.value),
+            displayAs: 'expense',
           },
           {
             label: 'HVAC',
             value: this.formatPayor(data.expenses?.hvac?.value),
             citation: data.expenses?.hvac?.citation,
+            displayAs: 'expense',
           },
           {
             label: 'Cleaning',
             value: this.formatPayor(data.expenses?.cleaning?.value),
+            displayAs: 'expense',
+          },
+          {
+            label: 'AI Reasoning',
+            value: '—',
+            reasoning: this.formatReasoning(data.expenses?.comments),
+            displayAs: 'note',
           },
         ],
       },
@@ -1149,4 +1182,15 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     const str = String(value);
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+
+  private formatReasoning(
+    values: Array<string | null | undefined> | undefined
+  ): string[] | undefined {
+    const reasoning = (values ?? [])
+      .map((value) => value?.trim())
+      .filter((value): value is string => Boolean(value));
+
+    return reasoning.length ? reasoning : undefined;
+  }
+
 }

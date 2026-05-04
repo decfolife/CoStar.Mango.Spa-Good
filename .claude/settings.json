@@ -3,7 +3,9 @@
     "allow": [
       "Read(//Users/michaelcurtis/developer/rem-document-viewer/**)",
       "Read(//Users/michaelcurtis/developer/formsengine/**)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(npm --version)",
+      "Bash(git -C /Users/michaelcurtis/developer/CoStar.Mango.Spa ls-files Client/libs/forms-shared/src/lib/ai/document-viewer-sdk-1.2.9.tgz)"
     ],
     "additionalDirectories": [
       "/Users/michaelcurtis/developer/formsengine/FormsEngine.Application/Ai",
