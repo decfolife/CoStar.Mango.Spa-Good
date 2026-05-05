@@ -131,21 +131,47 @@ export class AiLeaseService {
   }
 
   isDocumentTabArtifactAttachmentType(
-    attachmentTypeId: number | null | undefined
+    attachmentTypeId: number | string | null | undefined
   ): boolean {
+    const normalizedAttachmentTypeId = this.normalizeAttachmentTypeId(
+      attachmentTypeId
+    );
     return (
-      attachmentTypeId != null &&
-      this.documentTabArtifactAttachmentTypeIds.has(attachmentTypeId)
+      normalizedAttachmentTypeId != null &&
+      this.documentTabArtifactAttachmentTypeIds.has(normalizedAttachmentTypeId)
     );
   }
 
   isFileOnlyDocumentTabArtifactAttachmentType(
-    attachmentTypeId: number | null | undefined
+    attachmentTypeId: number | string | null | undefined
   ): boolean {
-    return (
-      attachmentTypeId != null &&
-      this.fileOnlyDocumentTabArtifactAttachmentTypeIds.has(attachmentTypeId)
+    const normalizedAttachmentTypeId = this.normalizeAttachmentTypeId(
+      attachmentTypeId
     );
+    return (
+      normalizedAttachmentTypeId != null &&
+      this.fileOnlyDocumentTabArtifactAttachmentTypeIds.has(
+        normalizedAttachmentTypeId
+      )
+    );
+  }
+
+  private normalizeAttachmentTypeId(
+    attachmentTypeId: number | string | null | undefined
+  ): number | null {
+    if (typeof attachmentTypeId === 'number' && Number.isFinite(attachmentTypeId)) {
+      return attachmentTypeId;
+    }
+
+    if (
+      typeof attachmentTypeId === 'string' &&
+      attachmentTypeId.trim() &&
+      !Number.isNaN(Number(attachmentTypeId))
+    ) {
+      return Number(attachmentTypeId);
+    }
+
+    return null;
   }
 
   getAbstractionDocumentUrl(document: AiAbstractionDocument): string | null {

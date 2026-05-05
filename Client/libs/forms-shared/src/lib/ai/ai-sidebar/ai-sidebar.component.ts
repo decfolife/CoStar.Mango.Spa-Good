@@ -307,6 +307,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   get selectedDocumentContent(): string | null {
+    if (
+      this.aiLeaseService.isFileOnlyDocumentTabArtifactAttachmentType(
+        this.selectedDocument?.attachmentTypeId
+      )
+    ) {
+      return null;
+    }
+
     return this.prettifyJson(this.selectedDocument?.contentText);
   }
 
