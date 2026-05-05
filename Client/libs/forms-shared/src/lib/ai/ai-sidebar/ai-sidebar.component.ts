@@ -923,7 +923,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   private shouldIncludeArtifact(
     artifact: AiAbstractionDocumentArtifact
   ): boolean {
-    if (artifact.attachmentTypeId === 20) {
+    if (
+      this.aiLeaseService.isDocumentTabArtifactAttachmentType(
+        artifact.attachmentTypeId
+      )
+    ) {
       return true;
     }
 

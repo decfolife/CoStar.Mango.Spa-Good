@@ -19,7 +19,9 @@ import type {
 
 @Injectable({ providedIn: 'root' })
 export class AiLeaseService {
-  private readonly requestedExternalAttachmentTypeIds = new Set([20, 70]);
+  private readonly documentTabArtifactAttachmentTypeIds = new Set([
+    20, 50, 70,
+  ]);
   private readonly apiUrl = UtilitiesService.getBaseApiUrl(
     Api.formWizard,
     'http://localhost:5000'
@@ -122,6 +124,15 @@ export class AiLeaseService {
           catchError(() => of(documents))
         );
       })
+    );
+  }
+
+  isDocumentTabArtifactAttachmentType(
+    attachmentTypeId: number | null | undefined
+  ): boolean {
+    return (
+      attachmentTypeId != null &&
+      this.documentTabArtifactAttachmentTypeIds.has(attachmentTypeId)
     );
   }
 
@@ -602,7 +613,7 @@ export class AiLeaseService {
     ]);
     if (
       attachmentTypeId == null ||
-      !this.requestedExternalAttachmentTypeIds.has(attachmentTypeId)
+      !this.isDocumentTabArtifactAttachmentType(attachmentTypeId)
     ) {
       return null;
     }
