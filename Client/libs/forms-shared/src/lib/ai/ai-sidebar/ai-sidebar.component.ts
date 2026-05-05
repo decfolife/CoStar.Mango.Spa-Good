@@ -307,14 +307,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   }
 
   get selectedDocumentContent(): string | null {
-    if (
-      this.aiLeaseService.isFileOnlyDocumentTabArtifactAttachmentType(
-        this.selectedDocument?.attachmentTypeId
-      )
-    ) {
-      return null;
-    }
-
     return this.prettifyJson(this.selectedDocument?.contentText);
   }
 
@@ -911,11 +903,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       artifactType: artifact.artifactType,
       attachmentTypeId: artifact.attachmentTypeId,
       mimeType: artifact.mimeType,
-      contentText: this.aiLeaseService.isFileOnlyDocumentTabArtifactAttachmentType(
-        artifact.attachmentTypeId
-      )
-        ? undefined
-        : artifact.contentText,
+      contentText: artifact.contentText,
       externalStatus: document.externalStatus,
       externalAbstractionStatus: document.externalAbstractionStatus,
       externalStatusDetail: document.externalStatusDetail,
@@ -935,11 +923,7 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
   private shouldIncludeArtifact(
     artifact: AiAbstractionDocumentArtifact
   ): boolean {
-    if (
-      this.aiLeaseService.isDocumentTabArtifactAttachmentType(
-        artifact.attachmentTypeId
-      )
-    ) {
+    if (artifact.attachmentTypeId === 20) {
       return true;
     }
 
@@ -962,14 +946,6 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   private shouldRenderAsText(document: DocumentOption): boolean {
     if (document.type !== 'artifact') {
-      return false;
-    }
-
-    if (
-      this.aiLeaseService.isFileOnlyDocumentTabArtifactAttachmentType(
-        document.attachmentTypeId
-      )
-    ) {
       return false;
     }
 

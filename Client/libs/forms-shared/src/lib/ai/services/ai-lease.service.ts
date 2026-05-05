@@ -19,12 +19,7 @@ import type {
 
 @Injectable({ providedIn: 'root' })
 export class AiLeaseService {
-  private readonly documentTabArtifactAttachmentTypeIds = new Set([
-    20, 50, 70,
-  ]);
-  private readonly fileOnlyDocumentTabArtifactAttachmentTypeIds = new Set([
-    50,
-  ]);
+  private readonly requestedExternalAttachmentTypeIds = new Set([20, 70]);
   private readonly apiUrl = UtilitiesService.getBaseApiUrl(
     Api.formWizard,
     'http://localhost:5000'
@@ -128,50 +123,6 @@ export class AiLeaseService {
         );
       })
     );
-  }
-
-  isDocumentTabArtifactAttachmentType(
-    attachmentTypeId: number | string | null | undefined
-  ): boolean {
-    const normalizedAttachmentTypeId = this.normalizeAttachmentTypeId(
-      attachmentTypeId
-    );
-    return (
-      normalizedAttachmentTypeId != null &&
-      this.documentTabArtifactAttachmentTypeIds.has(normalizedAttachmentTypeId)
-    );
-  }
-
-  isFileOnlyDocumentTabArtifactAttachmentType(
-    attachmentTypeId: number | string | null | undefined
-  ): boolean {
-    const normalizedAttachmentTypeId = this.normalizeAttachmentTypeId(
-      attachmentTypeId
-    );
-    return (
-      normalizedAttachmentTypeId != null &&
-      this.fileOnlyDocumentTabArtifactAttachmentTypeIds.has(
-        normalizedAttachmentTypeId
-      )
-    );
-  }
-
-  private normalizeAttachmentTypeId(
-    attachmentTypeId: number | string | null | undefined
-  ): number | null {
-    if (typeof attachmentTypeId === 'number' && Number.isFinite(attachmentTypeId)) {
-      return attachmentTypeId;
-    }
-
-    if (
-      typeof attachmentTypeId === 'string' &&
-      attachmentTypeId.trim() &&
-      !Number.isNaN(Number(attachmentTypeId))
-    ) {
-      return Number(attachmentTypeId);
-    }
-
-    return null;
   }
 
   getAbstractionDocumentUrl(document: AiAbstractionDocument): string | null {
@@ -651,7 +602,7 @@ export class AiLeaseService {
     ]);
     if (
       attachmentTypeId == null ||
-      !this.isDocumentTabArtifactAttachmentType(attachmentTypeId)
+      !this.requestedExternalAttachmentTypeIds.has(attachmentTypeId)
     ) {
       return null;
     }
@@ -666,10 +617,8 @@ export class AiLeaseService {
         this.readString(record, ['artifactType', 'attachmentTypeName']) ??
         this.getAttachmentTypeLabel(attachmentTypeId),
       contentText:
-        this.isFileOnlyDocumentTabArtifactAttachmentType(attachmentTypeId)
-          ? undefined
-          : this.readString(record, ['contentText', 'text', 'content']) ??
-            undefined,
+        this.readString(record, ['contentText', 'text', 'content']) ??
+        undefined,
       externalReferenceId: context.externalReferenceId,
       fileName:
         this.readString(record, [
