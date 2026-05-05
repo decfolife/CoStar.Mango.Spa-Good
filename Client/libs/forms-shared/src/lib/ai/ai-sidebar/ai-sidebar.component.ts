@@ -903,7 +903,11 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       artifactType: artifact.artifactType,
       attachmentTypeId: artifact.attachmentTypeId,
       mimeType: artifact.mimeType,
-      contentText: artifact.contentText,
+      contentText: this.aiLeaseService.isFileOnlyDocumentTabArtifactAttachmentType(
+        artifact.attachmentTypeId
+      )
+        ? undefined
+        : artifact.contentText,
       externalStatus: document.externalStatus,
       externalAbstractionStatus: document.externalAbstractionStatus,
       externalStatusDetail: document.externalStatusDetail,
@@ -950,6 +954,14 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
 
   private shouldRenderAsText(document: DocumentOption): boolean {
     if (document.type !== 'artifact') {
+      return false;
+    }
+
+    if (
+      this.aiLeaseService.isFileOnlyDocumentTabArtifactAttachmentType(
+        document.attachmentTypeId
+      )
+    ) {
       return false;
     }
 

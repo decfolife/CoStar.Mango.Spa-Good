@@ -22,6 +22,9 @@ export class AiLeaseService {
   private readonly documentTabArtifactAttachmentTypeIds = new Set([
     20, 50, 70,
   ]);
+  private readonly fileOnlyDocumentTabArtifactAttachmentTypeIds = new Set([
+    50,
+  ]);
   private readonly apiUrl = UtilitiesService.getBaseApiUrl(
     Api.formWizard,
     'http://localhost:5000'
@@ -133,6 +136,15 @@ export class AiLeaseService {
     return (
       attachmentTypeId != null &&
       this.documentTabArtifactAttachmentTypeIds.has(attachmentTypeId)
+    );
+  }
+
+  isFileOnlyDocumentTabArtifactAttachmentType(
+    attachmentTypeId: number | null | undefined
+  ): boolean {
+    return (
+      attachmentTypeId != null &&
+      this.fileOnlyDocumentTabArtifactAttachmentTypeIds.has(attachmentTypeId)
     );
   }
 
@@ -628,8 +640,10 @@ export class AiLeaseService {
         this.readString(record, ['artifactType', 'attachmentTypeName']) ??
         this.getAttachmentTypeLabel(attachmentTypeId),
       contentText:
-        this.readString(record, ['contentText', 'text', 'content']) ??
-        undefined,
+        this.isFileOnlyDocumentTabArtifactAttachmentType(attachmentTypeId)
+          ? undefined
+          : this.readString(record, ['contentText', 'text', 'content']) ??
+            undefined,
       externalReferenceId: context.externalReferenceId,
       fileName:
         this.readString(record, [
