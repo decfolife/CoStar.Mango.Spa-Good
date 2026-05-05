@@ -335,7 +335,7 @@
   }
 
   &__section-title {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.6px;
@@ -366,7 +366,7 @@
 
   &__field-label {
     display: block;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     color: #888;
     text-transform: uppercase;
@@ -380,7 +380,7 @@
 
   &__field-value {
     display: block;
-    font-size: 13px;
+    font-size: 14px;
     color: #1a1a2e;
   }
 
@@ -395,7 +395,7 @@
     background: #fdf8e1;
     border-left: 3px solid #f0b429;
     border-radius: 0 3px 3px 0;
-    font-size: 11px;
+    font-size: 12px;
     color: #5a4a00;
     line-height: 1.4;
   }
@@ -409,7 +409,7 @@
 
   &__citation-label,
   &__reasoning-label {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -433,9 +433,9 @@
     background: #eef5ff;
     border-left: 3px solid #3b82f6;
     border-radius: 0 3px 3px 0;
-    font-size: 11px;
+    font-size: 13px;
     color: #173a63;
-    line-height: 1.4;
+    line-height: 1.5;
   }
 
   &__reasoning-icon {
@@ -450,12 +450,14 @@
   &__reasoning-text,
   &__expense-note-text {
     margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   // ── Expense cards ────────────────────────────────────────────────────────
 
   &__expense-service-type {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     color: #666;
     text-transform: uppercase;
@@ -479,7 +481,7 @@
     }
 
     &__payor {
-      font-size: 13px;
+      font-size: 14px;
       color: #444;
       margin-bottom: 8px;
     }
@@ -492,14 +494,14 @@
 
     &__citation-label {
       display: block;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       color: #555;
       margin-bottom: 4px;
     }
 
     &__citation-text {
-      font-size: 12px;
+      font-size: 13px;
       color: #444;
       line-height: 1.5;
       margin: 0 0 6px;
@@ -538,7 +540,7 @@
 
   &__expense-note-label {
     display: block;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.4px;
@@ -549,7 +551,7 @@
   // ── Subtables ────────────────────────────────────────────────────────────
 
   &__subtable-label {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.4px;
