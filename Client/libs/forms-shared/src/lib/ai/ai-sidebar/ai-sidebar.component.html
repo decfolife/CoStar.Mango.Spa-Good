@@ -223,36 +223,61 @@
         <!-- Default field layout for all other sections -->
         <ng-template #defaultFieldList>
           <div *ngFor="let field of section.fields" class="ai-sidebar__field">
-            <span class="ai-sidebar__field-label">{{ field.label }}</span>
-            <span class="ai-sidebar__field-value">{{ field.value }}</span>
-            <div *ngIf="field.citation" class="ai-sidebar__citation">
-              <mat-icon class="ai-sidebar__citation-icon"
-                >format_quote</mat-icon
-              >
-              <div class="ai-sidebar__citation-content">
-                <span class="ai-sidebar__citation-label">
-                  {{ field.citationLabel || 'Citation' }}
-                </span>
-                <span>{{ field.citation }}</span>
-              </div>
-            </div>
-            <div
-              *ngIf="field.reasoning && field.reasoning.length"
-              class="ai-sidebar__reasoning"
+            <ng-container
+              *ngIf="
+                field.displayAs === 'note' &&
+                field.reasoning &&
+                field.reasoning.length;
+                else defaultFieldContent
+              "
             >
-              <mat-icon class="ai-sidebar__reasoning-icon">psychology</mat-icon>
-              <div class="ai-sidebar__reasoning-content">
-                <span class="ai-sidebar__reasoning-label">
-                  {{ field.reasoningLabel || 'AI Reasoning' }}
-                </span>
-                <p
-                  *ngFor="let reasoning of field.reasoning"
-                  class="ai-sidebar__reasoning-text"
-                >
-                  {{ reasoning }}
-                </p>
+              <div class="ai-sidebar__reasoning ai-sidebar__reasoning--standalone">
+                <mat-icon class="ai-sidebar__reasoning-icon">psychology</mat-icon>
+                <div class="ai-sidebar__reasoning-content">
+                  <span class="ai-sidebar__reasoning-label">
+                    {{ field.reasoningLabel || field.label }}
+                  </span>
+                  <p
+                    *ngFor="let reasoning of field.reasoning"
+                    class="ai-sidebar__reasoning-text"
+                  >
+                    {{ reasoning }}
+                  </p>
+                </div>
               </div>
-            </div>
+            </ng-container>
+            <ng-template #defaultFieldContent>
+              <span class="ai-sidebar__field-label">{{ field.label }}</span>
+              <span class="ai-sidebar__field-value">{{ field.value }}</span>
+              <div *ngIf="field.citation" class="ai-sidebar__citation">
+                <mat-icon class="ai-sidebar__citation-icon"
+                  >format_quote</mat-icon
+                >
+                <div class="ai-sidebar__citation-content">
+                  <span class="ai-sidebar__citation-label">
+                    {{ field.citationLabel || 'Citation' }}
+                  </span>
+                  <span>{{ field.citation }}</span>
+                </div>
+              </div>
+              <div
+                *ngIf="field.reasoning && field.reasoning.length"
+                class="ai-sidebar__reasoning"
+              >
+                <mat-icon class="ai-sidebar__reasoning-icon">psychology</mat-icon>
+                <div class="ai-sidebar__reasoning-content">
+                  <span class="ai-sidebar__reasoning-label">
+                    {{ field.reasoningLabel || 'AI Reasoning' }}
+                  </span>
+                  <p
+                    *ngFor="let reasoning of field.reasoning"
+                    class="ai-sidebar__reasoning-text"
+                  >
+                    {{ reasoning }}
+                  </p>
+                </div>
+              </div>
+            </ng-template>
           </div>
         </ng-template>
 

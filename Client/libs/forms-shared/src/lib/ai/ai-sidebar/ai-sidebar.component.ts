@@ -999,16 +999,48 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
                 .join('; ') ?? '—',
           },
           {
+            label: 'Multiple Buildings',
+            value: this.formatBoolean(
+              data.basics?.isMultipleBuildings?.value
+            ),
+          },
+          {
             label: 'Square Footage',
             value: this.formatNumber(data.basics?.squareFootage?.value),
           },
           { label: 'Suite', value: data.basics?.suite?.value ?? '—' },
+          {
+            label: 'Floors',
+            value: this.formatList(data.basics?.floors?.value),
+          },
+          {
+            label: 'Service Type',
+            value: data.expenses?.serviceTypeEstimate?.value ?? '—',
+          },
+          {
+            label: 'Includes Amendments',
+            value: this.formatBoolean(
+              data.basics?.includesAmendments?.value
+            ),
+          },
           { label: 'Lease Type', value: data.basics?.leaseType?.value ?? '—' },
           { label: 'Deal Type', value: data.basics?.dealType?.value ?? '—' },
           { label: 'Space Use', value: data.basics?.spaceUse?.value ?? '—' },
           {
             label: 'Entire Building',
             value: this.formatBoolean(data.basics?.entireBuilding?.value),
+          },
+          {
+            label: 'Data Center Lease',
+            value: this.formatBoolean(data.basics?.isDataCenterLease?.value),
+          },
+          {
+            label: 'Abstraction Date',
+            value: this.formatDate(data.basics?.abstractionDate?.value),
+          },
+          {
+            label: 'Currency',
+            value: this.formatCurrencyUnit(data.basics?.monetaryUnitId?.value),
           },
         ],
       },
@@ -1019,6 +1051,10 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           {
             label: 'Lease Sign Date',
             value: this.formatDate(data.dates?.leaseSignDate?.value),
+          },
+          {
+            label: 'Lease Start Date',
+            value: this.formatDate(data.dates?.leaseStartDate?.value),
           },
           {
             label: 'Commencement Date',
@@ -1036,12 +1072,49 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
             label: 'Term (Months)',
             value: this.formatNumber(data.dates?.leaseTermInMonths?.value),
           },
+          {
+            label: 'Does Lease Term Begin On Commencement Date',
+            value: this.formatBoolean(
+              data.dates?.leaseTermInMonths?.subfields?.beginsOnCD
+            ),
+          },
+          {
+            label: 'Does Lease Term Begin On Rent Commencement Date',
+            value: this.formatBoolean(
+              data.dates?.leaseTermInMonths?.subfields?.beginsOnRCD
+            ),
+          },
         ],
       },
       {
         title: 'Rent',
         isExpanded: true,
         fields: [
+          {
+            label: 'Does Rent Schedule Start From Commencement Date?',
+            value: this.formatBoolean(
+              data.rent?.baseRentSchedule?.subfields?.startsFromCD
+            ),
+          },
+          {
+            label: 'Does Rent Schedule Start From Rent Commencement Date?',
+            value: this.formatBoolean(
+              data.rent?.baseRentSchedule?.subfields?.startsFromRCD
+            ),
+          },
+          {
+            label: 'Does Rent Schedule Include Additional Rent?',
+            value: this.formatBoolean(
+              data.rent?.baseRentSchedule?.subfields?.includesAdditionalRent
+            ),
+          },
+          {
+            label: 'Does Rent Schedule Include Operating Expenses?',
+            value: this.formatBoolean(
+              data.rent?.baseRentSchedule?.subfields
+                ?.includesOperatingExpenses
+            ),
+          },
           {
             label: 'Effective Rent ($/SF)',
             value: this.formatCurrency(data.rent?.effectiveRent?.value),
@@ -1077,6 +1150,12 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
                 ?.amount
             ),
           },
+          {
+            label: 'AI Reasoning',
+            value: '—',
+            reasoning: this.formatReasoning(data.rent?.comments),
+            displayAs: 'note',
+          },
         ],
       },
       {
@@ -1090,49 +1169,55 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
           {
             label: 'Operating Expenses',
             value: this.formatPayor(data.expenses?.operatingExpenses?.value),
-            citation: data.expenses?.operatingExpenses?.citation,
+            citation: this.getExpenseCitation(data.expenses?.operatingExpenses),
             displayAs: 'expense',
           },
           {
             label: 'Common Area Maintenance',
             value: this.formatPayor(data.expenses?.cam?.value),
-            citation: data.expenses?.cam?.citation,
+            citation: this.getExpenseCitation(data.expenses?.cam),
             displayAs: 'expense',
           },
           {
             label: 'Insurance',
             value: this.formatPayor(data.expenses?.insurance?.value),
+            citation: this.getExpenseCitation(data.expenses?.insurance),
             displayAs: 'expense',
           },
           {
             label: 'Taxes',
             value: this.formatPayor(data.expenses?.taxes?.value),
+            citation: this.getExpenseCitation(data.expenses?.taxes),
             displayAs: 'expense',
           },
           {
             label: 'Water',
             value: this.formatPayor(data.expenses?.water?.value),
+            citation: this.getExpenseCitation(data.expenses?.water),
             displayAs: 'expense',
           },
           {
             label: 'Gas',
             value: this.formatPayor(data.expenses?.gas?.value),
+            citation: this.getExpenseCitation(data.expenses?.gas),
             displayAs: 'expense',
           },
           {
             label: 'Electricity',
             value: this.formatPayor(data.expenses?.electricity?.value),
+            citation: this.getExpenseCitation(data.expenses?.electricity),
             displayAs: 'expense',
           },
           {
             label: 'HVAC',
             value: this.formatPayor(data.expenses?.hvac?.value),
-            citation: data.expenses?.hvac?.citation,
+            citation: this.getExpenseCitation(data.expenses?.hvac),
             displayAs: 'expense',
           },
           {
             label: 'Cleaning',
             value: this.formatPayor(data.expenses?.cleaning?.value),
+            citation: data.expenses?.cleaning?.citation,
             displayAs: 'expense',
           },
           {
@@ -1183,6 +1268,23 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
+  private formatList(values: any[] | undefined): string {
+    const normalizedValues = (values ?? [])
+      .map((value) => String(value ?? '').trim())
+      .filter((value) => Boolean(value));
+
+    return normalizedValues.length ? normalizedValues.join(', ') : '—';
+  }
+
+  private formatCurrencyUnit(value: number | undefined): string {
+    switch (value) {
+      case 1:
+        return 'USD';
+      default:
+        return value == null ? '—' : String(value);
+    }
+  }
+
   private formatReasoning(
     values: Array<string | null | undefined> | undefined
   ): string[] | undefined {
@@ -1191,6 +1293,23 @@ export class AiSidebarComponent implements OnInit, OnDestroy {
       .filter((value): value is string => Boolean(value));
 
     return reasoning.length ? reasoning : undefined;
+  }
+
+  private getExpenseCitation(
+    expense:
+      | {
+          citation?: string;
+          subfields?: { metering?: { citation?: string } };
+        }
+      | undefined
+  ): string | undefined {
+    return expense?.citation ?? this.getMeteringCitation(expense?.subfields);
+  }
+
+  private getMeteringCitation(
+    subfields: { metering?: { citation?: string } } | undefined
+  ): string | undefined {
+    return subfields?.metering?.citation;
   }
 
 }
